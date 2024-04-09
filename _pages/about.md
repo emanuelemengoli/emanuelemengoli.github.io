@@ -41,7 +41,7 @@ Specifically, my latest projects have develved on:
 - ![LinkedIn](path/to/linkedin_icon.png) [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
 - ![Github](path/to/github_icon.png) [Github](https://github.com/emanuelemengoli) -->
 
-### Contacts:
+### Contacts
 <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; <i class="fas fa-envelope"></i> [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com) 
 
 <!-- ## Contacts:
