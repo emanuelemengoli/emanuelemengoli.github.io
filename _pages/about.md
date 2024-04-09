@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: Msc Computer Science at École polytechnique. Machine Learning for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: MSc Computer Science at École polytechnique. Machine Learning for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 
 profile:
   align: right
@@ -15,23 +15,21 @@ profile:
 # <p>Your City, State 12345</p>
 
 news: true # includes a list of news items
-latest_posts: false  # includes a list of the newest posts
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: False # includes social icons at the bottom of the page
 ---
+I'm a final-year MSc Computer Science student at [École Polytechnique](https://www.polytechnique.edu), specializing in Wireless Sensor Networks and AI. Currently, I'm at EPFL's [Information and Network Dynamics](https://indy.epfl.ch) lab, working on my thesis, "Dynamic Bayesian Optimization for Cellular Networks Performance," supervised by Prof. [Patrick Thiran](https://scholar.google.com/citations?user=7Ek7pqgAAAAJ&hl=it&oi=ao).
 
-I am a final year Masters student at the [École Polytechnique](https://www.polytechnique.edu), majoring in Computer Science and Telecommunications, with a focus on Wireless Sensor Networks and Artificial Intelligence. I am currently visiting the [Information and Network Dynamics](https://indy.epfl.ch) lab of EPFL, writing a thesis on "Dynamic Bayesian Optimization for Improving the Performance of Cellular Networks", under the supervision of Prof. [Patrick Thiran](https://scholar.google.com/citations?user=7Ek7pqgAAAAJ&hl=it&oi=ao).
-Previously, I was an intern in the Data Science team of [Cisco Meraki](https://meraki.cisco.com) in Paris.
+Previously, I interned at [Cisco Meraki](https://meraki.cisco.com)'s Data Science team, developing a novel [time series prediction model](https://ieeexplore.ieee.org/abstract/document/10411520) for L2 device anomaly detection. 
 
-I graduated in Industrial Engineering, specialising in ICT, at [the University of Bologna](https://www.unibo.it/en) discussing a thesis on predictive maintenance for the prediction of vehicle failures. The algorithm I developed was acquired from [Movyon](https://www.movyon.com/en/home).
+I obtained my BSc in Industrial Engineering from the [University of Bologna](https://www.unibo.it/en), specializing in ICT. As part of my thesis, I developed an algorithm for vehicle failures prediction, later acquired by [Movyon](https://www.movyon.com/en/home) for tunnel failure monitoring.
 
 
-Research Interests
+## Research Interests
 ======
 I am broadly interested in the intersection of **federated** and **reinforcement learning** for **wireless cellular** and **sensor networks**.
 
-Specifically my current projects develved around:
-My current work focuses on:
+Specifically, my latest projects have develved on:
 - RL for dynamic routing adaptation for multi-hop LPWANs
 - Byzantine fault tolerance of signSGD + an alternative accelerated version of signSGD
 - RIS-assisted tracking and localisation
@@ -44,8 +42,12 @@ My current work focuses on:
 - ![Github](path/to/github_icon.png) [Github](https://github.com/emanuelemengoli) -->
 
 
-**Contacts:**  
+## Contacts:  <i class="fas fa-envelope"></i> [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com) &nbsp; \| &nbsp; <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en)
+
+<!-- ## Contacts:  
 - <i class="fas fa-envelope"></i> [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com)
 - <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
 - <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli)
-- <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en)
+- <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->
+
+
