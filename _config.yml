@@ -10,6 +10,7 @@ email: em.mengoli@gmail.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   Msc Computer Science at École polytechnique. Machine Learning for Wireless Networks.
 footer_text: >
+  Mail: em.mengoli@gmail.com.
 # Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
 # Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 keywords: jekyll, jekyll-theme, academic-website, portfolio-website # add your own keywords or leave empty
