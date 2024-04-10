@@ -27,7 +27,7 @@ I obtained my BSc in Industrial Engineering from the [University of Bologna](htt
 
 ## Research Interests
 
-I am broadly interested in the intersection of **federated** and **reinforcement learning** for **wireless cellular** and **sensor networks**.
+I am broadly interested in the intersection of **Federated** and **Reinforcement Learning** for **Wireless Cellular** and **Sensor Networks**.
 
 Specifically, my latest projects have develved on:
 - RL for dynamic routing adaptation for multi-hop LPWANs
