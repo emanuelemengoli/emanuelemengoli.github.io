@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: MSc Computer Science at École polytechnique. Machine Learning for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: Machine Learning for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 
 profile:
   align: right
@@ -29,7 +29,7 @@ I obtained my BSc in Industrial Engineering from the [University of Bologna](htt
 
 I am broadly interested in the intersection of **Federated** and **Reinforcement Learning** for **Wireless Cellular** and **Sensor Networks**.
 
-Specifically, my latest projects have develved on:
+My latest projects have develved on:
 - RL for dynamic routing adaptation for multi-hop LPWANs
 - Byzantine fault tolerance of signSGD + an alternative accelerated version of signSGD
 - RIS-assisted tracking and localisation
