@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Wireless Sensor Networks:\\Dynamical routing adaptation via Multi-Armed Bandits (MABs)
+title: Wireless Sensor Networks - Dynamical routing adaptation via Multi-Armed Bandits (MABs)
 description: Relaxing the single-hop constraints to enable multi-hop routing 
 img: assets/img/WSN_MABS_experimets_images/random_net.png
 importance: 1
-category: Research
+category: research
 related_publications: false
 ---
 
