@@ -9,7 +9,7 @@ related_publications: false
 ---
 
 Link to the [Github repo](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator).
-A detailed analysis of of the project, experimental results and future extensions is available in `Dynamic_Bayesian_Optimization_for_Improving_the_Performance_of_Cellular_Networks.pdf [1]`.
+A detailed analysis of of the project, experimental results and future extensions is available in `Dynamic_Bayesian_Optimization_for_Improving_the_Performance_of_Cellular_Networks.pdf`[1].
 A toy notebook to run the simulation is available in `run.ipynb`.
 
 
@@ -18,7 +18,7 @@ The increasing complexity of wireless communication networks necessitates innova
 The project report [1] outlines the technical framework of BO and NOMA, articulates the problem statement, and discusses the experimental methodology alongside comparative analyses of motion models used to shape user trajectories. Results are presented, and the implications of the findings are explored, paving the way for future research in optimizing wireless network performance amidst user mobility.
 
 
-<div class="row justify-content-sm-center">
+<div class="row">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_biased_random_walk.png" title="Biased Random Walk." class="img-fluid rounded z-depth-1" %}
         <div class="caption">
@@ -39,7 +39,7 @@ The project report [1] outlines the technical framework of BO and NOMA, articula
     </div>
 </div>
 <div class="caption">
-    Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). $\alpha$-fairness = 1.
+    Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). &#945;-fairness = 1.
 </div>
 
 
