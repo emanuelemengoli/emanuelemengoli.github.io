@@ -1,6 +1,6 @@
 ---
 layout: page
-title: NOMA_net - dynamic wireless cellular network simulator.
+title: NOMA_net - Dynamic Wireless Cellular Network Simulator.
 description: Dynamic Bayesian Optimization for Improving the Performance of Cellular Networks.
 img: assets/img/Noma_net/visual_biased_rndm_wdbo.png
 importance: 1
