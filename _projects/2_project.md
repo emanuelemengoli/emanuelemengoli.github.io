@@ -27,22 +27,52 @@ The project report [1] outlines the technical framework of BO and NOMA, articula
     Biased Random Walk.
 </div> -->
 
-<div class="row justify-content-sm-center">
+<!-- <div class="row justify-content-sm-center">
     <div class="col-sm mt-3 mt-md-0">
             {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_biased_random_walk.png" title="Biased Random Walk." class="img-fluid rounded z-depth-1" %}
         </div>
-    </div>
     <div class="caption">
-        Biased Random Walk.
+        <strong>Biased Random Walk mobility model.</strong>.
+    </div>
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/Noma_net/obj_comparison_random_waypoint.png" title="Random Waypoint." class="img-fluid rounded z-depth-1" %}
     </div>
+    <div class="caption">
+        <strong>"Random Waypoint mobility model.</strong>.
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/Noma_net/obj_comparison_hybrid_gmm.png" title="Hybrid-GMM." class="img-fluid rounded z-depth-1" %}
     </div>
+    <div class="caption">
+        <strong>Hybrid-GMM mobility model.</strong>.
+    </div>
 </div>
 <div class="caption">
-    Objective function comparison between W- DBO (blue), Random pick (red) and Constant pick (green). $\alpha$-fairness = 1.
+    Objective function comparison between W-DBO (blue), Random pick (red) and Constant pick (green). $\alpha$-fairness = 1.
+</div> -->
+
+<div class="row justify-content-sm-center">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_biased_random_walk.png" title="Biased Random Walk." class="img-fluid rounded z-depth-1" %}
+        <div class="caption">
+            <strong>Biased Random Walk mobility model.</strong>
+        </div>
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/Noma_net/obj_comparison_random_waypoint.png" title="Random Waypoint." class="img-fluid rounded z-depth-1" %}
+        <div class="caption">
+            <strong>Random Waypoint mobility model.</strong>
+        </div>
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/Noma_net/obj_comparison_hybrid_gmm.png" title="Hybrid-GMM." class="img-fluid rounded z-depth-1" %}
+        <div class="caption">
+            <strong>Hybrid-GMM mobility model.</strong>
+        </div>
+    </div>
 </div>
+<div class="caption">
+    Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). $\alpha$-fairness = 1.
+</div>
+
 
 
