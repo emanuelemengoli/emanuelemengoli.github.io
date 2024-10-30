@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: Machine learning and Stochastic modeling for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: Machine learning and Stochastic modelling for Wireless Networks. #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 
 profile:
   align: right
