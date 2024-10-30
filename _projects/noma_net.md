@@ -8,7 +8,7 @@ category: Research
 related_publications: false
 ---
 
-Link to the [Github repo](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator).
+Link to the [`Github repo`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator).
 A detailed analysis of of the project, experimental results and future extensions is available in the [`project report`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/Dynamic_Bayesian_Optimization_for_Improving_the_Performance_of_Cellular_Networks.pdf). For a concise overview, refer to the [`slide deck presentation`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/DBO_for_cellular_networks.pdf).
 A toy notebook to run the simulator is available in [`run.ipynb`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/project/run.ipynb).
 
@@ -19,7 +19,7 @@ The project report details the technical framework of BO and NOMA, articulates t
 
 ## Some experimental results...
 
-###### Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). &#945;-fairness = 1.
+###### **Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). &#945;-fairness = 1.**
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">

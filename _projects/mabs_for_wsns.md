@@ -8,7 +8,7 @@ category: Research
 related_publications: false
 ---
 
-Link to the [Github repo](https://github.com/emanuelemengoli/MABs-Dynamic-Routing-WSNs).
+Link to the [`Github repo`](https://github.com/emanuelemengoli/MABs-Dynamic-Routing-WSNs).
 A detailed analysis of of the project, experimental results and future extensions is available in [`project report`](https://github.com/emanuelemengoli/MABs-Dynamic-Routing-WSNs/blob/main/Sensor_Networks_Dynamical_routing_adaptation_via_MABs.pdf).
 The code is available in [`toy_test.ipynb`](https://github.com/emanuelemengoli/MABs-Dynamic-Routing-WSNs/blob/main/toy_test.ipynb).
 
