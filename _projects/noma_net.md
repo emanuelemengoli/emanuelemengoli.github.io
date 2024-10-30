@@ -19,7 +19,10 @@ The project report details the technical framework of BO and NOMA, articulates t
 
 ## Some experimental results...
 
-#### Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). &#945;-fairness = 1.
+<div style="font-size: 0.85em; font-weight: bold; color: #555;">
+    Objective function comparison between W-DBO (blue), Random pick (red), and Constant pick (green). &#945;-fairness = 1.
+</div>
+
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
