@@ -28,7 +28,7 @@ I obtained my BSc in Industrial Engineering from the [University of Bologna](htt
 
 ## Research Interests
 
-I am broadly interested in the intersection of **stochastic modeling** and **machine learning** for improving **wireless networks**. I am also interested in developing theoretical extensions within stochastic optimization theory.
+I am broadly interested in the intersection of **stochastic modeling** and **machine learning** for improving **wireless networks**. I am also interested in developing theoretical extensions within **stochastic optimization** theory.
 
 My latest projects have focused on:
 - RL for dynamic routing adaptation in multi-hop LPWANs
