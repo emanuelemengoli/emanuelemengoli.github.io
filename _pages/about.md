@@ -18,9 +18,9 @@ news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: False # includes social icons at the bottom of the page
 ---
-I am an incoming PhD student in Applied Probability at Inria and Télécom Paris, specializing in stochastic geometry for wireless networks, with a focus on Satellite Communications. My doctoral research is supervised by Professor [François Baccelli](https://www.di.ens.fr/baccelli/) and Professor [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond).
+I am an incoming PhD student in Applied Probability at Inria and Télécom Paris, specializing in stochastic modelling of wireless networks, with a focus on Satellite Communications. My doctoral research is supervised by Professor [François Baccelli](https://www.di.ens.fr/baccelli/) and Professor [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond).
 
-I hold an MSc in Computer Science from [École Polytechnique](https://www.polytechnique.edu), where I specialized in Machine Learning and Communication Networks. For my master’s thesis, I joined EPFL’s [Information and Network Dynamics](https://indy.epfl.ch) lab, under the guidance of Professor [Patrick Thiran](https://people.epfl.ch/patrick.thiran). 
+I hold an MSc in Computer Science from [École Polytechnique](https://www.polytechnique.edu), where I specialized in Machine Learning and Communication Networks. For my master’s thesis, I joined EPFL’s [Information and Network Dynamics](https://indy.epfl.ch) lab, under the guidance of Professor [Patrick Thiran](https://people.epfl.ch/patrick.thiran), where I worked on Bayesian optimization for power control in wireless networks.
 
 Previously, I was part of the Data Science team at [Cisco Meraki](https://meraki.cisco.com), developing a novel [time series prediction model](https://ieeexplore.ieee.org/abstract/document/10411520) for L2 device anomaly detection. 
 
