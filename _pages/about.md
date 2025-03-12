@@ -18,23 +18,22 @@ news: true # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: False # includes social icons at the bottom of the page
 ---
-I am an incoming PhD student in Applied Probability at Inria and Télécom Paris, specializing in stochastic modelling of wireless networks, with a focus on Satellite Communications. My doctoral research is supervised by Professor [François Baccelli](https://www.di.ens.fr/baccelli/) and Professor [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond).
+I am a Ph.D. candidate in Applied Probability at Inria and Télécom Paris, specialising in stochastic modelling of wireless networks, with a focus on 6G and Satellite Communications. My doctoral research is supervised by Professor [François Baccelli](https://www.di.ens.fr/baccelli/) and Professor [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond).
 
-I hold an MSc in Computer Science from [École Polytechnique](https://www.polytechnique.edu), where I specialized in Machine Learning and Communication Networks. For my master’s thesis, I joined EPFL’s [Information and Network Dynamics](https://indy.epfl.ch) lab, under the guidance of Professor [Patrick Thiran](https://people.epfl.ch/patrick.thiran), where I worked on Bayesian optimization for power control in wireless networks.
+I hold an MSc in Computer Science from [École Polytechnique](https://www.polytechnique.edu), where I specialised in Machine Learning and Communication Networks. For my master’s thesis, I joined EPFL’s [Information and Network Dynamics](https://indy.epfl.ch) lab, under the guidance of Professor [Patrick Thiran](https://people.epfl.ch/patrick.thiran), where I worked on Bayesian optimisation for power control in cellular networks.
 
 Previously, I was part of the Data Science team at [Cisco Meraki](https://meraki.cisco.com), developing a novel [time series prediction model](https://ieeexplore.ieee.org/abstract/document/10411520) for L2 device anomaly detection. 
 
-I obtained my BSc in Industrial Engineering from the [University of Bologna](https://www.unibo.it/en), specializing in ICT. As part of my thesis, I developed an algorithm for vehicle failures prediction, later acquired by [Movyon](https://www.movyon.com/en/home) for tunnel failure monitoring.
+I obtained my BSc in Industrial Engineering from the [University of Bologna](https://www.unibo.it/en), specialising in ICT. As part of my thesis, I developed an algorithm for vehicle failures prediction, later acquired by [Movyon](https://www.movyon.com/en/home) for tunnel failure monitoring.
 
 ## Research Interests
 
-I am broadly interested in the intersection of **stochastic modeling** and **machine learning** for improving **wireless networks**. I am also interested in developing theoretical extensions within **stochastic optimization** theory.
+I am broadly interested in the intersection of **stochastic modelling** and **machine learning** for improving **wireless networks**. I am also interested in developing theoretical extensions within **stochastic optimisation** theory.
 
 My latest projects have focused on:
-- RL for dynamic routing adaptation in multi-hop LPWANs
-- Using stochastic geometry to model large cooperative JCAS networks
-- RIS-assisted tracking and localization
-- Proving the Byzantine Fault Tolerance of signSGD [ext. of Bernstein et al. (2018)]
+- Studying the entanglement between sensing and communication in JCAS networks, adopting a stochastic geometry approach,
+- RL for dynamic routing adaptation in multi-hop LPWANs,
+- RIS-assisted tracking and localisation.
 
 
 <!-- **Contacts:** [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; em.mengoli@gmail.com -->
