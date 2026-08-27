@@ -4,29 +4,38 @@ title: About
 permalink: /
 #subtitle: Ph.D. Candidate in Applied Probability at Inria & Télécom Paris — stochastic modelling of non-terrestrial networks.  #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 subtitle:
-  Ph.D. Candidate in Applied Probability at
-    <a href="https://team.inria.fr/mathnet/" target="_blank">Inria</a> &
-    <a href="https://www.telecom-paris.fr/en/research/labs/information-processing-ltci/teams/networks-mobility-services" target="_blank">Télécom Paris</a>
-    — MATHNET / LTCI — stochastic modelling of non-terrestrial networks.
+  Stochastic Geometry, Wireless Networks, Learning Theory
+#  Ph.D. Candidate in Applied Probability at
+#    <a href="https://team.inria.fr/mathnet/" target="_blank">Inria</a> &
+#    <a href="https://www.telecom-paris.fr/en/research/labs/information-processing-ltci/teams/networks-mobility-services" target="_blank">Télécom Paris</a>
+#    — MATHNET / LTCI — stochastic modelling of non-terrestrial networks.
 
 profile:
   align: right
   image: mengoli_profile.jpg
   image_circular: true
   more_info: >
-    <p>MATHNET team, Inria</p>
-    <p>LTCI, Télécom Paris</p>
+    <p>
+      <a href="https://team.inria.fr/mathnet/" target="_blank">MATHNET team, Inria</a>
+    </p>
+    <p>
+      <a href="https://www.telecom-paris.fr/en/research/labs/information-processing-ltci/teams/networks-mobility-services" target="_blank">LTCI, Télécom Paris</a>
+    </p>
     <p>48 Rue Barrault</p>
     <p>75013 Paris, France</p>
+
+#<p>MATHNET team, Inria</p>
+#<p>LTCI, Télécom Paris</p>
+#<p>48 Rue Barrault</p>
+#<p>75013 Paris, France</p>
 
 news: false # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
 social: False # includes social icons at the bottom of the page
 ---
 
-I am a Ph.D. candidate in **Applied Probability** at
-[Inria](https://www.inria.fr/) and
-[Télécom Paris](https://www.telecom-paris.fr/), where I am a member of the
+I am a Ph.D. candidate in **Applied Probability** at Inria and
+Télécom Paris, where I am a member of the
 MATHNET team and the LTCI laboratory. I am fotunate to be advised by Professor
 [François Baccelli](https://www.di.ens.fr/baccelli/), Dr. [Nahuel Soprano-Loto](https://sites.google.com/view/soprano-loto/nahuel-soprano-loto) and 
 Professor
@@ -55,7 +64,7 @@ at EPFL, where I worked with Professor
 **dynamic Bayesian optimisation for power control in cellular networks**.
 
 My earlier research and industry experience spans wireless localisation,
-RIS-assisted systems, time-series modelling, anomaly detection, and
+RIS-assisted systems, time-series modelling, anomaly detection and
 predictive maintenance. These experiences progressively led me toward my
 current interest in the mathematical modelling of networked systems.
 
