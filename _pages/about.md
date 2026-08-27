@@ -16,7 +16,7 @@ profile:
   image_circular: true
   more_info: >
     <p>
-      <a href="https://team.inria.fr/mathnet/" target="_blank">MATHNET team, Inria</a>
+      <a href="https://team.inria.fr/mathnet/" target="_blank">MathNet team, Inria</a>
     </p>
     <p>
       <a href="https://www.telecom-paris.fr/en/research/labs/information-processing-ltci/teams/networks-mobility-services" target="_blank">LTCI, Télécom Paris</a>
@@ -55,13 +55,13 @@ network is dynamic, partially observed, or analytically intractable.
 ## Background
 
 Before starting my Ph.D., I studied Computer Science at
-[École Polytechnique](https://www.polytechnique.edu/), specialising in
+École Polytechnique, specialising in
 machine learning and communication networks. For my Master's thesis, I
 joined the
-[Information and Network Dynamics Laboratory](https://indy.epfl.ch/)
+[INDY](https://indy.epfl.ch/)
 at EPFL, where I worked with Professor
 [Patrick Thiran](https://people.epfl.ch/patrick.thiran) on
-**dynamic Bayesian optimisation for power control in cellular networks**.
+dynamic Bayesian optimisation for power control in cellular networks.
 
 My earlier research and industry experience spans wireless localisation,
 RIS-assisted systems, time-series modelling, anomaly detection and
@@ -69,8 +69,7 @@ predictive maintenance. These experiences progressively led me toward my
 current interest in the mathematical modelling of networked systems.
 
 I received my B.Sc. in Industrial Engineering, with a specialisation in
-Information and Communication Technology, from the
-[University of Bologna](https://www.unibo.it/en).
+Information and Communication Technology, from the University of Bologna.
 
 <!-- I am a Ph.D. candidate in Applied Probability at Inria and Télécom Paris, specialising in stochastic modelling of wireless networks, with a focus on 6G and Satellite Communications. My doctoral research is supervised by Professor [François Baccelli](https://www.di.ens.fr/baccelli/), Professor [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond) and Dr. [Nahuel Soprano-Loto](https://sites.google.com/view/soprano-loto/nahuel-soprano-loto).
 
