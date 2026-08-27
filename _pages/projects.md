@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Projects
+title: Softwares
 permalink: /projects/
-description: Personal research projects.
+description: A list of software developed for research projects.
 nav: true
 nav_order: 4
 display_categories: [Research,Business]
