@@ -23,6 +23,12 @@ profile:
     </p>
     <p>48 Rue Barrault</p>
     <p>75013 Paris, France</p>
+    <p class="contact-icons" style="margin-top: 0.6rem; font-size: 1.2rem;">
+      <a href="https://www.linkedin.com/in/emanuele-mengoli/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin"></i></a>&nbsp;&nbsp;
+      <a href="https://github.com/emanuelemengoli" target="_blank" rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a>&nbsp;&nbsp;
+      <a href="https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" title="Google Scholar"><i class="fas fa-user-graduate"></i></a>&nbsp;&nbsp;
+      <a href="mailto:emanuele.mengoli@inria.fr" title="Email"><i class="fas fa-envelope"></i></a>
+    </p>
 
 #<p>MATHNET team, Inria</p>
 #<p>LTCI, Télécom Paris</p>
@@ -95,9 +101,6 @@ My latest projects have focused on:
 - ![Email](path/to/email_icon.png) [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr)
 - ![LinkedIn](path/to/linkedin_icon.png) [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
 - ![Github](path/to/github_icon.png) [Github](https://github.com/emanuelemengoli) -->
-
-### Contacts
-<i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; <i class="fas fa-envelope"></i> [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr) 
 
 <!-- ## Contacts:
 <a href="https://www.linkedin.com/in/emanuele-mengoli/"><i class="fab fa-linkedin"></i></a> &nbsp; \| &nbsp; 
