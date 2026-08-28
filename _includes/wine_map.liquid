@@ -1,0 +1,246 @@
+{% comment %}
+  Interactive wine map for /hobbies/.
+  Data source: _data/wines.yml
+  Requires `map: true` in the host page's front matter so al-folio loads Leaflet
+  (CSS via _includes/head.liquid, JS via _includes/scripts/leaflet.liquid).
+{% endcomment %}
+
+<style>
+  #wine-map {
+    height: 460px;
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--global-divider-color);
+    z-index: 0;
+  }
+  #wine-map .leaflet-container {
+    background: var(--global-bg-color);
+    font: inherit;
+  }
+  .wine-marker {
+    background: none;
+    border: none;
+  }
+  .wine-marker svg {
+    display: block;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  }
+  .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
+  .leaflet-popup.wine-popup .leaflet-popup-tip {
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  .leaflet-popup.wine-popup .leaflet-popup-content-wrapper {
+    border-radius: 6px;
+  }
+  .leaflet-popup.wine-popup .leaflet-popup-content {
+    margin: 0.7rem 0.9rem;
+    line-height: 1.45;
+  }
+  .wine-card .wine-name {
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .wine-card .wine-vintage {
+    color: var(--global-text-color-light);
+    font-weight: 400;
+  }
+  .wine-card .wine-stars {
+    display: block;
+    margin: 0.2rem 0 0.35rem;
+    color: #c8a951;
+    letter-spacing: 0.06em;
+  }
+  .wine-card .wine-stars .empty {
+    opacity: 0.5;
+  }
+  .wine-card .wine-producer a {
+    color: var(--global-theme-color);
+  }
+  .wine-card .wine-meta {
+    margin-top: 0.15rem;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
+  .wine-card .wine-notes {
+    margin: 0.4rem 0 0;
+    font-size: 0.86rem;
+  }
+  .wine-card .wine-tasted {
+    margin-top: 0.35rem;
+    font-size: 0.76rem;
+    color: var(--global-text-color-light);
+  }
+  html[data-theme="dark"] .wine-marker svg {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+  }
+</style>
+
+<div id="wine-map" role="region" aria-label="Map of tasted wines"></div>
+
+<script>
+  window.WINE_MAP_DATA = {{ site.data.wines | jsonify | replace: '</', '<\/' }};
+</script>
+
+<script>
+  (function () {
+    function ready(fn) {
+      if (document.readyState === "complete") fn();
+      else window.addEventListener("load", fn);
+    }
+
+    ready(function () {
+      var el = document.getElementById("wine-map");
+      if (!el) return;
+      if (typeof L === "undefined") {
+        el.innerHTML =
+          '<p style="padding:1rem;margin:0">Map unavailable &mdash; Leaflet did not load. Add <code>map: true</code> to this page\'s front matter.</p>';
+        return;
+      }
+
+      var wines = Array.isArray(window.WINE_MAP_DATA) ? window.WINE_MAP_DATA : [];
+
+      var TILES = {
+        light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+      };
+      var ATTRIBUTION =
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+      var COLORS = {
+        red: "#7b1e3b",
+        white: "#d8c56a",
+        "rosé": "#e79aa9",
+        rose: "#e79aa9",
+        sparkling: "#cdd39a",
+        orange: "#d0782e",
+      };
+
+      function isDark() {
+        var t = document.documentElement.getAttribute("data-theme");
+        if (t === "dark") return true;
+        if (t === "light") return false;
+        return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      }
+
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+
+      function safeUrl(u) {
+        return /^(https?:\/\/|\/)/i.test(String(u || "")) ? String(u) : "";
+      }
+
+      function bottleIcon(color) {
+        var fill = COLORS[color] || "#8a8a8a";
+        var svg =
+          '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">' +
+          '<path d="M9.5 2h5v2.3c0 .95.4 1.4 1 2.15C16.4 7.7 17 9 17 10.6V21c0 .55-.45 1-1 1H8c-.55 0-1-.45-1-1V10.6c0-1.6.6-2.9 1.5-4.15.6-.75 1-1.2 1-2.15V2z" fill="' +
+          fill +
+          '" stroke="rgba(0,0,0,0.35)" stroke-width="1"/>' +
+          '<rect x="7.6" y="12.4" width="8.8" height="4.4" fill="rgba(255,255,255,0.85)"/>' +
+          "</svg>";
+        return L.divIcon({
+          html: svg,
+          className: "wine-marker",
+          iconSize: [26, 26],
+          iconAnchor: [13, 26],
+          popupAnchor: [0, -24],
+        });
+      }
+
+      function stars(r) {
+        r = Math.max(0, Math.min(5, Number(r) || 0));
+        var full = Math.floor(r);
+        var half = r - full >= 0.5;
+        var out = "";
+        var i;
+        for (i = 0; i < full; i++) out += '<i class="fa-solid fa-star"></i>';
+        if (half) out += '<i class="fa-solid fa-star-half-stroke"></i>';
+        for (i = full + (half ? 1 : 0); i < 5; i++) out += '<i class="fa-regular fa-star empty"></i>';
+        return '<span class="wine-stars" aria-label="' + r + ' out of 5">' + out + "</span>";
+      }
+
+      function card(w) {
+        var url = safeUrl(w.url);
+        var producer = url
+          ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " \u2197</a>"
+          : esc(w.producer);
+        var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
+        var meta = [w.region, w.country].filter(Boolean).map(esc);
+        if (w.grape) meta.push(esc(w.grape));
+        var notes = w.notes ? '<p class="wine-notes">' + esc(w.notes) + "</p>" : "";
+        var tasted = w.tasted ? '<div class="wine-tasted">Tasted ' + esc(w.tasted) + "</div>" : "";
+        return (
+          '<div class="wine-card">' +
+          '<div class="wine-name">' +
+          esc(w.name) +
+          vintage +
+          "</div>" +
+          stars(w.rating) +
+          '<div class="wine-producer">' +
+          producer +
+          "</div>" +
+          '<div class="wine-meta">' +
+          meta.join(" &middot; ") +
+          "</div>" +
+          notes +
+          tasted +
+          "</div>"
+        );
+      }
+
+      var map = L.map(el, { scrollWheelZoom: false, worldCopyJump: true });
+      map.on("click", function () {
+        map.scrollWheelZoom.enable();
+      });
+      map.on("mouseout", function () {
+        map.scrollWheelZoom.disable();
+      });
+
+      var tileLayer = L.tileLayer(isDark() ? TILES.dark : TILES.light, {
+        attribution: ATTRIBUTION,
+        subdomains: "abcd",
+        maxZoom: 19,
+        detectRetina: true,
+      }).addTo(map);
+
+      new MutationObserver(function () {
+        tileLayer.setUrl(isDark() ? TILES.dark : TILES.light);
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+      // Fan out markers that share the exact same coordinates so each stays clickable.
+      var seen = {};
+      var pts = [];
+      wines.forEach(function (w) {
+        var lat = Number(w.lat);
+        var lng = Number(w.lng);
+        if (!isFinite(lat) || !isFinite(lng)) return;
+        var key = lat.toFixed(5) + "," + lng.toFixed(5);
+        var n = seen[key] || 0;
+        seen[key] = n + 1;
+        if (n > 0) {
+          var ang = n * 2.399963; // golden angle
+          var rad = 0.00018 * Math.ceil(n / 6); // ~20 m rings
+          lat += rad * Math.cos(ang);
+          lng += (rad * Math.sin(ang)) / Math.cos((lat * Math.PI) / 180);
+        }
+        L.marker([lat, lng], {
+          icon: bottleIcon(w.color),
+          title: (w.name || "") + (w.producer ? " \u2014 " + w.producer : ""),
+        })
+          .addTo(map)
+          .bindPopup(card(w), { className: "wine-popup", maxWidth: 260, minWidth: 200 });
+        pts.push([lat, lng]);
+      });
+
+      if (pts.length) {
+        map.fitBounds(pts, { padding: [30, 30], maxZoom: 8 });
+      } else {
+        map.setView([46, 6], 4);
+      }
+    });
+  })();
+</script>

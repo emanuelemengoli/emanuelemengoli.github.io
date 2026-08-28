@@ -1,0 +1,53 @@
+# Wines shown on the /hobbies/ interactive map (rendered by _includes/wine_map.liquid).
+#
+# One entry per wine. Required: name, producer, url, region, country, lat, lng, color, rating.
+# Optional: vintage, grape, notes, tasted.
+#
+#   color   : red | white | rosé | sparkling | orange   (sets the bottle marker tint)
+#   rating  : 0 to 5, in 0.5 steps
+#   lat/lng : decimal degrees of the producer / winery
+#   tasted  : "YYYY-MM-DD"  (keep the quotes)
+#
+# The three entries below are examples — replace them with your own tastings.
+
+- name: Barolo
+  producer: G. D. Vajra
+  url: https://www.gdvajra.it/
+  region: Piedmont
+  country: Italy
+  lat: 44.6167
+  lng: 7.9833
+  color: red
+  vintage: 2019
+  grape: Nebbiolo
+  rating: 4.5
+  notes: Tar and dried roses, firm tannins; give it a decade.
+  tasted: "2024-11-02"
+
+- name: Chablis 1er Cru Montmains
+  producer: Domaine William Fèvre
+  url: https://www.williamfevre.com/
+  region: Burgundy
+  country: France
+  lat: 47.8236
+  lng: 3.7897
+  color: white
+  vintage: 2021
+  grape: Chardonnay
+  rating: 4.0
+  notes: Chalky, taut, oyster-shell salinity.
+  tasted: "2025-03-14"
+
+- name: Brut Nature "Les Barres"
+  producer: Chartogne-Taillet
+  url: https://www.chartogne-taillet.com/
+  region: Champagne
+  country: France
+  lat: 49.3200
+  lng: 3.9500
+  color: sparkling
+  vintage: 2018
+  grape: Meunier
+  rating: 4.5
+  notes: Single-vineyard old-vine Meunier; smoky, vinous, low dosage.
+  tasted: "2025-06-21"

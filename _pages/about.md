@@ -83,3 +83,4 @@ My latest projects have focused on:
 - Studying the entanglement between sensing and communication in JCAS networks, adopting a stochastic geometry approach,
 - RL for dynamic routing adaptation in multi-hop LPWANs,
 - RIS-assisted tracking and localisation.
+-->
