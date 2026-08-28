@@ -23,7 +23,7 @@
   }
   .wine-marker svg {
     display: block;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 2px 2.5px rgba(0, 0, 0, 0.55));
   }
   .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
   .leaflet-popup.wine-popup .leaflet-popup-tip {
@@ -72,7 +72,7 @@
     color: var(--global-text-color-light);
   }
   html[data-theme="dark"] .wine-marker svg {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
   }
 </style>
 
@@ -101,12 +101,12 @@
       var wines = Array.isArray(window.WINE_MAP_DATA) ? window.WINE_MAP_DATA : [];
 
       var COLORS = {
-        red: "#7b1e3b",
-        white: "#d8c56a",
-        "rosé": "#e79aa9",
-        rose: "#e79aa9",
-        sparkling: "#cdd39a",
-        orange: "#d0782e",
+        red: "#7c1d2b",
+        white: "#c99a1f",
+        "rosé": "#df5c86",
+        rose: "#df5c86",
+        sparkling: "#93973a",
+        orange: "#cd6620",
       };
 
       function esc(s) {
@@ -120,20 +120,26 @@
       }
 
       function bottleIcon(color) {
-        var fill = COLORS[color] || "#8a8a8a";
+        var fill = COLORS[color] || "#6b6b6b";
+        var d =
+          "M9.5 2h5v2.3c0 .95.4 1.4 1 2.15C16.4 7.7 17 9 17 10.6V21c0 .55-.45 1-1 1H8c-.55 0-1-.45-1-1V10.6c0-1.6.6-2.9 1.5-4.15.6-.75 1-1.2 1-2.15V2z";
         var svg =
-          '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">' +
-          '<path d="M9.5 2h5v2.3c0 .95.4 1.4 1 2.15C16.4 7.7 17 9 17 10.6V21c0 .55-.45 1-1 1H8c-.55 0-1-.45-1-1V10.6c0-1.6.6-2.9 1.5-4.15.6-.75 1-1.2 1-2.15V2z" fill="' +
+          '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">' +
+          '<path d="' +
+          d +
+          '" fill="' +
           fill +
-          '" stroke="rgba(0,0,0,0.35)" stroke-width="1"/>' +
-          '<rect x="7.6" y="12.4" width="8.8" height="4.4" fill="rgba(255,255,255,0.85)"/>' +
+          '" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>' +
+          '<path d="' +
+          d +
+          '" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" stroke-linejoin="round"/>' +
           "</svg>";
         return L.divIcon({
           html: svg,
           className: "wine-marker",
-          iconSize: [26, 26],
-          iconAnchor: [13, 26],
-          popupAnchor: [0, -24],
+          iconSize: [30, 30],
+          iconAnchor: [15, 29],
+          popupAnchor: [0, -26],
         });
       }
 
