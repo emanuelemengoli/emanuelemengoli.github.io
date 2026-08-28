@@ -1,6 +1,6 @@
 ---
 layout: page
-title: MABs for WSNs Routing
+title: Multi-Armed Bandits Routing
 description: Relaxing the single-hop constraint to enable multi-hop routing via Multi-Armed Bandits (MABs). Wireless Sensor Networks (WSNs).
 img: assets/img/WSN_MABS_experiment_images/random_net.png
 importance: 1

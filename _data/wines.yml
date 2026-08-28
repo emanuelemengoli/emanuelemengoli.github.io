@@ -1,4 +1,4 @@
-# Wines shown on the /hobbies/ interactive map (rendered by _includes/wine_map.liquid).
+# Wines shown on the /le-mie-passioni/ interactive map (rendered by _includes/wine_map.liquid).
 #
 # One entry per wine. Required: name, producer, url, region, country, lat, lng, color, rating.
 # Optional: vintage, grape, notes, tasted.

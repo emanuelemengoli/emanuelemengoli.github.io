@@ -1,5 +1,5 @@
 {% comment %}
-  Interactive wine map for /hobbies/.
+  Interactive wine map for /le-mie-passioni/.
   Data source: _data/wines.yml
   Requires `map: true` in the host page's front matter so al-folio loads Leaflet
   (CSS via _includes/head.liquid, JS via _includes/scripts/leaflet.liquid).
@@ -100,13 +100,6 @@
 
       var wines = Array.isArray(window.WINE_MAP_DATA) ? window.WINE_MAP_DATA : [];
 
-      var TILES = {
-        light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-        dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-      };
-      var ATTRIBUTION =
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
-
       var COLORS = {
         red: "#7b1e3b",
         white: "#d8c56a",
@@ -115,13 +108,6 @@
         sparkling: "#cdd39a",
         orange: "#d0782e",
       };
-
-      function isDark() {
-        var t = document.documentElement.getAttribute("data-theme");
-        if (t === "dark") return true;
-        if (t === "light") return false;
-        return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
-      }
 
       function esc(s) {
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -200,16 +186,10 @@
         map.scrollWheelZoom.disable();
       });
 
-      var tileLayer = L.tileLayer(isDark() ? TILES.dark : TILES.light, {
-        attribution: ATTRIBUTION,
-        subdomains: "abcd",
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
-        detectRetina: true,
       }).addTo(map);
-
-      new MutationObserver(function () {
-        tileLayer.setUrl(isDark() ? TILES.dark : TILES.light);
-      }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
       // Fan out markers that share the exact same coordinates so each stays clickable.
       var seen = {};

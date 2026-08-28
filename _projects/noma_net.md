@@ -1,6 +1,6 @@
 ---
 layout: page
-title: NOMA_net
+title: Dynamic Bayesian Optimization
 description: Dynamic Bayesian Optimization (DBO) for cellular networks power optimization. NOMA_net is wireless cellular network simulator using NOMA as resource sharing mechanism (RSM).
 img: assets/img/Noma_net/visual_biased_rndm_wdbo.png
 importance: 1

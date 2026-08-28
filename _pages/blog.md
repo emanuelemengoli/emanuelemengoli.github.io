@@ -4,6 +4,7 @@ permalink: /blog/
 title: Blog
 nav: true
 nav_order: 1
+published: false # blog is hidden until the first real post lands; delete this line to bring it back
 pagination:
   enabled: true
   collection: posts
