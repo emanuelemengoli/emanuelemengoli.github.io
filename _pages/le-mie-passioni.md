@@ -47,16 +47,16 @@ map: true
 </style>
 
 <p class="passions-lead">
-  A small corner of the website for the things I enjoy outside research — wine, travel,
-  sport, and whatever else finds its way here over time.
+  A small corner for the things I enjoy outside research; wine, travel,
+  sport and whatever else finds its way here over time.
 </p>
 
 <div class="card passions-card">
   <h3 class="card-title font-weight-medium"><i class="fa-solid fa-wine-glass"></i>Degustando</h3>
   <p>
     A collection of wines I have tasted, mapped to the places where they are produced.
-    Click on a bottle to discover the producer and see my personal rating. The collection
-    grows as I explore new regions, producers, and bottles.
+    Click on a bottle to discover the producer and my personal rating. The collection
+    grows as I explore new regions, producers and bottles.
   </p>
   {% include wine_map.liquid %}
 </div>
