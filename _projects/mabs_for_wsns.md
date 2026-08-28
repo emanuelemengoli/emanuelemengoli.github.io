@@ -1,8 +1,8 @@
 ---
 layout: page
-title: MABs for WSNs routing.
+title: MABs for WSNs Routing
 description: Relaxing the single-hop constraint to enable multi-hop routing via Multi-Armed Bandits (MABs). Wireless Sensor Networks (WSNs).
-img: assets/img/WSN_MABS_experimets_images/random_net.png
+img: assets/img/WSN_MABS_experiment_images/random_net.png
 importance: 1
 category: Research
 related_publications: false
@@ -19,7 +19,7 @@ The proposed approach leverages **MABs** to build an **adaptive dynamic routing 
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experimets_images/random_net.png" title="Random network topology." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experiment_images/random_net.png" title="Random network topology." alt="Random network topology." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">
@@ -28,7 +28,7 @@ The proposed approach leverages **MABs** to build an **adaptive dynamic routing 
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experimets_images/deadlock_rate_ucb_random.png" title="Deadlock analysis on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experiment_images/deadlock_rate_ucb_random.png" title="Deadlock analysis on random network topology - UCB routing strategy." alt="Deadlock analysis on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">
@@ -37,7 +37,7 @@ The proposed approach leverages **MABs** to build an **adaptive dynamic routing 
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experimets_images/metrics_random_net_ucb.png" title="Performance metrics on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/WSN_MABS_experiment_images/metrics_random_net_ucb.png" title="Performance metrics on random network topology - UCB routing strategy." alt="Performance metrics on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">
@@ -46,10 +46,10 @@ The proposed approach leverages **MABs** to build an **adaptive dynamic routing 
 
 <!-- <div class="row justify-content-sm-center">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/WSN_MABS_experimets_images/deadlock_rate_ucb_random.png" title="Deadlock analysis on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/img/WSN_MABS_experiment_images/deadlock_rate_ucb_random.png" title="Deadlock analysis on random network topology - UCB routing strategy." alt="Deadlock analysis on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid path="assets/img/WSN_MABS_experimets_images/metrics_random_net_ucb.png" title="Performance metrics on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid path="assets/img/WSN_MABS_experiment_images/metrics_random_net_ucb.png" title="Performance metrics on random network topology - UCB routing strategy." alt="Performance metrics on random network topology - UCB routing strategy." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">

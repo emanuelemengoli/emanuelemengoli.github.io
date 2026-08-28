@@ -1,6 +1,6 @@
 ---
 layout: page
-title: NOMA_net.
+title: NOMA_net
 description: Dynamic Bayesian Optimization (DBO) for cellular networks power optimization. NOMA_net is wireless cellular network simulator using NOMA as resource sharing mechanism (RSM).
 img: assets/img/Noma_net/visual_biased_rndm_wdbo.png
 importance: 1
@@ -23,7 +23,7 @@ The project report details the technical framework of BO and NOMA, articulates t
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_biased_random_walk.png" title="Biased Random Walk." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_biased_random_walk.png" title="Biased Random Walk." alt="Biased Random Walk." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">
@@ -32,7 +32,7 @@ The project report details the technical framework of BO and NOMA, articulates t
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_random_waypoint.png" title="Random Waypoint." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_random_waypoint.png" title="Random Waypoint." alt="Random Waypoint." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">
@@ -41,7 +41,7 @@ The project report details the technical framework of BO and NOMA, articulates t
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_hybrid_gmm.png" title="Hybrid-GMM." class="img-fluid rounded z-depth-1" %}
+        {% include figure.liquid loading="eager" path="assets/img/Noma_net/obj_comparison_hybrid_gmm.png" title="Hybrid-GMM." alt="Hybrid-GMM." class="img-fluid rounded z-depth-1 bg-white p-2" %}
     </div>
 </div>
 <div class="caption">

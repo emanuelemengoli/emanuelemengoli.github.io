@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Softwares
+title: Software
 permalink: /projects/
 description: A list of software developed for research projects.
 nav: true
-nav_order: 4
+nav_order: 5
 display_categories: [Research]
 horizontal: false
 ---

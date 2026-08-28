@@ -2,13 +2,8 @@
 layout: about
 title: About
 permalink: /
-#subtitle: Ph.D. Candidate in Applied Probability at Inria & Télécom Paris — stochastic modelling of non-terrestrial networks.  #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
 subtitle:
   Stochastic Geometry, Wireless Networks, Learning Theory
-#  Ph.D. Candidate in Applied Probability at
-#    <a href="https://team.inria.fr/mathnet/" target="_blank">Inria</a> &
-#    <a href="https://www.telecom-paris.fr/en/research/labs/information-processing-ltci/teams/networks-mobility-services" target="_blank">Télécom Paris</a>
-#    — MATHNET / LTCI — stochastic modelling of non-terrestrial networks.
 
 profile:
   align: right
@@ -29,11 +24,6 @@ profile:
       <a href="https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en" target="_blank" rel="noopener noreferrer" title="Google Scholar"><i class="fas fa-user-graduate"></i></a>&nbsp;&nbsp;
       <a href="mailto:emanuele.mengoli@inria.fr" title="Email"><i class="fas fa-envelope"></i></a>
     </p>
-
-#<p>MATHNET team, Inria</p>
-#<p>LTCI, Télécom Paris</p>
-#<p>48 Rue Barrault</p>
-#<p>75013 Paris, France</p>
 
 news: false # includes a list of news items
 selected_papers: true # includes a list of papers marked as "selected={true}"
@@ -93,29 +83,3 @@ My latest projects have focused on:
 - Studying the entanglement between sensing and communication in JCAS networks, adopting a stochastic geometry approach,
 - RL for dynamic routing adaptation in multi-hop LPWANs,
 - RIS-assisted tracking and localisation.
-
-
-<!-- **Contacts:** [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; emanuele.mengoli@inria.fr -->
-
-<!-- **Contacts:**  
-- ![Email](path/to/email_icon.png) [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr)
-- ![LinkedIn](path/to/linkedin_icon.png) [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
-- ![Github](path/to/github_icon.png) [Github](https://github.com/emanuelemengoli) -->
-
-<!-- ## Contacts:
-<a href="https://www.linkedin.com/in/emanuele-mengoli/"><i class="fab fa-linkedin"></i></a> &nbsp; \| &nbsp; 
-<a href="https://github.com/emanuelemengoli"><i class="fab fa-github"></i></a> &nbsp; \| &nbsp; 
-<a href="https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en"><i class="fas fa-user-graduate"></i></a> &nbsp; \| &nbsp; 
-<a href="mailto:emanuele.mengoli@inria.fr"><i class="fas fa-envelope"></i></a> -->
-
-
-<!-- ## Contacts:
-<i class="fas fa-envelope"></i> [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr) &nbsp; \| &nbsp; <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->
-
-<!-- ## Contacts:  
-- <i class="fas fa-envelope"></i> [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr)
-- <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
-- <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli)
-- <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->
-
-

@@ -36,6 +36,18 @@ body.sticky-bottom-footer {
   img {
     width: 100%;
   }
+
+  .more-info .contact-icons {
+    line-height: 1.9;
+
+    a {
+      color: var(--global-text-color);
+
+      &:hover {
+        color: var(--global-theme-color);
+      }
+    }
+  }
 }
 
 // TODO: redefine content layout.
