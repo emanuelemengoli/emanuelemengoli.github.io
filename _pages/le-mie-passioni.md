@@ -2,7 +2,7 @@
 layout: page
 title: Le mie passioni
 permalink: /le-mie-passioni/
-description: A few things I enjoy beyond research.
+#description: A few things I enjoy beyond research.
 nav: true
 nav_order: 6
 map: true

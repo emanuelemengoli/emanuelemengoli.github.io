@@ -8,7 +8,7 @@ subtitle:
 profile:
   align: right
   image: mengoli_profile.jpg
-  image_circular: true
+  image_circular: false
   more_info: >
     <p>
       <a href="https://team.inria.fr/mathnet/" target="_blank">MathNet team, Inria</a>

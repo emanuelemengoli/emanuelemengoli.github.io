@@ -50,10 +50,14 @@ layout: default
 
     <!-- Selected papers -->
     {% if page.selected_papers %}
-      <h2>
-        <a href="{{ '/publications/' | relative_url }}" style="color: inherit">Selected Publications</a>
-      </h2>
-      {% include selected_papers.liquid %}
+      {% capture selected_papers_html %}{% include selected_papers.liquid %}{% endcapture %}
+      {% assign selected_papers_text = selected_papers_html | strip_html | strip %}
+      {% if selected_papers_text != "" %}
+        <h2>
+          <a href="{{ '/publications/' | relative_url }}" style="color: inherit">Selected Publications</a>
+        </h2>
+        {{ selected_papers_html }}
+      {% endif %}
     {% endif %}
 
     <!-- Social -->

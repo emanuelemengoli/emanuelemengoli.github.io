@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Multi-Armed Bandits Routing
-description: Relaxing the single-hop constraint to enable multi-hop routing via Multi-Armed Bandits (MABs). Wireless Sensor Networks (WSNs).
+description: Relaxing the single-hop constraint to enable multi-hop routing via Multi-Armed Bandits (MABs) in wireless sensor networks (WSNs).
 img: assets/img/WSN_MABS_experiment_images/random_net.png
 importance: 1
 category: Research
