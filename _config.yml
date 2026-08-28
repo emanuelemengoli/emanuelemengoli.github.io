@@ -6,11 +6,11 @@ title: blank # the website title (if blank, full name will be used instead)
 first_name: Emanuele
 middle_name: 
 last_name: Mengoli
-email: em.mengoli@gmail.com
+email: emanuele.mengoli@inria.fr
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
   Machine learning and Stochastic modelling for Wireless Networks.
 footer_text: >
-# Mail: em.mengoli@gmail.com.
+# Mail: emanuele.mengoli@inria.fr.
 # Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
 # Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 keywords: jekyll, jekyll-theme, academic-website, portfolio-website # add your own keywords or leave empty

@@ -5,7 +5,7 @@ permalink: /projects/
 description: A list of software developed for research projects.
 nav: true
 nav_order: 4
-display_categories: [Research,Business]
+display_categories: [Research]
 horizontal: false
 ---
 

@@ -36,7 +36,7 @@ social: False # includes social icons at the bottom of the page
 
 I am a Ph.D. candidate in **Applied Probability** at Inria and
 Télécom Paris, where I am a member of the
-MATHNET team and the LTCI laboratory. I am fotunate to be advised by Professor
+MATHNET team and the LTCI laboratory. I am fortunate to be advised by Professor
 [François Baccelli](https://www.di.ens.fr/baccelli/), Dr. [Nahuel Soprano-Loto](https://sites.google.com/view/soprano-loto/nahuel-soprano-loto) and 
 Professor
 [Laurent Decreusefond](https://www.telecom-paris.fr/laurent-decreusefond).
@@ -89,10 +89,10 @@ My latest projects have focused on:
 - RIS-assisted tracking and localisation.
 
 
-<!-- **Contacts:** [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; em.mengoli@gmail.com -->
+<!-- **Contacts:** [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) &nbsp; \| &nbsp; [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; emanuele.mengoli@inria.fr -->
 
 <!-- **Contacts:**  
-- ![Email](path/to/email_icon.png) [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com)
+- ![Email](path/to/email_icon.png) [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr)
 - ![LinkedIn](path/to/linkedin_icon.png) [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
 - ![Github](path/to/github_icon.png) [Github](https://github.com/emanuelemengoli) -->
 
@@ -103,14 +103,14 @@ My latest projects have focused on:
 <a href="https://www.linkedin.com/in/emanuele-mengoli/"><i class="fab fa-linkedin"></i></a> &nbsp; \| &nbsp; 
 <a href="https://github.com/emanuelemengoli"><i class="fab fa-github"></i></a> &nbsp; \| &nbsp; 
 <a href="https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en"><i class="fas fa-user-graduate"></i></a> &nbsp; \| &nbsp; 
-<a href="mailto:em.mengoli@gmail.com"><i class="fas fa-envelope"></i></a> -->
+<a href="mailto:emanuele.mengoli@inria.fr"><i class="fas fa-envelope"></i></a> -->
 
 
 <!-- ## Contacts:
-<i class="fas fa-envelope"></i> [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com) &nbsp; \| &nbsp; <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->
+<i class="fas fa-envelope"></i> [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr) &nbsp; \| &nbsp; <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/) &nbsp; \| &nbsp; <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli) &nbsp; \| &nbsp; <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->
 
 <!-- ## Contacts:  
-- <i class="fas fa-envelope"></i> [em.mengoli@gmail.com](mailto:em.mengoli@gmail.com)
+- <i class="fas fa-envelope"></i> [emanuele.mengoli@inria.fr](mailto:emanuele.mengoli@inria.fr)
 - <i class="fab fa-linkedin"></i> [LinkedIn](https://www.linkedin.com/in/emanuele-mengoli/)
 - <i class="fab fa-github"></i> [Github](https://github.com/emanuelemengoli)
 - <i class="fas fa-user-graduate"></i> [Google Scholar](https://scholar.google.com/citations?user=BMku9o8AAAAJ&hl=en) -->

@@ -2,14 +2,14 @@
 layout: page
 title: NOMA_net.
 description: Dynamic Bayesian Optimization (DBO) for cellular networks power optimization. NOMA_net is wireless cellular network simulator using NOMA as resource sharing mechanism (RSM).
-img: assets/img/Noma_net/visual_biased_rndm_wdbo.jpg
+img: assets/img/Noma_net/visual_biased_rndm_wdbo.png
 importance: 1
 category: Research
 related_publications: false
 ---
 
 Link to the [`Github repo`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator).
-A detailed analysis of of the project, experimental results and future extensions is available in the [`project report`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/Dynamic_Bayesian_Optimization_for_Improving_the_Performance_of_Cellular_Networks.pdf). For a concise overview, refer to the [`slide deck presentation`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/DBO_for_cellular_networks.pdf).
+A detailed analysis of the project, experimental results and future extensions is available in the [`project report`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/Dynamic_Bayesian_Optimization_for_Improving_the_Performance_of_Cellular_Networks.pdf). For a concise overview, refer to the [`slide deck presentation`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/DBO_for_cellular_networks.pdf).
 A toy notebook to run the simulator is available in [`run.ipynb`](https://github.com/emanuelemengoli/NOMA_cellular_network_simulator/blob/main/project/run.ipynb).
 
 
