@@ -12,9 +12,9 @@ description: > # the ">" symbol means to ignore newlines until "footer_text:"
   Stochastic geometry, stochastic modelling and learning theory for wireless networks,
   with a focus on non-terrestrial networks and 6G.
 footer_text: >
+  Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio" target="_blank">al-folio</a> theme.
+  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 # Mail: emanuele.mengoli@inria.fr.
-# Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://github.com/alshedivat/al-folio">al-folio</a> theme.
-# Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 keywords: Emanuele Mengoli, applied probability, stochastic geometry, point processes, stochastic modelling, wireless networks, non-terrestrial networks, NTN, 6G, satellite communications, learning theory, Inria, Télécom Paris # add your own keywords or leave empty
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: 📡 # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
