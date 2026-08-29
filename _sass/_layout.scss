@@ -2,6 +2,12 @@
  * Content
  ******************************************************************************/
 
+html {
+  // Always reserve the vertical scrollbar gutter so the navbar (and page
+  // content) do not shift horizontally between short and tall pages.
+  overflow-y: scroll;
+}
+
 body {
   padding-bottom: 70px;
   color: var(--global-text-color);

@@ -1,10 +1,11 @@
 ---
 layout: page
 permalink: /talks/
-# title: Talks
+title: Talks
 # description: Invited and contributed talks.
 nav: true
 nav_order: 4
+hide_header: true # keeps "Talks" in the navbar but hides the page's <h1>/description
 ---
 
 ## Invited talks

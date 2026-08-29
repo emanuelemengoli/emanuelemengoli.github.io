@@ -6,6 +6,7 @@ permalink: /le-mie-passioni/
 nav: true
 nav_order: 6
 map: true
+hide_header: true # keeps "Le mie passioni" in the navbar but hides the page's <h1>/description
 ---
 
 <style>

@@ -1,10 +1,11 @@
 ---
 layout: page
-# title: Softwares
+title: Softwares
 permalink: /projects/
-# description: A list of software developed for research projects.
+description: A list of software developed for research projects.
 nav: true
 nav_order: 5
+hide_header: true # keeps "Softwares" in the navbar but hides the page's <h1>/description
 display_categories: [Research]
 horizontal: false
 ---
