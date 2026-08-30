@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#
+# Update the wine map from the tasting form.
+#
+# Fetches the "Scheda di degustazione del vino" responses, folds them into
+# _data/wines.yml (merge / upsert), then — after you confirm — commits and pushes
+# so the /le-mie-passioni/ map redeploys.
+#
+# Usage:
+#   bin/run_update_wines_map              sync, show the diff, ask before committing
+#   bin/run_update_wines_map --dry-run    preview only, write nothing
+#   bin/run_update_wines_map --sort       also re-order entries newest-tasted first
+#   bin/run_update_wines_map -y           skip the confirmation prompt
+#
+# The published-CSV link must be in bin/wines_csv_url.txt (or $WINES_CSV_URL).
+
+set -euo pipefail
+
+# Move to the repo root, no matter where this was called from.
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Pull an optional -y / --yes out of the arguments; the rest pass through to sync-wines.
+assume_yes=0
+args=()
+for a in "$@"; do
+  case "$a" in
+    -y|--yes) assume_yes=1 ;;
+    *) args+=("$a") ;;
+  esac
+done
+
+if [[ ! -f bin/wines_csv_url.txt && -z "${WINES_CSV_URL:-}" ]]; then
+  echo "No CSV URL. Put the published-CSV link in bin/wines_csv_url.txt (see bin/wines-sync.md)." >&2
+  exit 1
+fi
+
+echo "▶ syncing wines from the tasting form…"
+WINES_DATE_ORDER="${WINES_DATE_ORDER:-dmy}" ruby bin/sync-wines "${args[@]}"
+
+# Nothing to commit after a dry run.
+for a in "${args[@]}"; do
+  case "$a" in
+    --dry-run|-n) exit 0 ;;
+  esac
+done
+
+if git diff --quiet -- _data/wines.yml; then
+  echo "✓ _data/wines.yml unchanged — nothing to commit."
+  exit 0
+fi
+
+echo
+git --no-pager diff --stat -- _data/wines.yml
+echo
+
+if [[ "$assume_yes" -ne 1 ]]; then
+  read -r -p "Commit and push these changes? [y/N] " reply
+  [[ "$reply" =~ ^[Yy]$ ]] || { echo "Skipped. Review with:  git diff _data/wines.yml"; exit 0; }
+fi
+
+git add _data/wines.yml
+git commit -m "wines: sync from tasting form"
+git push
+echo "✓ pushed — the site will redeploy in a couple of minutes."

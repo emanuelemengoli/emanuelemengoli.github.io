@@ -10,3 +10,7 @@ Gemfile.lock
 assets/libs/
 node_modules/
 vendor
+
+# bin/sync-wines local state (see bin/wines-sync.md)
+bin/wines_csv_url.txt
+bin/.wines_geocache.json

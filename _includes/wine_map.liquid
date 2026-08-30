@@ -1,6 +1,6 @@
 {% comment %}
   Interactive wine map for /le-mie-passioni/.
-  Data source: _data/wines.yml
+  Data source: _data/wines.yml (populated by bin/sync-wines from the tasting form).
   Requires `map: true` in the host page's front matter so al-folio loads Leaflet
   (CSS via _includes/head.liquid, JS via _includes/scripts/leaflet.liquid).
 {% endcomment %}
@@ -25,6 +25,10 @@
     display: block;
     filter: drop-shadow(0 2px 2.5px rgba(0, 0, 0, 0.55));
   }
+  html[data-theme="dark"] .wine-marker svg {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
+  }
+
   .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
   .leaflet-popup.wine-popup .leaflet-popup-tip {
     background: var(--global-bg-color);
@@ -37,6 +41,17 @@
     margin: 0.7rem 0.9rem;
     line-height: 1.45;
   }
+  .wine-popup .wine-card {
+    width: 232px;
+  }
+  .wine-popup .wine-card.is-expanded {
+    width: 320px;
+  }
+  .leaflet-popup.wine-popup--full .leaflet-popup-content {
+    max-height: 62vh;
+    overflow-y: auto;
+  }
+
   .wine-card .wine-name {
     font-weight: 600;
     font-size: 0.98rem;
@@ -71,8 +86,58 @@
     font-size: 0.76rem;
     color: var(--global-text-color-light);
   }
-  html[data-theme="dark"] .wine-marker svg {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
+  .wine-card .wine-more {
+    margin-top: 0.55rem;
+    font: inherit;
+    font-size: 0.78rem;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--global-theme-color);
+    cursor: pointer;
+  }
+  .wine-card .wine-more:hover {
+    border-color: var(--global-theme-color);
+  }
+  .wine-card .wine-full {
+    display: none;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--global-divider-color);
+    padding-top: 0.4rem;
+  }
+  .wine-card.is-expanded .wine-full {
+    display: block;
+  }
+  .wine-full h4 {
+    margin: 0.7rem 0 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--global-text-color-light);
+  }
+  .wine-full .r {
+    display: flex;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    margin: 0.12rem 0;
+  }
+  .wine-full .r span:first-child {
+    flex: 0 0 8.5rem;
+    color: var(--global-text-color-light);
+  }
+  .wine-full .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0.25rem 0 0.1rem;
+  }
+  .wine-full .chips span {
+    font-size: 0.73rem;
+    padding: 0.06rem 0.42rem;
+    border-radius: 10px;
+    background: var(--global-code-bg-color);
   }
 </style>
 
@@ -109,6 +174,43 @@
         orange: "#cd6620",
       };
 
+      var LABELS = {
+        visual: {
+          heading: "Esame visivo",
+          order: ["limpidezza", "intensita_colore", "colore", "metodo", "effervescenza", "perlage_dimensione", "perlage_persistenza"],
+          text: {
+            limpidezza: "Limpidezza",
+            intensita_colore: "Intensità colore",
+            colore: "Colore",
+            metodo: "Metodo",
+            effervescenza: "Effervescenza",
+            perlage_dimensione: "Perlage — bollicine",
+            perlage_persistenza: "Perlage — persistenza",
+          },
+          chips: ["osservazioni"],
+        },
+        nose: {
+          heading: "Esame olfattivo",
+          order: ["condizione", "intensita", "evoluzione", "altri_aromi"],
+          text: { condizione: "Condizione", intensita: "Intensità", evoluzione: "Evoluzione", altri_aromi: "Altri aromi" },
+          chips: ["aromi"],
+        },
+        palate: {
+          heading: "Esame gustativo",
+          order: ["zucchero", "acidita", "tannini", "alcol", "corpo", "intensita_sapori", "finale"],
+          text: {
+            zucchero: "Zucchero",
+            acidita: "Acidità",
+            tannini: "Tannini",
+            alcol: "Alcol",
+            corpo: "Corpo",
+            intensita_sapori: "Intensità sapori",
+            finale: "Finale",
+          },
+          chips: ["aromi_palato"],
+        },
+      };
+
       function esc(s) {
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -125,14 +227,8 @@
           "M9.5 2h5v2.3c0 .95.4 1.4 1 2.15C16.4 7.7 17 9 17 10.6V21c0 .55-.45 1-1 1H8c-.55 0-1-.45-1-1V10.6c0-1.6.6-2.9 1.5-4.15.6-.75 1-1.2 1-2.15V2z";
         var svg =
           '<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">' +
-          '<path d="' +
-          d +
-          '" fill="' +
-          fill +
-          '" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>' +
-          '<path d="' +
-          d +
-          '" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" stroke-linejoin="round"/>' +
+          '<path d="' + d + '" fill="' + fill + '" stroke="#ffffff" stroke-width="3" stroke-linejoin="round" paint-order="stroke"/>' +
+          '<path d="' + d + '" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="1" stroke-linejoin="round"/>' +
           "</svg>";
         return L.divIcon({
           html: svg,
@@ -152,34 +248,75 @@
         for (i = 0; i < full; i++) out += '<i class="fa-solid fa-star"></i>';
         if (half) out += '<i class="fa-solid fa-star-half-stroke"></i>';
         for (i = full + (half ? 1 : 0); i < 5; i++) out += '<i class="fa-regular fa-star empty"></i>';
-        return '<span class="wine-stars" aria-label="' + r + ' out of 5">' + out + "</span>";
+        return '<span class="wine-stars" aria-label="' + r + ' / 5">' + out + "</span>";
+      }
+
+      function chips(arr) {
+        return (
+          '<div class="chips">' +
+          arr
+            .filter(Boolean)
+            .map(function (a) {
+              return "<span>" + esc(a) + "</span>";
+            })
+            .join("") +
+          "</div>"
+        );
+      }
+
+      function sectionHtml(obj, spec) {
+        if (!obj) return "";
+        var rows = spec.order
+          .filter(function (k) {
+            return obj[k] != null && String(obj[k]).trim() !== "";
+          })
+          .map(function (k) {
+            return '<div class="r"><span>' + esc(spec.text[k]) + "</span><span>" + esc(obj[k]) + "</span></div>";
+          })
+          .join("");
+        var chipHtml = spec.chips
+          .map(function (k) {
+            return Array.isArray(obj[k]) && obj[k].length ? chips(obj[k]) : "";
+          })
+          .join("");
+        if (!rows && !chipHtml) return "";
+        return "<h4>" + spec.heading + "</h4>" + rows + chipHtml;
+      }
+
+      function fullView(w) {
+        var t = w.tasting;
+        if (!t || typeof t !== "object") return "";
+        var body = sectionHtml(t.visual, LABELS.visual) + sectionHtml(t.nose, LABELS.nose) + sectionHtml(t.palate, LABELS.palate);
+        return body ? '<div class="wine-full">' + body + "</div>" : "";
       }
 
       function card(w) {
         var url = safeUrl(w.url);
         var producer = url
-          ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " \u2197</a>"
+          ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " ↗</a>"
           : esc(w.producer);
         var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
-        var meta = [w.region, w.country].filter(Boolean).map(esc);
-        if (w.grape) meta.push(esc(w.grape));
+        var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" &middot; ");
+        var price = w.price ? '<div class="wine-meta">' + esc(w.price) + "</div>" : "";
         var notes = w.notes ? '<p class="wine-notes">' + esc(w.notes) + "</p>" : "";
-        var tasted = w.tasted ? '<div class="wine-tasted">Tasted ' + esc(w.tasted) + "</div>" : "";
+        var pairing = w.pairing
+          ? '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> ' + esc(w.pairing) + "</div>"
+          : "";
+        var tasted = w.tasted ? '<div class="wine-tasted">Degustato il ' + esc(w.tasted) + "</div>" : "";
+        var full = fullView(w);
+        var more = full ? '<button type="button" class="wine-more">Vedi valutazione completa</button>' : "";
         return (
           '<div class="wine-card">' +
-          '<div class="wine-name">' +
-          esc(w.name) +
-          vintage +
-          "</div>" +
+          '<div class="wine-name">' + esc(w.name) + vintage + "</div>" +
           stars(w.rating) +
-          '<div class="wine-producer">' +
-          producer +
-          "</div>" +
-          '<div class="wine-meta">' +
-          meta.join(" &middot; ") +
-          "</div>" +
+          '<div class="wine-producer">' + producer + "</div>" +
+          (meta ? '<div class="wine-meta">' + meta + "</div>" : "") +
+          price +
           notes +
+          pairing +
           tasted +
+          more +
+          full +
           "</div>"
         );
       }
@@ -196,6 +333,25 @@
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
       }).addTo(map);
+
+      var openPopup = null;
+      map.on("popupopen", function (e) {
+        openPopup = e.popup;
+      });
+      map.on("popupclose", function () {
+        openPopup = null;
+      });
+      el.addEventListener("click", function (ev) {
+        var btn = ev.target && ev.target.closest ? ev.target.closest(".wine-more") : null;
+        if (!btn) return;
+        var cardEl = btn.closest(".wine-card");
+        var popupEl = btn.closest(".leaflet-popup");
+        if (!cardEl) return;
+        var expanded = cardEl.classList.toggle("is-expanded");
+        btn.textContent = expanded ? "Nascondi valutazione" : "Vedi valutazione completa";
+        if (popupEl) popupEl.classList.toggle("wine-popup--full", expanded);
+        if (openPopup) openPopup.update();
+      });
 
       // Fan out markers that share the exact same coordinates so each stays clickable.
       var seen = {};
@@ -215,10 +371,10 @@
         }
         L.marker([lat, lng], {
           icon: bottleIcon(w.color),
-          title: (w.name || "") + (w.producer ? " \u2014 " + w.producer : ""),
+          title: (w.name || "") + (w.producer ? " — " + w.producer : ""),
         })
           .addTo(map)
-          .bindPopup(card(w), { className: "wine-popup", maxWidth: 260, minWidth: 200 });
+          .bindPopup(card(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
         pts.push([lat, lng]);
       });
 

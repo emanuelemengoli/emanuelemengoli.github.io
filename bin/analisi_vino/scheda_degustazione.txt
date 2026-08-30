@@ -1,0 +1,448 @@
+SCHEDA DI DEGUSTAZIONE DEL VINO
+
+1. IDENTIFICAZIONE DEL VINO
+Cantina / produttore:
+Nome del vino:
+Denominazione:
+Territorio di produzione:
+Annata:
+Vitigno/i:
+Data:
+Prezzo:
+Regione:
+Stato:
+Coordinates (Lat, Lon) (opzionale)
+
+Tipologia [menu a tendina - OBBLIGATORIO]:
+- Rosso
+- Bianco
+- Spumante
+- Rosé
+- Arancione
+
+
+2. ESAME VISIVO
+
+La sezione visiva dipende dalla tipologia selezionata.
+
+--------------------------------------------------
+2A. ROSSO
+--------------------------------------------------
+
+Limpidezza [selezione singola]
+☐ Limpido
+☐ Torbido
+
+Intensità del colore [selezione singola]
+☐ Pallido
+☐ Medio
+☐ Intenso
+
+Colore [selezione singola]
+☐ Rosso violaceo
+☐ Rosso rubino
+☐ Rosso granato
+☐ Rosso porpora
+☐ Rosso sangue
+☐ Bordeaux
+☐ Rosso mattone
+☐ Nero
+Altro [testo breve]:
+
+Altre osservazioni visive [selezione multipla]
+☐ Brillantezza
+☐ Archetti o lacrime
+☐ Sedimenti
+Altro [testo breve]:
+
+--------------------------------------------------
+2B. BIANCO
+--------------------------------------------------
+
+Limpidezza [selezione singola]
+☐ Limpido
+☐ Torbido
+
+Intensità del colore [selezione singola]
+☐ Pallido
+☐ Medio
+☐ Intenso
+
+Colore [selezione singola]
+☐ Giallo verdolino
+☐ Giallo paglierino
+☐ Giallo dorato
+☐ Giallo ambrato
+Altro [testo breve]:
+
+Altre osservazioni visive [selezione multipla]
+☐ Brillantezza
+☐ Archetti o lacrime
+☐ Sedimenti
+Altro [testo breve]:
+
+--------------------------------------------------
+2C. ROSÉ
+--------------------------------------------------
+
+Limpidezza [selezione singola]
+☐ Limpido
+☐ Torbido
+
+Intensità del colore [selezione singola]
+☐ Pallido
+☐ Medio
+☐ Intenso
+
+Colore [selezione singola]
+☐ Rosa
+☐ Rosa tenue
+☐ Rosa salmone
+☐ Rosa chiaretto
+☐ Rosso cerasuolo
+☐ Rosa corallo
+Altro [testo breve]:
+
+Altre osservazioni visive [selezione multipla]
+☐ Brillantezza
+☐ Archetti o lacrime
+☐ Sedimenti
+Altro [testo breve]:
+
+--------------------------------------------------
+2D. ARANCIONE
+--------------------------------------------------
+
+Limpidezza [selezione singola]
+☐ Limpido
+☐ Velato
+☐ Torbido
+
+Intensità del colore [selezione singola]
+☐ Pallido
+☐ Medio
+☐ Intenso
+
+Colore [selezione singola]
+☐ Giallo dorato
+☐ Giallo ambrato
+☐ Arancio chiaro
+☐ Arancio
+☐ Arancio ramato
+☐ Ambrato scuro
+Altro [testo breve]:
+
+Altre osservazioni visive [selezione multipla]
+☐ Brillantezza
+☐ Archetti o lacrime
+☐ Sedimenti
+Altro [testo breve]:
+
+--------------------------------------------------
+2E. SPUMANTE
+--------------------------------------------------
+
+Metodo di produzione [menu a tendina - OBBLIGATORIO]
+☐ Metodo Martinotti / Charmat
+☐ Metodo classico / tradizionale
+☐ Metodo Asti
+☐ Metodo ancestrale / Pét-Nat
+☐ Metodo di trasferimento
+Altro [testo breve]:
+
+Limpidezza [selezione singola]
+☐ Limpido
+☐ Torbido
+
+Intensità del colore [selezione singola]
+☐ Pallido
+☐ Medio
+☐ Intenso
+
+Colore [selezione singola]
+☐ Giallo verdolino
+☐ Giallo paglierino
+☐ Giallo dorato
+☐ Rosa tenue
+☐ Rosa salmone
+☐ Rosa cerasuolo
+Altro [testo breve]:
+
+Effervescenza - intensità [selezione singola]
+☐ Debole
+☐ Media
+☐ Intensa
+
+Perlage - dimensione delle bollicine [selezione singola]
+☐ Fine
+☐ Media
+☐ Grossolana
+
+Perlage - persistenza [selezione singola]
+☐ Poco persistente
+☐ Persistente
+☐ Molto persistente
+
+Altre osservazioni visive [selezione multipla]
+☐ Brillantezza
+☐ Sedimenti
+Altro [testo breve]:
+
+3. ESAME OLFATTIVO
+
+Condizione dei sentori [selezione singola]
+☐ Netti
+☐ Non netti
+
+Intensità [selezione singola]
+☐ Leggera
+☐ Media
+☐ Pronunciata
+
+Evoluzione olfattiva [selezione singola]
+☐ Giovane
+☐ In corso d'evoluzione
+☐ Totalmente evoluto
+☐ Affaticato / troppo vecchio
+
+Caratteristiche degli aromi [selezione multipla]
+
+FLOREALE
+☐ Acacia
+☐ Caprifoglio
+☐ Camomilla
+☐ Sambuco
+☐ Fiori bianchi
+☐ Rosa
+☐ Violetta
+
+FRUTTI VERDI
+☐ Mela verde
+☐ Mela rossa
+☐ Pera
+☐ Uva spina
+☐ Uva sultanina
+
+AGRUMI
+☐ Pompelmo
+☐ Limone
+☐ Limone verde / scorza
+☐ Agrumi confits
+
+FRUTTI CON NOCCIOLO
+☐ Pesca
+☐ Albicocca
+☐ Nettarina fresca
+☐ Nettarina essiccata
+
+FRUTTI ESOTICI
+☐ Banana
+☐ Litchi
+☐ Mango
+☐ Melone
+☐ Frutto della passione
+☐ Ananas
+
+FRUTTI ROSSI
+☐ Fragola
+☐ Lampone
+☐ Ciliegia
+☐ Prugna rossa
+☐ Ribes
+
+FRUTTI NERI
+☐ Ribes nero
+☐ Mora
+☐ Mirtillo
+☐ Ciliegia nera
+☐ Prugna
+
+FRUTTI SECCHI / COTTI
+☐ Fico
+☐ Prugna secca
+☐ Uva passa
+☐ Confettura
+☐ Frutta cotta
+
+LINFA
+☐ Peperone verde
+☐ Erba tagliata
+☐ Foglia di pomodoro
+
+VEGETALE
+☐ Erba
+☐ Asparago
+☐ Foglie di ribes nero
+
+ERBE SPONTANEE
+☐ Eucalyptus
+☐ Menta
+☐ Piante medicinali
+☐ Lavanda
+☐ Finocchio selvatico
+☐ Aneto
+
+SPEZIE DOLCI
+☐ Cannella
+☐ Chiodo di garofano
+☐ Zenzero
+☐ Noce moscata
+
+SPEZIE FORTI
+☐ Pepe nero / bianco
+☐ Liquirizia
+☐ Ginepro
+
+BALSAMICI
+☐ Resina
+☐ Cera d'ape
+☐ Canfora
+
+MINERALI
+☐ Pietra focaia
+☐ Gesso
+☐ Mina di matita
+☐ Petrolio
+
+MARINI
+☐ Iodio
+☐ Marea
+☐ Alga
+
+ANIMALI
+Nobili:
+☐ Cuoio
+☐ Selvaggina
+☐ Muschio
+Possibili difetti:
+☐ Pipì di gatto
+☐ Topo
+☐ Carne frollata
+☐ Stalla
+
+RIDUZIONE
+☐ Ridotto
+☐ Uovo marcio
+☐ Cipolla
+
+DIFETTI
+☐ Aceto
+☐ Tappo
+☐ Cartone bagnato
+☐ Zolfo
+☐ Muffa
+
+AROMI SECONDARI – vinificazione
+Lieviti / fecce / autolisi:
+☐ Biscotto
+☐ Pane grigliato
+☐ Pasticceria
+☐ Brioche
+☐ Impasto del pane
+
+Prodotti caseari:
+☐ Burro
+☐ Formaggio
+☐ Crema
+
+Tostati:
+☐ Vaniglia
+☐ Pane grigliato
+☐ Cedro
+☐ Noce di cocco
+☐ Caramello
+☐ Affumicato
+☐ Cioccolato
+☐ Caffè
+
+AROMI TERZIARI – invecchiamento
+Ossidazione deliberata:
+☐ Mandorla
+☐ Pasta di mandorle
+☐ Nocciola
+☐ Noce
+☐ Cioccolato
+☐ Caffè
+☐ Caramello
+
+Evoluzione delle note fruttate nei vini bianchi:
+☐ Albicocca secca
+☐ Confettura
+☐ Mela essiccata
+☐ Banana essiccata
+☐ Kerosene
+☐ Zenzero
+☐ Pane grigliato
+☐ Frutta secca
+☐ Funghi
+☐ Fieno
+☐ Miele
+
+Evoluzione delle note fruttate nei vini rossi:
+☐ Fico
+☐ Prugna
+☐ Catrame
+☐ Cuoio
+☐ Sottobosco
+☐ Terra
+☐ Funghi
+☐ Selvaggina
+☐ Tabacco
+☐ Carne
+
+Altri aromi / note olfattive:
+
+4. ESAME GUSTATIVO
+
+Zucchero [selezione singola]
+☐ Secco
+☐ Non del tutto secco
+☐ Demi-sec
+☐ Morbido
+☐ Dolce
+☐ Molto dolce
+
+Acidità [selezione singola]
+☐ Flebile
+☐ Media
+☐ Elevata
+
+Tannini [selezione singola]
+☐ Flebili
+☐ Medi
+☐ Potenti
+
+Alcol [selezione singola]
+☐ Flebile
+☐ Medio
+☐ Elevato
+
+Corpo [selezione singola]
+☐ Leggero
+☐ Medio
+☐ Strutturato
+
+Intensità dei sapori [selezione singola]
+☐ Leggera
+☐ Media
+☐ Pronunciata
+
+Caratteristiche degli aromi al palato [selezione multipla]
+(Utilizzare gli stessi descrittori dell'esame olfattivo)
+☐ Primari
+☐ Secondari
+☐ Terziari
+
+Persistenza / finale:
+☐ Corto
+☐ Medio
+☐ Lungo
+
+5. VALUTAZIONE FINALE
+
+Le mie impressioni:
+
+Un piatto per accompagnarlo:
+
+Valutazione complessiva [scala 1–5]
+1 ☐   2 ☐   3 ☐   4 ☐   5 ☐

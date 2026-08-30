@@ -48,7 +48,7 @@ combined with **optimisation and learning methods** when the underlying
 network is dynamic, partially observed, or analytically intractable.
 
 
-## Background
+### Background
 
 Before starting my Ph.D., I studied Computer Science at
 École Polytechnique, specialising in

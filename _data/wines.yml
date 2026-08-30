@@ -1,53 +1,88 @@
 # Wines shown on the /le-mie-passioni/ interactive map (rendered by _includes/wine_map.liquid).
 #
-# One entry per wine. Required: name, producer, url, region, country, lat, lng, color, rating.
-# Optional: vintage, grape, notes, tasted.
+# Add wines with the "Scheda di degustazione" form and `ruby bin/sync-wines` (merge/upsert
+# — it only touches wines the form mentions). Setup: bin/wines-sync.md. Hand-editing works too.
 #
-#   color   : red | white | rosé | sparkling | orange   (sets the bottle marker tint)
-#   rating  : 0 to 5, in 0.5 steps
-#   lat/lng : decimal degrees of the producer / winery
-#   tasted  : "YYYY-MM-DD"  (keep the quotes)
+# Compact fields (all optional except name/producer): name, producer, url, denominazione,
+# territorio, region, country, lat, lng, vintage, grape, price, color, sparkling, rating,
+# tasted ("YYYY-MM-DD"), notes, pairing.
+#   color  : red | white | rosé | sparkling | orange   (bottle marker tint; derived from Tipologia)
+#   rating : 1 to 5
+# An optional `tasting:` block (visual / nose / palate) powers the "Vedi valutazione
+# completa" button in the popup — see the first entry.
 #
-# The three entries below are examples — replace them with your own tastings.
+# The entries below are examples — replace them with your own tastings.
 
 - name: Barolo
   producer: G. D. Vajra
   url: https://www.gdvajra.it/
-  region: Piedmont
-  country: Italy
+  denominazione: Barolo DOCG
+  region: Piemonte
+  country: Italia
   lat: 44.6167
   lng: 7.9833
-  color: red
   vintage: 2019
   grape: Nebbiolo
-  rating: 4.5
-  notes: Tar and dried roses, firm tannins; give it a decade.
+  price: "€ 45"
+  color: red
+  rating: 4
   tasted: "2024-11-02"
+  notes: Catrame e rosa appassita, tannino fitto; da attendere un decennio.
+  pairing: Brasato al Barolo
+  tasting:
+    visual:
+      limpidezza: Limpido
+      intensita_colore: Medio
+      colore: Rosso granato
+      osservazioni:
+        - Archetti o lacrime
+    nose:
+      condizione: Netti
+      intensita: Pronunciata
+      evoluzione: In corso d'evoluzione
+      aromi:
+        - Rosa
+        - Ciliegia
+        - Prugna
+        - Catrame
+        - Cuoio
+        - Sottobosco
+    palate:
+      zucchero: Secco
+      acidita: Elevata
+      tannini: Potenti
+      alcol: Medio
+      corpo: Strutturato
+      intensita_sapori: Pronunciata
+      finale: Lungo
 
 - name: Chablis 1er Cru Montmains
   producer: Domaine William Fèvre
   url: https://www.williamfevre.com/
-  region: Burgundy
-  country: France
+  denominazione: Chablis 1er Cru
+  region: Borgogna
+  country: Francia
   lat: 47.8236
   lng: 3.7897
-  color: white
   vintage: 2021
   grape: Chardonnay
-  rating: 4.0
-  notes: Chalky, taut, oyster-shell salinity.
+  color: white
+  rating: 4
   tasted: "2025-03-14"
+  notes: Gessoso, teso, salino come guscio d'ostrica.
 
 - name: Brut Nature "Les Barres"
   producer: Chartogne-Taillet
   url: https://www.chartogne-taillet.com/
+  denominazione: Champagne
   region: Champagne
-  country: France
-  lat: 49.3200
-  lng: 3.9500
-  color: sparkling
+  country: Francia
+  lat: 49.32
+  lng: 3.95
   vintage: 2018
   grape: Meunier
-  rating: 4.5
-  notes: Single-vineyard old-vine Meunier; smoky, vinous, low dosage.
+  color: sparkling
+  sparkling: true
+  rating: 5
   tasted: "2025-06-21"
+  notes: Meunier da vigna vecchia; fumè, vinoso, dosaggio bassissimo.
