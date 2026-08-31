@@ -14,3 +14,6 @@ vendor
 # bin/sync-wines local state (see bin/wines-sync.md)
 bin/wines_csv_url.txt
 bin/.wines_geocache.json
+
+# source archives dropped into the image tree — extract, don't commit
+assets/img/*.zip
