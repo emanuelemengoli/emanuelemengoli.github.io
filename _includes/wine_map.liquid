@@ -17,6 +17,14 @@
     background: var(--global-bg-color);
     font: inherit;
   }
+  /* OpenStreetMap has no dark tiles: dim them so the map follows the site theme. */
+  html[data-theme="dark"] #wine-map .leaflet-tile {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95);
+  }
+  html[data-theme="dark"] #wine-map .leaflet-container {
+    background: #1c1c1d;
+  }
+
   .wine-marker {
     background: none;
     border: none;
@@ -27,6 +35,24 @@
   }
   html[data-theme="dark"] .wine-marker svg {
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
+  }
+
+  .wine-lang {
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.3rem 0.5rem;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  }
+  .wine-lang:hover {
+    border-color: var(--global-theme-color);
+    color: var(--global-theme-color);
   }
 
   .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
@@ -174,42 +200,46 @@
         orange: "#cd6620",
       };
 
-      var LABELS = {
-        visual: {
-          heading: "Esame visivo",
-          order: ["limpidezza", "intensita_colore", "colore", "metodo", "effervescenza", "perlage_dimensione", "perlage_persistenza"],
-          text: {
-            limpidezza: "Limpidezza",
-            intensita_colore: "Intensità colore",
-            colore: "Colore",
-            metodo: "Metodo",
-            effervescenza: "Effervescenza",
-            perlage_dimensione: "Perlage — bollicine",
-            perlage_persistenza: "Perlage — persistenza",
+      // ---- bilingual labels (chrome only; the wine's own text stays as entered) ----
+      var TXT = {
+        it: {
+          lang: "EN", langTitle: "Show in English",
+          more: "Vedi valutazione completa", less: "Nascondi valutazione",
+          tasted: "Degustato il",
+          sec: { visual: "Esame visivo", nose: "Esame olfattivo", palate: "Esame gustativo" },
+          lab: {
+            limpidezza: "Limpidezza", intensita_colore: "Intensità colore", colore: "Colore",
+            metodo: "Metodo", effervescenza: "Effervescenza",
+            perlage_dimensione: "Perlage — bollicine", perlage_persistenza: "Perlage — persistenza",
+            condizione: "Condizione", intensita: "Intensità", evoluzione: "Evoluzione", altri_aromi: "Altri aromi",
+            zucchero: "Zucchero", acidita: "Acidità", tannini: "Tannini", alcol: "Alcol", corpo: "Corpo",
+            intensita_sapori: "Intensità sapori", finale: "Finale",
           },
-          chips: ["osservazioni"],
         },
-        nose: {
-          heading: "Esame olfattivo",
-          order: ["condizione", "intensita", "evoluzione", "altri_aromi"],
-          text: { condizione: "Condizione", intensita: "Intensità", evoluzione: "Evoluzione", altri_aromi: "Altri aromi" },
-          chips: ["aromi"],
-        },
-        palate: {
-          heading: "Esame gustativo",
-          order: ["zucchero", "acidita", "tannini", "alcol", "corpo", "intensita_sapori", "finale"],
-          text: {
-            zucchero: "Zucchero",
-            acidita: "Acidità",
-            tannini: "Tannini",
-            alcol: "Alcol",
-            corpo: "Corpo",
-            intensita_sapori: "Intensità sapori",
-            finale: "Finale",
+        en: {
+          lang: "IT", langTitle: "Mostra in italiano",
+          more: "See full evaluation", less: "Hide evaluation",
+          tasted: "Tasted",
+          sec: { visual: "Appearance", nose: "Nose", palate: "Palate" },
+          lab: {
+            limpidezza: "Clarity", intensita_colore: "Colour intensity", colore: "Colour",
+            metodo: "Method", effervescenza: "Effervescence",
+            perlage_dimensione: "Bead — size", perlage_persistenza: "Bead — persistence",
+            condizione: "Condition", intensita: "Intensity", evoluzione: "Evolution", altri_aromi: "Other aromas",
+            zucchero: "Sugar", acidita: "Acidity", tannini: "Tannins", alcol: "Alcohol", corpo: "Body",
+            intensita_sapori: "Flavour intensity", finale: "Finish",
           },
-          chips: ["aromi_palato"],
         },
       };
+      var SECTIONS = {
+        visual: { order: ["limpidezza", "intensita_colore", "colore", "metodo", "effervescenza", "perlage_dimensione", "perlage_persistenza"], chips: ["osservazioni"] },
+        nose: { order: ["condizione", "intensita", "evoluzione", "altri_aromi"], chips: ["aromi"] },
+        palate: { order: ["zucchero", "acidita", "tannini", "alcol", "corpo", "intensita_sapori", "finale"], chips: ["aromi_palato"] },
+      };
+      var LANG = "it";
+      try {
+        if (window.localStorage && localStorage.getItem("wine-map-lang") === "en") LANG = "en";
+      } catch (e) {}
 
       function esc(s) {
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -254,24 +284,21 @@
       function chips(arr) {
         return (
           '<div class="chips">' +
-          arr
-            .filter(Boolean)
-            .map(function (a) {
-              return "<span>" + esc(a) + "</span>";
-            })
-            .join("") +
+          arr.filter(Boolean).map(function (a) { return "<span>" + esc(a) + "</span>"; }).join("") +
           "</div>"
         );
       }
 
-      function sectionHtml(obj, spec) {
+      function sectionHtml(obj, secKey) {
         if (!obj) return "";
+        var spec = SECTIONS[secKey];
+        var t = TXT[LANG];
         var rows = spec.order
           .filter(function (k) {
             return obj[k] != null && String(obj[k]).trim() !== "";
           })
           .map(function (k) {
-            return '<div class="r"><span>' + esc(spec.text[k]) + "</span><span>" + esc(obj[k]) + "</span></div>";
+            return '<div class="r"><span>' + esc(t.lab[k] || k) + "</span><span>" + esc(obj[k]) + "</span></div>";
           })
           .join("");
         var chipHtml = spec.chips
@@ -280,17 +307,18 @@
           })
           .join("");
         if (!rows && !chipHtml) return "";
-        return "<h4>" + spec.heading + "</h4>" + rows + chipHtml;
+        return "<h4>" + t.sec[secKey] + "</h4>" + rows + chipHtml;
       }
 
       function fullView(w) {
-        var t = w.tasting;
-        if (!t || typeof t !== "object") return "";
-        var body = sectionHtml(t.visual, LABELS.visual) + sectionHtml(t.nose, LABELS.nose) + sectionHtml(t.palate, LABELS.palate);
+        var tv = w.tasting;
+        if (!tv || typeof tv !== "object") return "";
+        var body = sectionHtml(tv.visual, "visual") + sectionHtml(tv.nose, "nose") + sectionHtml(tv.palate, "palate");
         return body ? '<div class="wine-full">' + body + "</div>" : "";
       }
 
       function card(w) {
+        var t = TXT[LANG];
         var url = safeUrl(w.url);
         var producer = url
           ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " ↗</a>"
@@ -302,9 +330,9 @@
         var pairing = w.pairing
           ? '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> ' + esc(w.pairing) + "</div>"
           : "";
-        var tasted = w.tasted ? '<div class="wine-tasted">Degustato il ' + esc(w.tasted) + "</div>" : "";
+        var tasted = w.tasted ? '<div class="wine-tasted">' + esc(t.tasted) + " " + esc(w.tasted) + "</div>" : "";
         var full = fullView(w);
-        var more = full ? '<button type="button" class="wine-more">Vedi valutazione completa</button>' : "";
+        var more = full ? '<button type="button" class="wine-more">' + esc(t.more) + "</button>" : "";
         return (
           '<div class="wine-card">' +
           '<div class="wine-name">' + esc(w.name) + vintage + "</div>" +
@@ -335,27 +363,68 @@
       }).addTo(map);
 
       var openPopup = null;
+
+      // Wire the "full evaluation" button directly on the popup: Leaflet stops click
+      // events from bubbling out of the popup, so a listener on #wine-map never fires.
+      function wireMore(popup) {
+        var root = popup.getElement ? popup.getElement() : popup._container;
+        if (!root) return;
+        var btn = root.querySelector(".wine-more");
+        if (!btn) return;
+        btn.onclick = function () {
+          var cardEl = root.querySelector(".wine-card");
+          if (!cardEl) return;
+          var expanded = cardEl.classList.toggle("is-expanded");
+          btn.textContent = expanded ? TXT[LANG].less : TXT[LANG].more;
+          root.classList.toggle("wine-popup--full", expanded);
+          popup.update();
+        };
+      }
       map.on("popupopen", function (e) {
         openPopup = e.popup;
+        wireMore(e.popup);
       });
       map.on("popupclose", function () {
         openPopup = null;
       });
-      el.addEventListener("click", function (ev) {
-        var btn = ev.target && ev.target.closest ? ev.target.closest(".wine-more") : null;
-        if (!btn) return;
-        var cardEl = btn.closest(".wine-card");
-        var popupEl = btn.closest(".leaflet-popup");
-        if (!cardEl) return;
-        var expanded = cardEl.classList.toggle("is-expanded");
-        btn.textContent = expanded ? "Nascondi valutazione" : "Vedi valutazione completa";
-        if (popupEl) popupEl.classList.toggle("wine-popup--full", expanded);
-        if (openPopup) openPopup.update();
+
+      // ---- IT / EN toggle ----
+      var LangControl = L.Control.extend({
+        options: { position: "topright" },
+        onAdd: function () {
+          var b = L.DomUtil.create("button", "wine-lang");
+          b.type = "button";
+          var sync = function () {
+            b.textContent = TXT[LANG].lang;
+            b.setAttribute("title", TXT[LANG].langTitle);
+            b.setAttribute("aria-label", TXT[LANG].langTitle);
+          };
+          sync();
+          L.DomEvent.disableClickPropagation(b);
+          L.DomEvent.on(b, "click", function (ev) {
+            L.DomEvent.stop(ev);
+            LANG = LANG === "it" ? "en" : "it";
+            try {
+              if (window.localStorage) localStorage.setItem("wine-map-lang", LANG);
+            } catch (e) {}
+            sync();
+            markers.forEach(function (m) {
+              m.setPopupContent(card(m._wine));
+            });
+            if (openPopup) {
+              wireMore(openPopup);
+              openPopup.update();
+            }
+          });
+          return b;
+        },
       });
+      map.addControl(new LangControl());
 
       // Fan out markers that share the exact same coordinates so each stays clickable.
       var seen = {};
       var pts = [];
+      var markers = [];
       wines.forEach(function (w) {
         var lat = Number(w.lat);
         var lng = Number(w.lng);
@@ -369,12 +438,14 @@
           lat += rad * Math.cos(ang);
           lng += (rad * Math.sin(ang)) / Math.cos((lat * Math.PI) / 180);
         }
-        L.marker([lat, lng], {
+        var m = L.marker([lat, lng], {
           icon: bottleIcon(w.color),
           title: (w.name || "") + (w.producer ? " — " + w.producer : ""),
         })
           .addTo(map)
           .bindPopup(card(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
+        m._wine = w;
+        markers.push(m);
         pts.push([lat, lng]);
       });
 
