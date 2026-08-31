@@ -11,6 +11,9 @@
 # An optional `tasting:` block (visual / nose / palate) powers the "Vedi valutazione
 # completa" button in the popup — see the first entry.
 #
+# The popup has an IT/EN toggle; English is produced on the fly by Google Translate and
+# cached in the browser, so keep everything here in Italian.
+#
 # The entries below are examples — replace them with your own tastings.
 
 - name: Barolo

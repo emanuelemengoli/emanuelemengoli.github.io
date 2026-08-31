@@ -3,6 +3,9 @@
   Data source: _data/wines.yml (populated by bin/sync-wines from the tasting form).
   Requires `map: true` in the host page's front matter so al-folio loads Leaflet
   (CSS via _includes/head.liquid, JS via _includes/scripts/leaflet.liquid).
+
+  The card is authored in Italian; the EN toggle translates the wine content at
+  runtime through Google Translate's free endpoint and caches it in localStorage.
 {% endcomment %}
 
 <style>
@@ -53,6 +56,10 @@
   .wine-lang:hover {
     border-color: var(--global-theme-color);
     color: var(--global-theme-color);
+  }
+  .wine-lang[aria-busy="true"] {
+    opacity: 0.55;
+    cursor: progress;
   }
 
   .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
@@ -200,41 +207,11 @@
         orange: "#cd6620",
       };
 
-      // ---- bilingual labels (chrome only; the wine's own text stays as entered) ----
-      var TXT = {
-        it: {
-          lang: "EN", langTitle: "Show in English",
-          more: "Vedi valutazione completa", less: "Nascondi valutazione",
-          tasted: "Degustato il",
-          sec: { visual: "Esame visivo", nose: "Esame olfattivo", palate: "Esame gustativo" },
-          lab: {
-            limpidezza: "Limpidezza", intensita_colore: "Intensità colore", colore: "Colore",
-            metodo: "Metodo", effervescenza: "Effervescenza",
-            perlage_dimensione: "Perlage — bollicine", perlage_persistenza: "Perlage — persistenza",
-            condizione: "Condizione", intensita: "Intensità", evoluzione: "Evoluzione", altri_aromi: "Altri aromi",
-            zucchero: "Zucchero", acidita: "Acidità", tannini: "Tannini", alcol: "Alcol", corpo: "Corpo",
-            intensita_sapori: "Intensità sapori", finale: "Finale",
-          },
-        },
-        en: {
-          lang: "IT", langTitle: "Mostra in italiano",
-          more: "See full evaluation", less: "Hide evaluation",
-          tasted: "Tasted",
-          sec: { visual: "Appearance", nose: "Nose", palate: "Palate" },
-          lab: {
-            limpidezza: "Clarity", intensita_colore: "Colour intensity", colore: "Colour",
-            metodo: "Method", effervescenza: "Effervescence",
-            perlage_dimensione: "Bead — size", perlage_persistenza: "Bead — persistence",
-            condizione: "Condition", intensita: "Intensity", evoluzione: "Evolution", altri_aromi: "Other aromas",
-            zucchero: "Sugar", acidita: "Acidity", tannini: "Tannins", alcol: "Alcohol", corpo: "Body",
-            intensita_sapori: "Flavour intensity", finale: "Finish",
-          },
-        },
-      };
-      var SECTIONS = {
-        visual: { order: ["limpidezza", "intensita_colore", "colore", "metodo", "effervescenza", "perlage_dimensione", "perlage_persistenza"], chips: ["osservazioni"] },
-        nose: { order: ["condizione", "intensita", "evoluzione", "altri_aromi"], chips: ["aromi"] },
-        palate: { order: ["zucchero", "acidita", "tannini", "alcol", "corpo", "intensita_sapori", "finale"], chips: ["aromi_palato"] },
+      // Only the map widget's own controls are bilingual; every word that comes from
+      // _data/wines.yml (field labels included) is authored in Italian and machine-translated.
+      var UI = {
+        it: { lang: "EN", langTitle: "Mostra in inglese", more: "Vedi valutazione completa", less: "Nascondi valutazione" },
+        en: { lang: "IT", langTitle: "Show in Italian", more: "See full evaluation", less: "Hide evaluation" },
       };
       var LANG = "it";
       try {
@@ -246,9 +223,105 @@
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
         });
       }
-
+      function blankStr(v) {
+        return v == null || String(v).trim() === "";
+      }
       function safeUrl(u) {
         return /^(https?:\/\/|\/)/i.test(String(u || "")) ? String(u) : "";
+      }
+
+      // ---- runtime IT -> EN via Google Translate's keyless endpoint, cached locally ----
+      var TR = {};
+      try {
+        TR = JSON.parse(localStorage.getItem("wine-map-tr") || "{}") || {};
+      } catch (e) {}
+      function trSave() {
+        try {
+          localStorage.setItem("wine-map-tr", JSON.stringify(TR));
+        } catch (e) {}
+      }
+      function trOne(src) {
+        var url =
+          "https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=en&dt=t&q=" +
+          encodeURIComponent(src);
+        return fetch(url)
+          .then(function (r) {
+            return r.ok ? r.json() : null;
+          })
+          .then(function (j) {
+            var out =
+              j && j[0]
+                ? j[0]
+                    .map(function (seg) {
+                      return seg && seg[0] ? seg[0] : "";
+                    })
+                    .join("")
+                : "";
+            if (out) TR[src] = out;
+          })
+          .catch(function () {
+            /* leave untranslated; a later toggle retries */
+          });
+      }
+      // Resolve every source string in `list` to English, filling TR. Unknown strings go
+      // out one per request, in sequential waves; failures keep the Italian and retry later.
+      function trResolve(list) {
+        var miss = [];
+        list.forEach(function (s) {
+          s = (s || "").trim();
+          if (s && !(s in TR) && miss.indexOf(s) < 0) miss.push(s);
+        });
+        if (!miss.length) return Promise.resolve(TR);
+        var idx = 0;
+        function wave() {
+          if (idx >= miss.length) {
+            trSave();
+            return Promise.resolve(TR);
+          }
+          var batch = miss.slice(idx, idx + 8);
+          idx += 8;
+          return Promise.all(batch.map(trOne)).then(wave);
+        }
+        return wave();
+      }
+
+      // Translate the visible wine text inside `rootEl` in place (no-op unless LANG=en).
+      // Skips links, buttons and anything marked .no-tx (proper nouns, dates, prices).
+      function translateEl(rootEl, done) {
+        if (LANG !== "en" || !rootEl || !window.fetch) {
+          if (done) done();
+          return;
+        }
+        var walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+          acceptNode: function (node) {
+            if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+            var p = node.parentElement;
+            while (p && p !== rootEl.parentElement) {
+              if (p.nodeName === "A" || p.nodeName === "BUTTON") return NodeFilter.FILTER_REJECT;
+              if (p.classList && p.classList.contains("no-tx")) return NodeFilter.FILTER_REJECT;
+              p = p.parentElement;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+          },
+        });
+        var nodes = [];
+        var nd;
+        while ((nd = walker.nextNode())) nodes.push(nd);
+        if (!nodes.length) {
+          if (done) done();
+          return;
+        }
+        trResolve(
+          nodes.map(function (n) {
+            return n.nodeValue;
+          })
+        ).then(function (map) {
+          nodes.forEach(function (n) {
+            var key = n.nodeValue.trim();
+            if (map[key] && map[key] !== key) n.nodeValue = n.nodeValue.replace(key, map[key]);
+          });
+          if (done) done();
+        });
       }
 
       function bottleIcon(color) {
@@ -278,64 +351,122 @@
         for (i = 0; i < full; i++) out += '<i class="fa-solid fa-star"></i>';
         if (half) out += '<i class="fa-solid fa-star-half-stroke"></i>';
         for (i = full + (half ? 1 : 0); i < 5; i++) out += '<i class="fa-regular fa-star empty"></i>';
-        return '<span class="wine-stars" aria-label="' + r + ' / 5">' + out + "</span>";
+        return '<span class="wine-stars no-tx" aria-label="' + r + ' / 5">' + out + "</span>";
       }
 
       function chips(arr) {
         return (
           '<div class="chips">' +
-          arr.filter(Boolean).map(function (a) { return "<span>" + esc(a) + "</span>"; }).join("") +
+          arr
+            .filter(Boolean)
+            .map(function (a) {
+              return "<span>" + esc(a) + "</span>";
+            })
+            .join("") +
           "</div>"
         );
       }
 
-      function sectionHtml(obj, secKey) {
+      // section key -> [key, Italian heading, scalar [field,label] in order, chip fields, free-text [field,label]]
+      var SECTIONS = [
+        [
+          "visual",
+          "Esame visivo",
+          [
+            ["limpidezza", "Limpidezza"],
+            ["intensita_colore", "Intensità colore"],
+            ["colore", "Colore"],
+            ["metodo", "Metodo"],
+            ["effervescenza", "Effervescenza"],
+            ["perlage_dimensione", "Perlage — bollicine"],
+            ["perlage_persistenza", "Perlage — persistenza"],
+          ],
+          [["osservazioni"]],
+          [],
+        ],
+        [
+          "nose",
+          "Esame olfattivo",
+          [
+            ["condizione", "Condizione"],
+            ["intensita", "Intensità"],
+            ["evoluzione", "Evoluzione"],
+          ],
+          [["aromi"]],
+          [["altri_aromi", "Altri aromi"]],
+        ],
+        [
+          "palate",
+          "Esame gustativo",
+          [
+            ["zucchero", "Zucchero"],
+            ["acidita", "Acidità"],
+            ["tannini", "Tannini"],
+            ["alcol", "Alcol"],
+            ["corpo", "Corpo"],
+            ["intensita_sapori", "Intensità sapori"],
+            ["finale", "Finale"],
+          ],
+          [["aromi_palato"]],
+          [],
+        ],
+      ];
+
+      function sectionHtml(obj, spec) {
         if (!obj) return "";
-        var spec = SECTIONS[secKey];
-        var t = TXT[LANG];
-        var rows = spec.order
-          .filter(function (k) {
-            return obj[k] != null && String(obj[k]).trim() !== "";
+        var rows = spec[2]
+          .filter(function (f) {
+            return !blankStr(obj[f[0]]);
           })
-          .map(function (k) {
-            return '<div class="r"><span>' + esc(t.lab[k] || k) + "</span><span>" + esc(obj[k]) + "</span></div>";
+          .map(function (f) {
+            return '<div class="r"><span>' + esc(f[1]) + "</span><span>" + esc(obj[f[0]]) + "</span></div>";
           })
           .join("");
-        var chipHtml = spec.chips
-          .map(function (k) {
-            return Array.isArray(obj[k]) && obj[k].length ? chips(obj[k]) : "";
+        var chipHtml = spec[3]
+          .map(function (f) {
+            return Array.isArray(obj[f[0]]) && obj[f[0]].length ? chips(obj[f[0]]) : "";
           })
           .join("");
-        if (!rows && !chipHtml) return "";
-        return "<h4>" + t.sec[secKey] + "</h4>" + rows + chipHtml;
+        var freeHtml = spec[4]
+          .map(function (f) {
+            return blankStr(obj[f[0]])
+              ? ""
+              : '<div class="r"><span>' + esc(f[1]) + "</span><span>" + esc(obj[f[0]]) + "</span></div>";
+          })
+          .join("");
+        if (!rows && !chipHtml && !freeHtml) return "";
+        return "<h4>" + esc(spec[1]) + "</h4>" + rows + chipHtml + freeHtml;
       }
 
       function fullView(w) {
         var tv = w.tasting;
         if (!tv || typeof tv !== "object") return "";
-        var body = sectionHtml(tv.visual, "visual") + sectionHtml(tv.nose, "nose") + sectionHtml(tv.palate, "palate");
+        var body = SECTIONS.map(function (spec) {
+          return sectionHtml(tv[spec[0]], spec);
+        }).join("");
         return body ? '<div class="wine-full">' + body + "</div>" : "";
       }
 
-      function card(w) {
-        var t = TXT[LANG];
+      function cardHtml(w) {
         var url = safeUrl(w.url);
         var producer = url
           ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " ↗</a>"
-          : esc(w.producer);
+          : '<span class="no-tx">' + esc(w.producer) + "</span>";
         var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
         var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" &middot; ");
-        var price = w.price ? '<div class="wine-meta">' + esc(w.price) + "</div>" : "";
-        var notes = w.notes ? '<p class="wine-notes">' + esc(w.notes) + "</p>" : "";
-        var pairing = w.pairing
-          ? '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> ' + esc(w.pairing) + "</div>"
+        var price = w.price ? '<div class="wine-meta no-tx">' + esc(w.price) + "</div>" : "";
+        var notes = blankStr(w.notes) ? "" : '<p class="wine-notes">' + esc(w.notes) + "</p>";
+        var pairing = blankStr(w.pairing)
+          ? ""
+          : '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> ' + esc(w.pairing) + "</div>";
+        var tasted = w.tasted
+          ? '<div class="wine-tasted">Degustato il <span class="no-tx">' + esc(w.tasted) + "</span></div>"
           : "";
-        var tasted = w.tasted ? '<div class="wine-tasted">' + esc(t.tasted) + " " + esc(w.tasted) + "</div>" : "";
         var full = fullView(w);
-        var more = full ? '<button type="button" class="wine-more">' + esc(t.more) + "</button>" : "";
+        var more = full ? '<button type="button" class="wine-more">' + esc(UI[LANG].more) + "</button>" : "";
         return (
           '<div class="wine-card">' +
-          '<div class="wine-name">' + esc(w.name) + vintage + "</div>" +
+          '<div class="wine-name no-tx">' + esc(w.name) + vintage + "</div>" +
           stars(w.rating) +
           '<div class="wine-producer">' + producer + "</div>" +
           (meta ? '<div class="wine-meta">' + meta + "</div>" : "") +
@@ -347,6 +478,14 @@
           full +
           "</div>"
         );
+      }
+
+      // Popup content is a DOM node (not a string) so Leaflet's popup.update() keeps the
+      // expanded state and the translated text instead of re-rendering from scratch.
+      function cardNode(w) {
+        var tpl = document.createElement("template");
+        tpl.innerHTML = cardHtml(w).trim();
+        return tpl.content.firstElementChild || tpl.firstElementChild;
       }
 
       var map = L.map(el, { scrollWheelZoom: false, worldCopyJump: true });
@@ -364,8 +503,6 @@
 
       var openPopup = null;
 
-      // Wire the "full evaluation" button directly on the popup: Leaflet stops click
-      // events from bubbling out of the popup, so a listener on #wine-map never fires.
       function wireMore(popup) {
         var root = popup.getElement ? popup.getElement() : popup._container;
         if (!root) return;
@@ -375,14 +512,28 @@
           var cardEl = root.querySelector(".wine-card");
           if (!cardEl) return;
           var expanded = cardEl.classList.toggle("is-expanded");
-          btn.textContent = expanded ? TXT[LANG].less : TXT[LANG].more;
+          btn.textContent = expanded ? UI[LANG].less : UI[LANG].more;
           root.classList.toggle("wine-popup--full", expanded);
-          popup.update();
+          popup.update(); // safe: content is a node, so the expanded state survives
         };
       }
+
+      function refreshOpenPopup(onDone) {
+        if (!openPopup) {
+          if (onDone) onDone();
+          return;
+        }
+        wireMore(openPopup);
+        var root = openPopup.getElement && openPopup.getElement();
+        translateEl(root && root.querySelector(".wine-card"), function () {
+          openPopup.update();
+          if (onDone) onDone();
+        });
+      }
+
       map.on("popupopen", function (e) {
         openPopup = e.popup;
-        wireMore(e.popup);
+        refreshOpenPopup();
       });
       map.on("popupclose", function () {
         openPopup = null;
@@ -395,9 +546,9 @@
           var b = L.DomUtil.create("button", "wine-lang");
           b.type = "button";
           var sync = function () {
-            b.textContent = TXT[LANG].lang;
-            b.setAttribute("title", TXT[LANG].langTitle);
-            b.setAttribute("aria-label", TXT[LANG].langTitle);
+            b.textContent = UI[LANG].lang;
+            b.setAttribute("title", UI[LANG].langTitle);
+            b.setAttribute("aria-label", UI[LANG].langTitle);
           };
           sync();
           L.DomEvent.disableClickPropagation(b);
@@ -408,13 +559,13 @@
               if (window.localStorage) localStorage.setItem("wine-map-lang", LANG);
             } catch (e) {}
             sync();
+            b.setAttribute("aria-busy", "true");
             markers.forEach(function (m) {
-              m.setPopupContent(card(m._wine));
+              m.setPopupContent(cardNode(m._wine));
             });
-            if (openPopup) {
-              wireMore(openPopup);
-              openPopup.update();
-            }
+            refreshOpenPopup(function () {
+              b.removeAttribute("aria-busy");
+            });
           });
           return b;
         },
@@ -443,7 +594,7 @@
           title: (w.name || "") + (w.producer ? " — " + w.producer : ""),
         })
           .addTo(map)
-          .bindPopup(card(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
+          .bindPopup(cardNode(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
         m._wine = w;
         markers.push(m);
         pts.push([lat, lng]);

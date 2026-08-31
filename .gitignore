@@ -15,5 +15,8 @@ vendor
 bin/wines_csv_url.txt
 bin/.wines_geocache.json
 
+# local dev launcher — machine-specific, never committed
+bin/local_loader
+
 # source archives dropped into the image tree — extract, don't commit
 assets/img/*.zip

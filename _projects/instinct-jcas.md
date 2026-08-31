@@ -14,7 +14,7 @@ The simulator runs from the notebook [`main.ipynb`](https://github.com/emanuelem
 This project provides a configurable simulator for **Joint Communication and Sensing (JCAS)** networks defined on a **periodic (toroidal) spatial domain**. Base stations, mobile user equipments and sensing objects are placed on a rectangular flat torus, where a **Voronoi tessellation** defines cell coverage; the periodic geometry removes boundary effects and yields unbiased spatial statistics. Deployments are drawn from **Poisson or Binomial point processes**, with users and targets placed either uniformly or as a Gaussian cluster around the serving base station.
 
 <div class="row justify-content-sm-center">
-    <div class="col-sm-6 mt-3 mt-md-0">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/network_voronoi.png" title="JCAS network realization and Voronoi tessellation" alt="JCAS network realization and Voronoi tessellation" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
 </div>
@@ -44,14 +44,18 @@ Figures from a single captive-scenario run under the default (`exponential` chan
 
 ### Steady-state distributions
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/sinr_kde.png" title="Communication and sensing SINR KDE" alt="Communication and sensing SINR KDE" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
-    <div class="col-sm mt-3 mt-md-0">
+</div>
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/covariance_trace_kde.png" title="Filter covariance-trace KDE" alt="Filter covariance-trace KDE" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
-    <div class="col-sm mt-3 mt-md-0">
+</div>
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/workload_kde.png" title="Queue-workload KDE" alt="Queue-workload KDE" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
 </div>
@@ -61,8 +65,8 @@ Figures from a single captive-scenario run under the default (`exponential` chan
 
 ### Queue–covariance association
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/filter_queue_association.png" title="Queue workload versus filter covariance trace, with association ratio" alt="Queue workload versus filter covariance trace, with association ratio" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
 </div>
@@ -72,16 +76,18 @@ Figures from a single captive-scenario run under the default (`exponential` chan
 
 ### Trajectory animations
 
-<div class="row">
-    <div class="col-sm mt-3 mt-md-0">
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/jcas/trajectory_animation_gm.gif" title="Captive Gauss–Markov entity trajectories" alt="Captive Gauss–Markov entity trajectories" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
-    <div class="col-sm mt-3 mt-md-0">
+</div>
+<div class="row justify-content-sm-center">
+    <div class="col-sm-7 mt-3 mt-md-0">
         {% include figure.liquid path="assets/img/jcas/trajectory_animation_rw.gif" title="ρ-persistent random-walk entity trajectories" alt="ρ-persistent random-walk entity trajectories" class="img-fluid rounded z-depth-1 bg-white p-1" %}
     </div>
 </div>
 <div class="caption">
-    Captive Gauss–Markov (<code>captive_gauss_markov</code>, left): each entity is contracted toward its serving base station and stays within its cell — the no-handover regime. ρ-persistent random walk (<code>rho_random_walk</code>, right): entities carry momentum and roam across cell boundaries, the regime in which handover applies.
+    Captive Gauss–Markov (<code>captive_gauss_markov</code>, top): each entity is contracted toward its serving base station and stays within its cell — the no-handover regime. ρ-persistent random walk (<code>rho_random_walk</code>, bottom): entities carry momentum and roam across cell boundaries, the regime in which handover applies.
 </div>
 
 ## Usage
