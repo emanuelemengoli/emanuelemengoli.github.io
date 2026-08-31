@@ -42,6 +42,8 @@ The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) =
 
 Figures from a single captive-scenario run under the default (`exponential` channel) configuration, produced by `jcas_simulator.visualization`.
 
+### Steady-state distributions
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/sinr_kde.png" title="Communication and sensing SINR KDE" alt="Communication and sensing SINR KDE" class="img-fluid rounded z-depth-1 bg-white p-2" %}
@@ -57,6 +59,8 @@ Figures from a single captive-scenario run under the default (`exponential` chan
     Kernel density estimates pooled across entities in the steady-state window: per-link communication and sensing SINR (the monostatic sensing return is far weaker than the communication link), the KF/EKF error-covariance trace <code>Tr(Σ)</code> used as the sensing-uncertainty metric, and the per-cell Lindley-queue workload.
 </div>
 
+### Queue–covariance association
+
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
         {% include figure.liquid loading="eager" path="assets/img/jcas/filter_queue_association.png" title="Queue workload versus filter covariance trace, with association ratio" alt="Queue workload versus filter covariance trace, with association ratio" class="img-fluid rounded z-depth-1 bg-white p-2" %}
@@ -64,6 +68,20 @@ Figures from a single captive-scenario run under the default (`exponential` chan
 </div>
 <div class="caption">
     Per-base-station mean queue workload against mean filter covariance trace. The association ratio <code>A(W, Tr Σ) ≈ 1.006 &gt; 1</code>: communication congestion and sensing uncertainty co-increase weakly across the network.
+</div>
+
+### Trajectory animations
+
+<div class="row">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/jcas/trajectory_animation_gm.gif" title="Captive Gauss–Markov entity trajectories" alt="Captive Gauss–Markov entity trajectories" class="img-fluid rounded z-depth-1 bg-white p-2" %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.liquid path="assets/img/jcas/trajectory_animation_rw.gif" title="ρ-persistent random-walk entity trajectories" alt="ρ-persistent random-walk entity trajectories" class="img-fluid rounded z-depth-1 bg-white p-2" %}
+    </div>
+</div>
+<div class="caption">
+    Captive Gauss–Markov (<code>captive_gauss_markov</code>, left): each entity is contracted toward its serving base station and stays within its cell — the no-handover regime. ρ-persistent random walk (<code>rho_random_walk</code>, right): entities carry momentum and roam across cell boundaries, the regime in which handover applies.
 </div>
 
 ## Usage
