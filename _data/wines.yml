@@ -29,7 +29,7 @@
   price: "€ 45"
   color: red
   rating: 4
-  tasted: "2024-11-02"
+  tasted: '2024-11-02'
   notes: Catrame e rosa appassita, tannino fitto; da attendere un decennio.
   pairing: Brasato al Barolo
   tasting:
@@ -38,18 +38,18 @@
       intensita_colore: Medio
       colore: Rosso granato
       osservazioni:
-        - Archetti o lacrime
+      - Archetti o lacrime
     nose:
       condizione: Netti
       intensita: Pronunciata
       evoluzione: In corso d'evoluzione
       aromi:
-        - Rosa
-        - Ciliegia
-        - Prugna
-        - Catrame
-        - Cuoio
-        - Sottobosco
+      - Rosa
+      - Ciliegia
+      - Prugna
+      - Catrame
+      - Cuoio
+      - Sottobosco
     palate:
       zucchero: Secco
       acidita: Elevata
@@ -71,7 +71,7 @@
   grape: Chardonnay
   color: white
   rating: 4
-  tasted: "2025-03-14"
+  tasted: '2025-03-14'
   notes: Gessoso, teso, salino come guscio d'ostrica.
 
 - name: Brut Nature "Les Barres"
@@ -87,5 +87,80 @@
   color: sparkling
   sparkling: true
   rating: 5
-  tasted: "2025-06-21"
+  tasted: '2025-06-21'
   notes: Meunier da vigna vecchia; fumè, vinoso, dosaggio bassissimo.
+
+- name: ansonica
+  producer: farkas AZ agricola
+  denominazione: docg
+  territorio: Elba isola
+  region: toscana
+  country: Italia
+  lat: 42.793
+  lng: 10.18
+  vintage: 2024
+  price: "€ 14"
+  color: white
+  rating: 3
+  tasted: '2026-07-31'
+  notes: ottimo vino per pesce alla griglia e frittura
+  pairing: fritto di pesce
+  tasting:
+    visual:
+      intensita_colore: Intenso
+      colore: Giallo dorato
+    nose:
+      condizione: Netti
+      intensita: Media
+      aromi:
+      - Floreale
+      - Agrumi
+      - Spezie dolci
+      - non rilevati
+      altri_aromi: acacia
+    palate:
+      zucchero: Secco
+      acidita: Media
+      tannini: Flebili
+      alcol: Medio
+      corpo: Medio
+      intensita_sapori: Media
+      finale: Medio
+
+- name: Roero riserva colla
+  producer: Battaglini AZ agricola
+  denominazione: roero docg
+  territorio: Langhe roero
+  region: piemonte
+  country: Italia
+  lat: 44.76
+  lng: 7.98
+  vintage: 2020
+  price: "€ 20"
+  color: red
+  rating: 3.5
+  tasted: '2025-06-10'
+  notes: buon vino da pasto semplice ed efficace
+  pairing: brasato
+  tasting:
+    visual:
+      intensita_colore: Medio
+      colore: Rosso rubino
+    nose:
+      condizione: Netti
+      intensita: Media
+      aromi:
+      - Frutti verdi
+      - Frutti con nocciolo
+      - Spezie forti
+      - Tostati
+      - nessuno
+      altri_aromi: frutta fresca tipo pesca
+    palate:
+      zucchero: Secco
+      acidita: Media
+      tannini: Medi
+      alcol: Medio
+      corpo: Medio
+      intensita_sapori: Media
+      finale: Medio
