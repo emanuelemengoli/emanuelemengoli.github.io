@@ -77,13 +77,6 @@
   .wine-popup .wine-card {
     width: 232px;
   }
-  .wine-popup .wine-card.is-expanded {
-    width: 320px;
-  }
-  .leaflet-popup.wine-popup--full .leaflet-popup-content {
-    max-height: 62vh;
-    overflow-y: auto;
-  }
 
   .wine-card .wine-name {
     font-weight: 600;
@@ -133,14 +126,87 @@
   .wine-card .wine-more:hover {
     border-color: var(--global-theme-color);
   }
-  .wine-card .wine-full {
-    display: none;
-    margin-top: 0.5rem;
+
+  /* Full tasting sheet — shown in a modal over the page, not inside the map. */
+  .wine-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    animation: wine-modal-fade 0.12s ease-out;
+  }
+  @keyframes wine-modal-fade {
+    from {
+      opacity: 0;
+    }
+  }
+  .wine-modal {
+    position: relative;
+    max-width: min(560px, 92vw);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
+    box-shadow: 0 12px 44px rgba(0, 0, 0, 0.35);
+  }
+  .wine-modal-close {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.55rem;
+    padding: 0.2rem 0.45rem;
+    font: inherit;
+    font-size: 1.45rem;
+    line-height: 1;
+    background: transparent;
+    border: none;
+    color: var(--global-text-color-light);
+    cursor: pointer;
+  }
+  .wine-modal-close:hover {
+    color: var(--global-theme-color);
+  }
+  .wine-modal-head {
+    margin-right: 1.6rem;
+  }
+  .wine-modal-head .wine-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .wine-modal-head .wine-vintage {
+    color: var(--global-text-color-light);
+    font-weight: 400;
+  }
+  .wine-modal-head .wine-stars {
+    display: block;
+    margin: 0.3rem 0 0.1rem;
+    color: #c8a951;
+    letter-spacing: 0.06em;
+  }
+  .wine-modal-head .wine-stars .empty {
+    opacity: 0.5;
+  }
+  .wine-modal-head .wine-producer a {
+    color: var(--global-theme-color);
+  }
+  .wine-modal-head .wine-meta {
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
+    color: var(--global-text-color-light);
+  }
+  .wine-modal .wine-full {
+    margin-top: 0.85rem;
     border-top: 1px solid var(--global-divider-color);
     padding-top: 0.4rem;
   }
-  .wine-card.is-expanded .wine-full {
-    display: block;
+  .wine-modal .wine-full .r span:first-child {
+    flex-basis: 10rem;
   }
   .wine-full h4 {
     margin: 0.7rem 0 0.2rem;
@@ -210,8 +276,8 @@
       // Only the map widget's own controls are bilingual; every word that comes from
       // _data/wines.yml (field labels included) is authored in Italian and machine-translated.
       var UI = {
-        it: { lang: "EN", langTitle: "Mostra in inglese", more: "Vedi valutazione completa", less: "Nascondi valutazione" },
-        en: { lang: "IT", langTitle: "Show in Italian", more: "See full evaluation", less: "Hide evaluation" },
+        it: { lang: "EN", langTitle: "Mostra in inglese", more: "Vedi valutazione completa", close: "Chiudi" },
+        en: { lang: "IT", langTitle: "Show in Italian", more: "See full evaluation", close: "Close" },
       };
       var LANG = "it";
       try {
@@ -446,14 +512,27 @@
         }).join("");
         return body ? '<div class="wine-full">' + body + "</div>" : "";
       }
+      function hasFull(w) {
+        return fullView(w) !== "";
+      }
 
-      function cardHtml(w) {
+      // Wine identity block, shared by the popup summary and the modal header.
+      function identHtml(w) {
         var url = safeUrl(w.url);
         var producer = url
           ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " ↗</a>"
           : '<span class="no-tx">' + esc(w.producer) + "</span>";
         var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
         var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" &middot; ");
+        return (
+          '<div class="wine-name no-tx">' + esc(w.name) + vintage + "</div>" +
+          stars(w.rating) +
+          '<div class="wine-producer">' + producer + "</div>" +
+          (meta ? '<div class="wine-meta">' + meta + "</div>" : "")
+        );
+      }
+
+      function cardHtml(w) {
         var price = w.price ? '<div class="wine-meta no-tx">' + esc(w.price) + "</div>" : "";
         var notes = blankStr(w.notes) ? "" : '<p class="wine-notes">' + esc(w.notes) + "</p>";
         var pairing = blankStr(w.pairing)
@@ -462,26 +541,23 @@
         var tasted = w.tasted
           ? '<div class="wine-tasted">Degustato il <span class="no-tx">' + esc(w.tasted) + "</span></div>"
           : "";
-        var full = fullView(w);
-        var more = full ? '<button type="button" class="wine-more">' + esc(UI[LANG].more) + "</button>" : "";
+        var more = hasFull(w)
+          ? '<button type="button" class="wine-more">' + esc(UI[LANG].more) + "</button>"
+          : "";
         return (
           '<div class="wine-card">' +
-          '<div class="wine-name no-tx">' + esc(w.name) + vintage + "</div>" +
-          stars(w.rating) +
-          '<div class="wine-producer">' + producer + "</div>" +
-          (meta ? '<div class="wine-meta">' + meta + "</div>" : "") +
+          identHtml(w) +
           price +
           notes +
           pairing +
           tasted +
           more +
-          full +
           "</div>"
         );
       }
 
-      // Popup content is a DOM node (not a string) so Leaflet's popup.update() keeps the
-      // expanded state and the translated text instead of re-rendering from scratch.
+      // Popup content is a DOM node (not a string) so Leaflet's popup.update() re-appends
+      // the same element and keeps the in-place translation instead of re-rendering it.
       function cardNode(w) {
         var tpl = document.createElement("template");
         tpl.innerHTML = cardHtml(w).trim();
@@ -503,18 +579,65 @@
 
       var openPopup = null;
 
+      // ---- full tasting sheet in a modal over the page (not clipped by the map) ----
+      var modalEl = null;
+      var modalReturnFocus = null;
+
+      function closeModal() {
+        if (!modalEl) return;
+        document.removeEventListener("keydown", onModalKey);
+        modalEl.remove();
+        modalEl = null;
+        document.body.style.overflow = "";
+        if (modalReturnFocus && modalReturnFocus.focus) modalReturnFocus.focus();
+        modalReturnFocus = null;
+      }
+      function onModalKey(e) {
+        if (e.key === "Escape" || e.keyCode === 27) closeModal();
+      }
+      function openModal(w) {
+        closeModal();
+        modalReturnFocus = document.activeElement;
+
+        var back = document.createElement("div");
+        back.className = "wine-modal-backdrop";
+        back.addEventListener("click", function (e) {
+          if (e.target === back) closeModal();
+        });
+
+        var box = document.createElement("div");
+        box.className = "wine-modal";
+        box.setAttribute("role", "dialog");
+        box.setAttribute("aria-modal", "true");
+        box.setAttribute("aria-label", (w.name || "") + (w.vintage ? " " + w.vintage : ""));
+        box.innerHTML =
+          '<button type="button" class="wine-modal-close" aria-label="' +
+          esc(UI[LANG].close) +
+          '">&times;</button>' +
+          '<div class="wine-modal-head">' +
+          identHtml(w) +
+          "</div>" +
+          fullView(w);
+        box.querySelector(".wine-modal-close").addEventListener("click", closeModal);
+
+        back.appendChild(box);
+        document.body.appendChild(back);
+        modalEl = back;
+        document.body.style.overflow = "hidden";
+        document.addEventListener("keydown", onModalKey);
+        box.querySelector(".wine-modal-close").focus();
+
+        translateEl(box);
+      }
+
       function wireMore(popup) {
         var root = popup.getElement ? popup.getElement() : popup._container;
         if (!root) return;
         var btn = root.querySelector(".wine-more");
         if (!btn) return;
+        var w = popup._source && popup._source._wine;
         btn.onclick = function () {
-          var cardEl = root.querySelector(".wine-card");
-          if (!cardEl) return;
-          var expanded = cardEl.classList.toggle("is-expanded");
-          btn.textContent = expanded ? UI[LANG].less : UI[LANG].more;
-          root.classList.toggle("wine-popup--full", expanded);
-          popup.update(); // safe: content is a node, so the expanded state survives
+          if (w) openModal(w);
         };
       }
 
@@ -559,6 +682,7 @@
               if (window.localStorage) localStorage.setItem("wine-map-lang", LANG);
             } catch (e) {}
             sync();
+            closeModal(); // it was rendered in the old language; dismiss it
             b.setAttribute("aria-busy", "true");
             markers.forEach(function (m) {
               m.setPopupContent(cardNode(m._wine));

@@ -9,7 +9,7 @@ fill the **Scheda di degustazione del vino** Google Form after each tasting;
   untouched — you can delete old rows from the responses sheet whenever you like.
 - Clicking a bottle shows a **compact summary**; if the wine has any detailed section
   filled (i.e. you chose *Completa*, or the *Corta* olfactory/taste pages), a
-  **"Vedi valutazione completa"** button expands the popup.
+  **"Vedi valutazione completa"** button opens the full tasting sheet in a dialog.
 - New wines are **geocoded** from `produttore, regione, stato` via OpenStreetMap
   Nominatim (cached in `bin/.wines_geocache.json`). If you fill **Latitudine** /
   **Longitudine** those win. A re-submission never moves an existing pin — change
