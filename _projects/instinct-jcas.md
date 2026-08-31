@@ -2,7 +2,7 @@
 layout: page
 title: Instinct JCAS
 description: A configurable simulator for Joint Communication and Sensing (JCAS) networks on a toroidal domain — stochastic-geometry deployments, mobility, physical channel models, and Kalman-filter object tracking.
-img: assets/img/jcas/network_voronoi.png
+img: assets/img/jcas/sinr_kde.png
 importance: 1
 category: Research
 related_publications: false
@@ -24,7 +24,7 @@ This project provides a configurable simulator for **Joint Communication and Sen
 
 Communication is modelled through **Lindley queues** with SINR-dependent service rates, over either a **ray-traced channel** parameterised from a University of Oulu ray-tracing campaign or a **Rayleigh-fading power-law** model. User equipments and sensing objects move under stationary, **Gauss–Markov**, or **ρ-persistent random-walk** motion, and targets are tracked with **Kalman / Extended Kalman filters** for linear and radar-style (range, bearing, range rate) observations. Optional **sector beamforming** and a cyclic **TDD** communication/sensing schedule are supported.
 
-The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) = E[XY] / (E[X]·E[Y])` and the Pearson correlation, for the interference, SINR and queue-versus-covariance pairs — that quantify the trade-off between the communication and sensing functions sharing the same infrastructure. Two operation modes are available: a *captive* full large-scale simulation, and a *non-captive* single-track toy model that benchmarks JCAS tracking against a sensing-only baseline.
+The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) = E[XY] / (E[X]·E[Y])` and the Pearson correlation, for the interference, SINR and queue-versus-covariance pairs — that quantify the trade-off between the communication and sensing functions sharing the same infrastructure. Two operation modes are available: a *captive* full large-scale simulation, and a *non-captive* single-track toy model that benchmarks JCAS tracking against a sensing-only baseline. Every run is fully determined by a `master_seed` driving a per-stream seeded random-number manager, so results are exactly reproducible.
 
 ## Features
 
@@ -36,6 +36,7 @@ The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) =
 - Sensing and tracking with **Kalman / Extended Kalman filters**; one-way or two-way (monostatic-radar) sensing gain.
 - Optional **sector beamforming** and **TDD scheduling**.
 - **Communication–sensing coupling metrics** (association ratios, Pearson correlations).
+- Configured through a single immutable **`SimulationConfig`** dataclass tree, validated on construction; `jcas_simulator/config.py` documents every field and default, `main.ipynb` has worked examples.
 
 ## Example output
 
