@@ -49,9 +49,6 @@
     gap: 0.3rem;
     min-width: 0;
   }
-  .wf-facet.wf-price {
-    flex: 1 1 12rem;
-  }
   .wf-label {
     font-size: 0.72rem;
     font-weight: 600;
@@ -89,15 +86,41 @@
     background: var(--global-bg-color);
     color: var(--global-text-color);
   }
-  #wine-finder input[type="range"] {
-    width: 100%;
-    accent-color: var(--global-theme-color);
+  .wf-num {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    overflow: hidden;
+    width: max-content;
+  }
+  .wf-num-pre {
+    padding: 0 0.15rem 0 0.55rem;
+    color: var(--global-text-color-light);
+    font-size: 0.9rem;
+  }
+  #wine-finder input[type="number"] {
+    font: inherit;
+    width: 5rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.35rem;
+    border: none;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  #wine-finder input[type="number"]::-webkit-outer-spin-button,
+  #wine-finder input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
   .wf-search {
     align-items: center;
   }
   .wf-search input[type="search"] {
-    flex: 1 1 16rem;
+    flex: 1 1 18rem;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.65rem;
   }
   #wine-finder button.wf-ghost,
   #wine-finder button#wf-go {
@@ -129,9 +152,36 @@
     opacity: 0.8;
   }
   .wf-status {
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--global-theme-color);
+    margin-top: 0.6rem;
+  }
+  .wf-progress {
+    display: block;
+    height: 4px;
+    width: 100%;
+    max-width: 260px;
+    border-radius: 999px;
+    background: var(--global-divider-color);
+    overflow: hidden;
+  }
+  .wf-progress i {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--global-theme-color);
+    transition: width 0.25s ease;
+  }
+  .wf-progress.wf-indet i {
+    width: 100%;
+    animation: wf-pulse 1.1s ease-in-out infinite;
+  }
+  .wf-progress.wf-error i {
+    width: 100%;
+    background: #c0392b;
+    animation: none;
+  }
+  @keyframes wf-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
   }
 
   .wf-results {
@@ -186,6 +236,20 @@
   .wf-card-prod {
     font-size: 0.86rem;
   }
+  .wf-strength {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .wf-strength i {
+    width: 14px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--global-divider-color);
+  }
+  .wf-strength i.on {
+    background: var(--global-theme-color);
+  }
   .wf-card-meta {
     margin-top: 0.1rem;
     font-size: 0.8rem;
@@ -220,6 +284,16 @@
   </p>
 
   <form id="wf-form" class="wf-controls">
+    <div class="wf-row wf-search">
+      <input
+        type="search"
+        id="wf-q"
+        autocomplete="off"
+        placeholder="es. brasato di manzo · aperitivo in terrazza · un regalo importante"
+      />
+      <button type="submit" id="wf-go">Consiglia</button>
+      <button type="button" id="wf-clear" class="wf-ghost">Pulisci</button>
+    </div>
     <div class="wf-row">
       <div class="wf-facet">
         <span class="wf-label">Tipo</span>
@@ -235,26 +309,21 @@
         <span class="wf-label">Regione</span>
         <select id="wf-region"><option value="">Tutte</option></select>
       </label>
-      <label class="wf-facet wf-price">
-        <span class="wf-label">Prezzo massimo <b id="wf-price-out"></b></span>
-        <input type="range" id="wf-price" />
+      <label class="wf-facet">
+        <span class="wf-label">Prezzo massimo</span>
+        <span class="wf-num">
+          <span class="wf-num-pre">€</span>
+          <input type="number" id="wf-price" min="0" step="1" inputmode="decimal" />
+        </span>
       </label>
-    </div>
-    <div class="wf-row wf-search">
-      <input
-        type="search"
-        id="wf-q"
-        autocomplete="off"
-        placeholder="es. brasato di manzo · aperitivo in terrazza · un regalo importante"
-      />
-      <button type="submit" id="wf-go">Consiglia</button>
-      <button type="button" id="wf-clear" class="wf-ghost">Pulisci</button>
     </div>
     <label class="wf-sem-toggle">
       <input type="checkbox" id="wf-sem" />
-      <span>ricerca semantica <small>(un modello ~25&nbsp;MB scaricato al primo uso, poi resta in cache)</small></span>
+      <span>ricerca semantica avanzata <small>(~25&nbsp;MB al primo utilizzo)</small></span>
     </label>
-    <div id="wf-status" class="wf-status" hidden></div>
+    <div id="wf-status" class="wf-status" hidden aria-hidden="true">
+      <span class="wf-progress"><i id="wf-progress-fill"></i></span>
+    </div>
   </form>
 
   <div id="wf-results" class="wf-results" aria-live="polite"></div>
@@ -300,6 +369,10 @@
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
         });
+      }
+      function cap(s) {
+        s = String(s == null ? "" : s).trim();
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
       }
       function uniq(a) {
         var o = {}, r = [];
@@ -473,19 +546,19 @@
       var regionsPresent = uniq(META.map(function (m) { return m.region; }).filter(Boolean)).sort();
       var prices = META.map(function (m) { return m.price; }).filter(function (p) { return p != null; });
       var priceMax = prices.length ? Math.ceil(Math.max.apply(null, prices) / 5) * 5 : 100;
-      var priceMin = prices.length ? Math.floor(Math.min.apply(null, prices) / 5) * 5 : 0;
       var OCCASIONS = ["aperitivo", "cena importante", "celebrazione", "tutti i giorni", "estate", "inverno", "regalo"];
 
-      var sel = { type: {}, occ: {}, region: "", price: priceMax, q: "" };
+      var NO_CAP = Infinity;
+      var sel = { type: {}, occ: {}, region: "", price: NO_CAP, q: "" };
 
       var elType = document.getElementById("wf-type");
       var elOcc = document.getElementById("wf-occasion");
       var elRegion = document.getElementById("wf-region");
       var elPrice = document.getElementById("wf-price");
-      var elPriceOut = document.getElementById("wf-price-out");
       var elQ = document.getElementById("wf-q");
       var elSem = document.getElementById("wf-sem");
       var elStatus = document.getElementById("wf-status");
+      var elProgFill = document.getElementById("wf-progress-fill");
       var elResults = document.getElementById("wf-results");
       var elForm = document.getElementById("wf-form");
 
@@ -507,25 +580,21 @@
         };
         container.appendChild(b);
       }
-      typesPresent.forEach(function (t) { chip(elType, t, TYPE_LABEL[t] || t, sel.type); });
-      OCCASIONS.forEach(function (o) { chip(elOcc, o, o.charAt(0).toUpperCase() + o.slice(1), sel.occ); });
+      typesPresent.forEach(function (t) { chip(elType, t, cap(TYPE_LABEL[t] || t), sel.type); });
+      OCCASIONS.forEach(function (o) { chip(elOcc, o, cap(o), sel.occ); });
       regionsPresent.forEach(function (r) {
         var o = document.createElement("option");
         o.value = norm(r);
-        o.textContent = r;
+        o.textContent = cap(r);
         elRegion.appendChild(o);
       });
       elRegion.onchange = function () { sel.region = elRegion.value; run(); };
-      elPrice.min = priceMin;
-      elPrice.max = priceMax;
-      elPrice.step = 5;
-      elPrice.value = priceMax;
-      elPriceOut.textContent = "€ " + priceMax;
-      elPrice.oninput = function () {
-        sel.price = Number(elPrice.value);
-        elPriceOut.textContent = "€ " + sel.price;
-        run();
-      };
+      elPrice.placeholder = String(priceMax);
+      function readPrice() {
+        var v = parseFloat(String(elPrice.value).replace(",", "."));
+        sel.price = isFinite(v) && v > 0 ? v : NO_CAP;
+      }
+      elPrice.oninput = function () { readPrice(); run(); };
 
       var semWanted = true;
       try { semWanted = localStorage.getItem("wine-finder-sem") !== "0"; } catch (e) {}
@@ -541,11 +610,10 @@
       };
 
       document.getElementById("wf-clear").onclick = function () {
-        sel = { type: {}, occ: {}, region: "", price: priceMax, q: "" };
+        sel = { type: {}, occ: {}, region: "", price: NO_CAP, q: "" };
         elQ.value = "";
         elRegion.value = "";
-        elPrice.value = priceMax;
-        elPriceOut.textContent = "€ " + priceMax;
+        elPrice.value = "";
         Array.prototype.forEach.call(root.querySelectorAll(".wf-chip"), function (b) {
           b.setAttribute("aria-pressed", "false");
         });
@@ -568,14 +636,28 @@
 
       // -------------------------------------------------- semantic layer (optional)
       var SEM = { ready: false, loading: false, vecs: null, qcache: {} };
-      function setStatus(msg) {
-        if (!msg) {
+      var elProgTrack = elStatus.querySelector(".wf-progress");
+      // frac: 0..1 determinate · null indeterminate · "error" · false hide
+      function showProgress(frac) {
+        if (frac === false) {
           elStatus.hidden = true;
-          elStatus.textContent = "";
+          elProgTrack.className = "wf-progress";
+          elProgFill.style.width = "0";
           return;
         }
         elStatus.hidden = false;
-        elStatus.textContent = msg;
+        if (frac === "error") {
+          elProgTrack.className = "wf-progress wf-error";
+          setTimeout(function () { showProgress(false); }, 2200);
+          return;
+        }
+        if (frac == null) {
+          elProgTrack.className = "wf-progress wf-indet";
+          elProgFill.style.width = "100%";
+          return;
+        }
+        elProgTrack.className = "wf-progress";
+        elProgFill.style.width = Math.max(4, Math.round(frac * 100)) + "%";
       }
       function ensureModuleTag() {
         if (document.getElementById("wf-sem-mod")) return;
@@ -590,28 +672,27 @@
         if (!("indexedDB" in window)) return;
         ensureModuleTag();
         SEM.loading = true;
-        setStatus("Carico il modello semantico…");
+        showProgress(null);
         var start = function () {
           window.WineSemantic
-            .pipe(function (pct) { setStatus("Scarico il modello semantico… " + pct + "%"); })
+            .pipe(function (pct) { showProgress(0.05 + 0.75 * (pct / 100)); })
             .then(function () {
-              setStatus("Analizzo la collezione…");
+              showProgress(0.82);
               var items = META.map(function (m) { return { key: "wf:" + m.vhash, text: m.text }; });
               return window.WineSemantic.embedCorpus(items, function (done, total) {
-                setStatus("Analizzo la collezione… " + done + "/" + total);
+                showProgress(0.82 + 0.18 * (done / total));
               });
             })
             .then(function (vecs) {
               SEM.vecs = vecs;
               SEM.ready = true;
               SEM.loading = false;
-              setStatus("");
+              showProgress(false);
               run();
             })
             .catch(function (err) {
               SEM.loading = false;
-              setStatus("Ricerca semantica non disponibile — uso le parole chiave.");
-              setTimeout(function () { setStatus(""); }, 4500);
+              showProgress("error");
               if (window.console) console.warn("wine-finder semantic:", err);
             });
         };
@@ -663,10 +744,9 @@
         for (i = full + (half ? 1 : 0); i < 5; i++) s += "☆";
         return s;
       }
+      // Only the concrete matches — the suggestion strength is shown as a meter, not words.
       function whyText(r, expanded) {
         var m = r.m, bits = [];
-        if (r.sm != null && r.sm >= 0.6) bits.push("forte affinità semantica");
-        else if (r.sm != null && r.sm >= 0.45) bits.push("affinità semantica");
         if (r.kw > 0 && expanded.length) {
           var set = {};
           m.kw.forEach(function (t) { set[t] = 1; });
@@ -675,16 +755,23 @@
         }
         var occSel = Object.keys(sel.occ).filter(function (o) { return m.occ.indexOf(o) >= 0; });
         if (occSel.length) bits.push(occSel.join(", "));
-        return bits.join(" · ");
+        return bits.map(cap).join(" · ");
       }
-      function cardHtml(r, expanded) {
+      function strengthHtml(v) {
+        var n = Math.max(1, Math.min(5, Math.round(v * 5)));
+        var out = "";
+        for (var i = 1; i <= 5; i++) out += '<i class="' + (i <= n ? "on" : "") + '"></i>';
+        return '<span class="wf-strength" role="img" aria-label="affinità ' + n + ' su 5">' + out + "</span>";
+      }
+      function cardHtml(r, expanded, strength) {
         var w = r.m.w;
         var reason = sel.q || Object.keys(sel.occ).length ? whyText(r, expanded) : "";
         var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" · ");
         return (
           '<article class="wf-card">' +
           '<div class="wf-card-top">' +
-          '<span class="wf-badge wf-badge-' + badgeSlug(r.m.type) + '">' + esc(TYPE_LABEL[r.m.type] || r.m.type) + "</span>" +
+          '<span class="wf-badge wf-badge-' + badgeSlug(r.m.type) + '">' + esc(cap(TYPE_LABEL[r.m.type] || r.m.type)) + "</span>" +
+          (strength != null ? strengthHtml(strength) : "") +
           '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
           (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
           "</div>" +
@@ -723,6 +810,13 @@
           return;
         }
         var top = rows.slice(0, 6);
+        var active =
+          !!sel.q ||
+          Object.keys(sel.occ).length ||
+          Object.keys(sel.type).length ||
+          !!sel.region ||
+          isFinite(sel.price);
+        var best = top[0].score || 1;
         var count =
           rows.length <= top.length
             ? top.length + (top.length === 1 ? " suggerimento" : " suggerimenti")
@@ -730,7 +824,10 @@
         elResults.innerHTML =
           '<p class="wf-count">' + count + "</p>" +
           top
-            .map(function (r) { return cardHtml(r, expanded); })
+            .map(function (r) {
+              var strength = active ? Math.max(0, Math.min(1, r.score / best)) : null;
+              return cardHtml(r, expanded, strength);
+            })
             .join("");
         Array.prototype.forEach.call(elResults.querySelectorAll(".wf-show"), function (btn) {
           btn.onclick = function () {
