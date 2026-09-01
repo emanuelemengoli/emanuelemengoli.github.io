@@ -53,7 +53,7 @@ map: true
     color: var(--global-text-color-light);
   }
   .section-sub {
-    margin: 0 0 0.4rem;
+    margin: 2.75rem 0 0.4rem;
     padding-bottom: 0.4rem;
     border-bottom: 1px solid var(--global-divider-color);
     font-size: 1.15rem;

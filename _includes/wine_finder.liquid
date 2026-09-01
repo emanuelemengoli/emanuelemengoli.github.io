@@ -188,10 +188,6 @@
   .wf-boost button:hover {
     border-color: var(--global-theme-color);
   }
-  .wf-boost small {
-    font-size: 0.76rem;
-    color: var(--global-text-color-light);
-  }
   .wf-status {
     margin: 0 0 0.6rem;
   }
@@ -366,11 +362,6 @@
     font-size: 0.78rem;
     color: var(--global-text-color-light);
   }
-  .wf-card-why {
-    margin-top: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--global-theme-color);
-  }
   .wf-card .wf-show {
     margin-top: 0.5rem;
     font: inherit;
@@ -439,7 +430,6 @@
 
   <div id="wf-boost" class="wf-boost" hidden>
     <button type="button" id="wf-boost-btn">Migliora i suggerimenti</button>
-    <small id="wf-boost-note">una tantum, ~25&nbsp;MB</small>
   </div>
   <div id="wf-status" class="wf-status" hidden aria-hidden="true">
     <span class="wf-progress"><i id="wf-progress-fill"></i></span>
@@ -729,7 +719,6 @@
       var elProgFill = document.getElementById("wf-progress-fill");
       var elBoost = document.getElementById("wf-boost");
       var elBoostBtn = document.getElementById("wf-boost-btn");
-      var elBoostNote = document.getElementById("wf-boost-note");
 
       function chip(container, value, label, store) {
         var b = document.createElement("button");
@@ -898,7 +887,6 @@
       elBoostBtn.onclick = function () {
         boostOn = true;
         try { localStorage.setItem("wine-finder-boost", "1"); } catch (e) {}
-        if (elBoostNote) elBoostNote.hidden = true;
         updateBoostVisibility();
         ensureSemantic();
       };
@@ -968,11 +956,8 @@
           return "Una buona scelta per " + occPhrase + (qPrice ? " intorno ai " + qPrice + " €" : "") + ".";
         }
         var typeSel = Object.keys(sel.type);
-        if (typeSel.length) {
-          return TYPE_PHRASE[typeSel[0]] || "Un vino di riferimento della collezione.";
-        }
-        if (sel.q || sel.region || isFinite(sel.price)) {
-          return "Un vino di riferimento della collezione.";
+        if (typeSel.length && TYPE_PHRASE[typeSel[0]]) {
+          return TYPE_PHRASE[typeSel[0]];
         }
         return "";
       }
@@ -1002,9 +987,10 @@
           "</article>"
         );
       }
+      // Compact runner-up: no reason line — the strength meter and ordering already
+      // rank it, and the sentence would just repeat "La mia scelta".
       function compactCardHtml(r, strength) {
         var w = r.m.w;
-        var reason = reasonSentence(r.m);
         var meta = [w.region, w.grape].filter(Boolean).map(esc).join(" · ");
         return (
           '<article class="wf-card">' +
@@ -1017,7 +1003,6 @@
           '<div class="wf-card-name no-tx">' + esc(w.name) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
           '<div class="wf-card-prod no-tx">' + esc(w.producer) + "</div>" +
           (meta ? '<div class="wf-card-meta">' + meta + "</div>" : "") +
-          (reason ? '<div class="wf-card-why">' + esc(reason) + "</div>" : "") +
           '<button type="button" class="wf-show" data-name="' + esc(w.name) + '" data-producer="' + esc(w.producer) + '">Vedi sulla mappa →</button>' +
           "</article>"
         );
