@@ -35,6 +35,18 @@ function createWineTastingFormUXv11() {
 
   addShort(form, 'Cantina / produttore', true);
   addShort(form, 'Nome del vino', true);
+  
+  const urlValidation = FormApp.createTextValidation()
+  .setHelpText('Inserisci un URL valido, ad esempio https://www.example.com')
+  .requireTextIsUrl()
+  .build();
+
+form.addTextItem()
+  .setTitle('URL')
+  .setHelpText('Link alla pagina del vino o del produttore.')
+  .setRequired(false)
+  .setValidation(urlValidation);
+
   addShort(form, 'Denominazione', true);
   addShort(form, 'Territorio di produzione', true);
   addShort(form, 'Annata', true, 'Sono ammessi anche valori come NV / s.a.');

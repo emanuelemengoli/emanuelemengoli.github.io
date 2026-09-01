@@ -25,8 +25,9 @@ A plain-text walk-through of every question and the branching is in
 Structure the script needs to know about (it matches on the exact question titles):
 
 - **Identificazione** — `Cantina / produttore`, `Nome del vino`, `Denominazione`,
-  `Territorio di produzione`, `Annata`, `Data`, `Prezzo` (numeric), `Regione`, `Stato`,
-  optional `Latitudine` / `Longitudine`, and the **`Tipologia`** dropdown
+  `Territorio di produzione`, `Vitigno/i`, `Annata`, `Data`, `Prezzo` (numeric),
+  `Regione`, `Stato`, optional `Url` (producer/wine site — bare domains get `https://`)
+  and optional `Latitudine` / `Longitudine`, and the **`Tipologia`** dropdown
   (Rosso / Bianco / Spumante / Rosé / Arancione → marker colour).
 - A **`Valutazione`** dropdown per tipologia: **Corta** or **Completa**.
 - The visual, olfactory and taste questions repeat once per tipologia branch and once per

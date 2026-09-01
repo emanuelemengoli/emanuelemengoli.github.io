@@ -2,6 +2,7 @@ SCHEDA DI DEGUSTAZIONE DEL VINO
 
 1. IDENTIFICAZIONE DEL VINO
 Cantina / produttore:
+Url:
 Nome del vino:
 Denominazione:
 Territorio di produzione:

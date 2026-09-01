@@ -10,10 +10,9 @@
 
 <style>
   #wine-map {
-    height: 460px;
+    height: clamp(460px, 72vh, 720px);
     width: 100%;
-    border-radius: 6px;
-    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
     z-index: 0;
   }
   #wine-map .leaflet-container {
@@ -97,6 +96,14 @@
   }
   .wine-card .wine-producer a {
     color: var(--global-theme-color);
+  }
+  .wine-card .wine-site,
+  .wine-modal-head .wine-site {
+    display: inline-block;
+    margin-top: 0.1rem;
+    font-size: 0.78rem;
+    color: var(--global-theme-color);
+    word-break: break-all;
   }
   .wine-card .wine-meta {
     margin-top: 0.15rem;
@@ -226,6 +233,11 @@
     flex: 0 0 8.5rem;
     color: var(--global-text-color-light);
   }
+  .wine-full .chips-label {
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
   .wine-full .chips {
     display: flex;
     flex-wrap: wrap;
@@ -293,7 +305,19 @@
         return v == null || String(v).trim() === "";
       }
       function safeUrl(u) {
-        return /^(https?:\/\/|\/)/i.test(String(u || "")) ? String(u) : "";
+        u = String(u || "").trim();
+        if (!u) return "";
+        if (/^(https?:\/\/|\/)/i.test(u)) return u;
+        // the form's "Url" field is optional and often typed without a scheme
+        if (/^[\w-]+(\.[\w-]+)+([/?#]|$)/.test(u)) return "https://" + u;
+        return "";
+      }
+      function hostOf(u) {
+        try {
+          return new URL(u).hostname.replace(/^www\./, "");
+        } catch (e) {
+          return String(u || "").replace(/^https?:\/\//i, "").split("/")[0];
+        }
       }
 
       // ---- runtime IT -> EN via Google Translate's keyless endpoint, cached locally ----
@@ -433,47 +457,49 @@
         );
       }
 
-      // section key -> [key, Italian heading, scalar [field,label] in order, chip fields, free-text [field,label]]
+      // section -> [key, Italian heading, scalar [field,label] in order,
+      //             chip [field,label], free-text [field,label]]. Labels match the
+      //             tasting form's own wording so nothing is lost to abbreviation.
       var SECTIONS = [
         [
           "visual",
           "Esame visivo",
           [
             ["limpidezza", "Limpidezza"],
-            ["intensita_colore", "Intensità colore"],
+            ["intensita_colore", "Intensità del colore"],
             ["colore", "Colore"],
-            ["metodo", "Metodo"],
-            ["effervescenza", "Effervescenza"],
-            ["perlage_dimensione", "Perlage — bollicine"],
+            ["metodo", "Metodo di produzione"],
+            ["effervescenza", "Effervescenza — intensità"],
+            ["perlage_dimensione", "Perlage — dimensione delle bollicine"],
             ["perlage_persistenza", "Perlage — persistenza"],
           ],
-          [["osservazioni"]],
+          [["osservazioni", "Altre osservazioni visive"]],
           [],
         ],
         [
           "nose",
           "Esame olfattivo",
           [
-            ["condizione", "Condizione"],
-            ["intensita", "Intensità"],
-            ["evoluzione", "Evoluzione"],
+            ["condizione", "Condizione dei sentori"],
+            ["intensita", "Intensità olfattiva"],
+            ["evoluzione", "Evoluzione olfattiva"],
           ],
-          [["aromi"]],
-          [["altri_aromi", "Altri aromi"]],
+          [["aromi", "Aromi percepiti"]],
+          [["altri_aromi", "Altri aromi / note"]],
         ],
         [
           "palate",
           "Esame gustativo",
           [
-            ["zucchero", "Zucchero"],
+            ["zucchero", "Zucchero (dolcezza)"],
             ["acidita", "Acidità"],
             ["tannini", "Tannini"],
             ["alcol", "Alcol"],
             ["corpo", "Corpo"],
-            ["intensita_sapori", "Intensità sapori"],
-            ["finale", "Finale"],
+            ["intensita_sapori", "Intensità dei sapori"],
+            ["finale", "Persistenza / finale"],
           ],
-          [["aromi_palato"]],
+          [["aromi_palato", "Aromi al palato (per fase)"]],
           [],
         ],
       ];
@@ -490,7 +516,9 @@
           .join("");
         var chipHtml = spec[3]
           .map(function (f) {
-            return Array.isArray(obj[f[0]]) && obj[f[0]].length ? chips(obj[f[0]]) : "";
+            if (!Array.isArray(obj[f[0]]) || !obj[f[0]].length) return "";
+            var lbl = f[1] ? '<div class="chips-label">' + esc(f[1]) + "</div>" : "";
+            return lbl + chips(obj[f[0]]);
           })
           .join("");
         var freeHtml = spec[4]
@@ -519,15 +547,17 @@
       // Wine identity block, shared by the popup summary and the modal header.
       function identHtml(w) {
         var url = safeUrl(w.url);
-        var producer = url
-          ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(w.producer) + " ↗</a>"
-          : '<span class="no-tx">' + esc(w.producer) + "</span>";
         var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
         var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" &middot; ");
+        var site = url
+          ? '<a class="wine-site no-tx" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
+            esc(hostOf(url)) + " ↗</a>"
+          : "";
         return (
           '<div class="wine-name no-tx">' + esc(w.name) + vintage + "</div>" +
           stars(w.rating) +
-          '<div class="wine-producer">' + producer + "</div>" +
+          '<div class="wine-producer no-tx">' + esc(w.producer) + "</div>" +
+          site +
           (meta ? '<div class="wine-meta">' + meta + "</div>" : "")
         );
       }
@@ -537,7 +567,7 @@
         var notes = blankStr(w.notes) ? "" : '<p class="wine-notes">' + esc(w.notes) + "</p>";
         var pairing = blankStr(w.pairing)
           ? ""
-          : '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> ' + esc(w.pairing) + "</div>";
+          : '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> Abbinamento: ' + esc(w.pairing) + "</div>";
         var tasted = w.tasted
           ? '<div class="wine-tasted">Degustato il <span class="no-tx">' + esc(w.tasted) + "</span></div>"
           : "";

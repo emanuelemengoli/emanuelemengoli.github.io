@@ -38,7 +38,7 @@ OPZIONALI — per la collocazione sulla mappa
 📍 Coordinate per la mappa
 Facoltative. Se fornite vengono utilizzate per collocare il vino con precisione
 sulla mappa. In alternativa il sistema le deduce combinando produttore, regione e stato.
-
+Url:
 Latitudine:
 Longitudine:
 

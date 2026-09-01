@@ -34,17 +34,19 @@ USER_AGENT = "emanuelemengoli.github.io wine-map sync " \
 # removed) -> entry path + kind. A field may map to SEVERAL columns because the form
 # repeats questions per tipologia / per Corta|Completa path; a respondent fills only one,
 # so scalar fields take the first non-blank column and :list fields merge them.
-# Kinds: :text :int :rating :date :num :price :list. Paths starting "_" are transient.
+# Kinds: :text :int :rating :date :num :price :list :url. Paths starting "_" are transient.
 FIELDS = [
   ["producer",                          :text,  %w[cantinaproduttore]],
   ["name",                              :text,  %w[nomedelvino]],
   ["denominazione",                     :text,  %w[denominazione]],
   ["territorio",                        :text,  %w[territoriodiproduzione]],
+  ["grape",                             :text,  %w[vitignoi vitigno vitigni]],
   ["vintage",                           :int,   %w[annata]],
   ["tasted",                            :date,  %w[data]],
   ["price",                             :price, %w[prezzo]],
   ["region",                            :text,  %w[regione]],
   ["country",                           :text,  %w[stato]],
+  ["url",                               :url,   %w[url sito sitoweb]],
   ["_lat",                              :num,   %w[latitudine]],
   ["_lng",                              :num,   %w[longitudine]],
   ["_tipologia",                        :text,  %w[tipologia]],
@@ -226,7 +228,17 @@ def coerce(kind, raw)
   when :date   then to_yaml_date(raw)
   when :price  then blank?(raw) ? nil : "€ #{utf8(raw).strip.sub(/\A€\s*/, '')}"
   when :list   then blank?(raw) ? nil : split_multi(raw)
+  when :url    then to_url(raw)
   end
+end
+
+# The form's optional "Url" field: accept a full URL, or add https:// to a bare
+# host like "gdvajra.it"; reject anything that isn't host-shaped.
+def to_url(raw)
+  return nil if blank?(raw)
+  s = utf8(raw).strip.gsub(/\s+/, "")
+  return s if s.match?(%r{\Ahttps?://}i)
+  s.match?(%r{\A[\w-]+(\.[\w-]+)+([/?#].*)?\z}) ? "https://#{s}" : nil
 end
 
 def derive_color(entry, tipologia)

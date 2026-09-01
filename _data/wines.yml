@@ -16,79 +16,79 @@
 #
 # The entries below are examples — replace them with your own tastings.
 
-- name: Barolo
-  producer: G. D. Vajra
-  url: https://www.gdvajra.it/
-  denominazione: Barolo DOCG
-  region: Piemonte
-  country: Italia
-  lat: 44.6167
-  lng: 7.9833
-  vintage: 2019
-  grape: Nebbiolo
-  price: "€ 45"
-  color: red
-  rating: 4
-  tasted: '2024-11-02'
-  notes: Catrame e rosa appassita, tannino fitto; da attendere un decennio.
-  pairing: Brasato al Barolo
-  tasting:
-    visual:
-      limpidezza: Limpido
-      intensita_colore: Medio
-      colore: Rosso granato
-      osservazioni:
-      - Archetti o lacrime
-    nose:
-      condizione: Netti
-      intensita: Pronunciata
-      evoluzione: In corso d'evoluzione
-      aromi:
-      - Rosa
-      - Ciliegia
-      - Prugna
-      - Catrame
-      - Cuoio
-      - Sottobosco
-    palate:
-      zucchero: Secco
-      acidita: Elevata
-      tannini: Potenti
-      alcol: Medio
-      corpo: Strutturato
-      intensita_sapori: Pronunciata
-      finale: Lungo
+# - name: Barolo
+#   producer: G. D. Vajra
+#   url: https://www.gdvajra.it/
+#   denominazione: Barolo DOCG
+#   region: Piemonte
+#   country: Italia
+#   lat: 44.6167
+#   lng: 7.9833
+#   vintage: 2019
+#   grape: Nebbiolo
+#   price: "€ 45"
+#   color: red
+#   rating: 4
+#   tasted: '2024-11-02'
+#   notes: Catrame e rosa appassita, tannino fitto; da attendere un decennio.
+#   pairing: Brasato al Barolo
+#   tasting:
+#     visual:
+#       limpidezza: Limpido
+#       intensita_colore: Medio
+#       colore: Rosso granato
+#       osservazioni:
+#       - Archetti o lacrime
+#     nose:
+#       condizione: Netti
+#       intensita: Pronunciata
+#       evoluzione: In corso d'evoluzione
+#       aromi:
+#       - Rosa
+#       - Ciliegia
+#       - Prugna
+#       - Catrame
+#       - Cuoio
+#       - Sottobosco
+#     palate:
+#       zucchero: Secco
+#       acidita: Elevata
+#       tannini: Potenti
+#       alcol: Medio
+#       corpo: Strutturato
+#       intensita_sapori: Pronunciata
+#       finale: Lungo
 
-- name: Chablis 1er Cru Montmains
-  producer: Domaine William Fèvre
-  url: https://www.williamfevre.com/
-  denominazione: Chablis 1er Cru
-  region: Borgogna
-  country: Francia
-  lat: 47.8236
-  lng: 3.7897
-  vintage: 2021
-  grape: Chardonnay
-  color: white
-  rating: 4
-  tasted: '2025-03-14'
-  notes: Gessoso, teso, salino come guscio d'ostrica.
+# - name: Chablis 1er Cru Montmains
+#   producer: Domaine William Fèvre
+#   url: https://www.williamfevre.com/
+#   denominazione: Chablis 1er Cru
+#   region: Borgogna
+#   country: Francia
+#   lat: 47.8236
+#   lng: 3.7897
+#   vintage: 2021
+#   grape: Chardonnay
+#   color: white
+#   rating: 4
+#   tasted: '2025-03-14'
+#   notes: Gessoso, teso, salino come guscio d'ostrica.
 
-- name: Brut Nature "Les Barres"
-  producer: Chartogne-Taillet
-  url: https://www.chartogne-taillet.com/
-  denominazione: Champagne
-  region: Champagne
-  country: Francia
-  lat: 49.32
-  lng: 3.95
-  vintage: 2018
-  grape: Meunier
-  color: sparkling
-  sparkling: true
-  rating: 5
-  tasted: '2025-06-21'
-  notes: Meunier da vigna vecchia; fumè, vinoso, dosaggio bassissimo.
+# - name: Brut Nature "Les Barres"
+#   producer: Chartogne-Taillet
+#   url: https://www.chartogne-taillet.com/
+#   denominazione: Champagne
+#   region: Champagne
+#   country: Francia
+#   lat: 49.32
+#   lng: 3.95
+#   vintage: 2018
+#   grape: Meunier
+#   color: sparkling
+#   sparkling: true
+#   rating: 5
+#   tasted: '2025-06-21'
+#   notes: Meunier da vigna vecchia; fumè, vinoso, dosaggio bassissimo.
 
 - name: ansonica
   producer: farkas AZ agricola
