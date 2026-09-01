@@ -2,20 +2,13 @@
 layout: page
 title: Le mie passioni
 permalink: /le-mie-passioni/
-#description: A few things I enjoy beyond research.
+description: Wine, travel, sport and life outside research.
 nav: true
 nav_order: 6
 map: true
-hide_header: true # keeps "Le mie passioni" in the navbar but hides the page's <h1>/description
 ---
 
 <style>
-  .passions-lead {
-    font-size: 1.05rem;
-    color: var(--global-text-color-light);
-    max-width: 44rem;
-    margin: 0.75rem 0 0.5rem;
-  }
   .passions-section {
     margin-top: 2.25rem;
   }
@@ -33,28 +26,94 @@ hide_header: true # keeps "Le mie passioni" in the navbar but hides the page's <
     color: var(--global-theme-color);
     font-size: 0.8em;
   }
+  .wine-lang-toggle {
+    margin-left: auto;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--global-text-color-light);
+    cursor: pointer;
+  }
+  .wine-lang-toggle:hover {
+    border-color: var(--global-theme-color);
+    color: var(--global-theme-color);
+  }
+  .wine-lang-toggle[aria-busy="true"] {
+    opacity: 0.55;
+    cursor: progress;
+  }
   .passions-section > .section-desc {
     max-width: 44rem;
     margin: 0 0 1.1rem;
     font-size: 0.95rem;
     color: var(--global-text-color-light);
   }
+  .section-sub {
+    margin: 0 0 0.4rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--global-divider-color);
+    font-size: 1.15rem;
+    font-weight: 500;
+  }
+  .wine-stats {
+    margin: 0 0 0.8rem;
+    font-size: 0.85rem;
+    color: var(--global-text-color-light);
+  }
+  .wine-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.9rem;
+    margin: 0 0 0.7rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8rem;
+    color: var(--global-text-color-light);
+  }
+  .wine-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .wine-legend-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
 </style>
 
-<p class="passions-lead">
-  A small corner for the things I enjoy outside research; wine, travel,
-  sport and whatever else finds its way here over time.
-</p>
-
 <section class="passions-section">
-  <h2><i class="fa-solid fa-wine-glass"></i>Degustando</h2>
+  <h2>
+    <i class="fa-solid fa-wine-glass"></i><span class="no-tx">Degustando</span>
+    <button id="wine-lang-toggle" class="wine-lang-toggle no-tx" type="button">EN</button>
+  </h2>
   <p class="section-desc">
-    A collection of wines I have tasted, mapped to the places where they are produced.
-    Click on a bottle to discover the producer and my personal rating. The collection
-    grows as I explore new regions, producers and bottles.
+    Una raccolta dei vini che ho degustato: esplorali sulla mappa o chiedimi un
+    consiglio in base al piatto, alla regione o all'occasione.
   </p>
-  {% include wine_map.liquid %}
+
+  {% include wine_i18n.liquid %}
   {% include wine_finder.liquid %}
+
+  <h3 class="section-sub">La mia mappa del vino</h3>
+  {% assign _w = site.data.wines %}
+  {% if _w and _w.size > 0 %}
+    {% assign _regions = _w | map: "region" | compact | uniq %}
+    {% assign _countries = _w | map: "country" | compact | uniq %}
+    <p class="wine-stats">
+      {{ _w.size }} {% if _w.size == 1 %}vino{% else %}vini{% endif %} ·
+      {{ _regions.size }} {% if _regions.size == 1 %}regione{% else %}regioni{% endif %} ·
+      {{ _countries.size }} {% if _countries.size == 1 %}paese{% else %}paesi{% endif %}
+    </p>
+  {% endif %}
+  <ul id="wine-legend" class="wine-legend"></ul>
+
+  {% include wine_map.liquid %}
 </section>
 
 <!--

@@ -10,10 +10,15 @@
 
 <style>
   #wine-map {
-    height: clamp(460px, 72vh, 720px);
+    height: clamp(340px, 60vh, 560px);
     width: 100%;
     border-radius: 8px;
     z-index: 0;
+  }
+  @media (max-width: 576px) {
+    #wine-map {
+      height: clamp(300px, 52vh, 420px);
+    }
   }
   #wine-map .leaflet-container {
     background: var(--global-bg-color);
@@ -37,28 +42,6 @@
   }
   html[data-theme="dark"] .wine-marker svg {
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
-  }
-
-  .wine-lang {
-    font: inherit;
-    font-size: 0.7rem;
-    font-weight: 700;
-    line-height: 1;
-    padding: 0.3rem 0.5rem;
-    background: var(--global-bg-color);
-    color: var(--global-text-color);
-    border: 1px solid var(--global-divider-color);
-    border-radius: 4px;
-    cursor: pointer;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
-  }
-  .wine-lang:hover {
-    border-color: var(--global-theme-color);
-    color: var(--global-theme-color);
-  }
-  .wine-lang[aria-busy="true"] {
-    opacity: 0.55;
-    cursor: progress;
   }
 
   .leaflet-popup.wine-popup .leaflet-popup-content-wrapper,
@@ -285,16 +268,15 @@
         orange: "#cd6620",
       };
 
-      // Only the map widget's own controls are bilingual; every word that comes from
-      // _data/wines.yml (field labels included) is authored in Italian and machine-translated.
-      var UI = {
-        it: { lang: "EN", langTitle: "Mostra in inglese", more: "Vedi valutazione completa", close: "Chiudi" },
-        en: { lang: "IT", langTitle: "Show in Italian", more: "See full evaluation", close: "Close" },
+      // Language + IT->EN translation are shared with the finder via window.WineI18n
+      // (wine_i18n.liquid, included first). Everything here is authored in Italian.
+      var I18N = window.WineI18n || {
+        lang: "it",
+        translate: function (el, done) {
+          if (done) done();
+        },
+        onChange: function () {},
       };
-      var LANG = "it";
-      try {
-        if (window.localStorage && localStorage.getItem("wine-map-lang") === "en") LANG = "en";
-      } catch (e) {}
 
       function esc(s) {
         return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -320,98 +302,8 @@
         }
       }
 
-      // ---- runtime IT -> EN via Google Translate's keyless endpoint, cached locally ----
-      var TR = {};
-      try {
-        TR = JSON.parse(localStorage.getItem("wine-map-tr") || "{}") || {};
-      } catch (e) {}
-      function trSave() {
-        try {
-          localStorage.setItem("wine-map-tr", JSON.stringify(TR));
-        } catch (e) {}
-      }
-      function trOne(src) {
-        var url =
-          "https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=en&dt=t&q=" +
-          encodeURIComponent(src);
-        return fetch(url)
-          .then(function (r) {
-            return r.ok ? r.json() : null;
-          })
-          .then(function (j) {
-            var out =
-              j && j[0]
-                ? j[0]
-                    .map(function (seg) {
-                      return seg && seg[0] ? seg[0] : "";
-                    })
-                    .join("")
-                : "";
-            if (out) TR[src] = out;
-          })
-          .catch(function () {
-            /* leave untranslated; a later toggle retries */
-          });
-      }
-      // Resolve every source string in `list` to English, filling TR. Unknown strings go
-      // out one per request, in sequential waves; failures keep the Italian and retry later.
-      function trResolve(list) {
-        var miss = [];
-        list.forEach(function (s) {
-          s = (s || "").trim();
-          if (s && !(s in TR) && miss.indexOf(s) < 0) miss.push(s);
-        });
-        if (!miss.length) return Promise.resolve(TR);
-        var idx = 0;
-        function wave() {
-          if (idx >= miss.length) {
-            trSave();
-            return Promise.resolve(TR);
-          }
-          var batch = miss.slice(idx, idx + 8);
-          idx += 8;
-          return Promise.all(batch.map(trOne)).then(wave);
-        }
-        return wave();
-      }
-
-      // Translate the visible wine text inside `rootEl` in place (no-op unless LANG=en).
-      // Skips links, buttons and anything marked .no-tx (proper nouns, dates, prices).
       function translateEl(rootEl, done) {
-        if (LANG !== "en" || !rootEl || !window.fetch) {
-          if (done) done();
-          return;
-        }
-        var walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
-          acceptNode: function (node) {
-            if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-            var p = node.parentElement;
-            while (p && p !== rootEl.parentElement) {
-              if (p.nodeName === "A" || p.nodeName === "BUTTON") return NodeFilter.FILTER_REJECT;
-              if (p.classList && p.classList.contains("no-tx")) return NodeFilter.FILTER_REJECT;
-              p = p.parentElement;
-            }
-            return NodeFilter.FILTER_ACCEPT;
-          },
-        });
-        var nodes = [];
-        var nd;
-        while ((nd = walker.nextNode())) nodes.push(nd);
-        if (!nodes.length) {
-          if (done) done();
-          return;
-        }
-        trResolve(
-          nodes.map(function (n) {
-            return n.nodeValue;
-          })
-        ).then(function (map) {
-          nodes.forEach(function (n) {
-            var key = n.nodeValue.trim();
-            if (map[key] && map[key] !== key) n.nodeValue = n.nodeValue.replace(key, map[key]);
-          });
-          if (done) done();
-        });
+        I18N.translate(rootEl, done);
       }
 
       function bottleIcon(color) {
@@ -572,7 +464,7 @@
           ? '<div class="wine-tasted">Degustato il <span class="no-tx">' + esc(w.tasted) + "</span></div>"
           : "";
         var more = hasFull(w)
-          ? '<button type="button" class="wine-more">' + esc(UI[LANG].more) + "</button>"
+          ? '<button type="button" class="wine-more">Vedi valutazione completa</button>'
           : "";
         return (
           '<div class="wine-card">' +
@@ -641,9 +533,7 @@
         box.setAttribute("aria-modal", "true");
         box.setAttribute("aria-label", (w.name || "") + (w.vintage ? " " + w.vintage : ""));
         box.innerHTML =
-          '<button type="button" class="wine-modal-close" aria-label="' +
-          esc(UI[LANG].close) +
-          '">&times;</button>' +
+          '<button type="button" class="wine-modal-close no-tx" aria-label="Chiudi">&times;</button>' +
           '<div class="wine-modal-head">' +
           identHtml(w) +
           "</div>" +
@@ -692,39 +582,14 @@
         openPopup = null;
       });
 
-      // ---- IT / EN toggle ----
-      var LangControl = L.Control.extend({
-        options: { position: "topright" },
-        onAdd: function () {
-          var b = L.DomUtil.create("button", "wine-lang");
-          b.type = "button";
-          var sync = function () {
-            b.textContent = UI[LANG].lang;
-            b.setAttribute("title", UI[LANG].langTitle);
-            b.setAttribute("aria-label", UI[LANG].langTitle);
-          };
-          sync();
-          L.DomEvent.disableClickPropagation(b);
-          L.DomEvent.on(b, "click", function (ev) {
-            L.DomEvent.stop(ev);
-            LANG = LANG === "it" ? "en" : "it";
-            try {
-              if (window.localStorage) localStorage.setItem("wine-map-lang", LANG);
-            } catch (e) {}
-            sync();
-            closeModal(); // it was rendered in the old language; dismiss it
-            b.setAttribute("aria-busy", "true");
-            markers.forEach(function (m) {
-              m.setPopupContent(cardNode(m._wine));
-            });
-            refreshOpenPopup(function () {
-              b.removeAttribute("aria-busy");
-            });
-          });
-          return b;
-        },
+      // ---- language: driven by the single section toggle (window.WineI18n) ----
+      I18N.onChange(function () {
+        closeModal(); // it was rendered in the old language
+        markers.forEach(function (m) {
+          m.setPopupContent(cardNode(m._wine)); // rebuild from the Italian source
+        });
+        refreshOpenPopup();
       });
-      map.addControl(new LangControl());
 
       // Fan out markers that share the exact same coordinates so each stays clickable.
       var seen = {};
@@ -771,6 +636,45 @@
         hit.openPopup();
         el.scrollIntoView({ behavior: "smooth", block: "center" });
       });
+
+      // ...or to open a wine's full tasting sheet.
+      window.addEventListener("winefinder:sheet", function (ev) {
+        var d = (ev && ev.detail) || {};
+        var w = wines.filter(function (x) {
+          return x.name === d.name && x.producer === d.producer;
+        })[0];
+        if (w) openModal(w);
+      });
+
+      // Legend under the map — labels + colours straight from COLORS, present types only.
+      (function () {
+        var host = document.getElementById("wine-legend");
+        if (!host) return;
+        var LABEL = { red: "Rosso", white: "Bianco", "rosé": "Rosé", sparkling: "Bollicine", orange: "Arancione" };
+        var order = ["red", "white", "rosé", "sparkling", "orange"];
+        var present = {};
+        wines.forEach(function (w) {
+          var c = String(w.color || "").toLowerCase();
+          if (c === "rose") c = "rosé";
+          if (LABEL[c]) present[c] = true;
+        });
+        var html = order
+          .filter(function (c) { return present[c]; })
+          .map(function (c) {
+            return (
+              '<li><span class="wine-legend-dot" style="background:' + COLORS[c] + '"></span>' +
+              LABEL[c] +
+              "</li>"
+            );
+          })
+          .join("");
+        if (html) {
+          host.innerHTML = html;
+          if (I18N.lang === "en") I18N.translate(host);
+        } else {
+          host.hidden = true;
+        }
+      })();
     });
   })();
 </script>

@@ -1,0 +1,201 @@
+{% comment %}
+  Shared IT -> EN runtime translation for the Degustando section (/le-mie-passioni/).
+  Include ONCE, before wine_finder.liquid and wine_map.liquid.
+
+  window.WineI18n:
+    .lang                "it" | "en"  (plain property, kept in sync)
+    .setLang(l)          switch language: persist, re-translate / restore the section, notify
+    .onChange(fn)        subscribe fn(lang) — finder re-renders, map rebuilds popups
+    .translate(el, done) walk el's text nodes IT -> EN via Google's keyless endpoint,
+                         cache in localStorage, stash the Italian for restore.
+                         Skips <a> and .no-tx; DOES translate <button> text.
+    .restore(el)         put stashed Italian back (used on EN -> IT)
+
+  English is produced on the fly and cached — no hand-maintained copies. One toggle
+  (#wine-lang-toggle in the page) drives the finder, the map popups and the tasting sheet.
+{% endcomment %}
+
+<script>
+  (function () {
+    var KEY_LANG = "wine-lang";
+    var KEY_TR = "wine-map-tr"; // reuse the existing cache so returning visitors keep it
+
+    var lang = "it";
+    try {
+      if (window.localStorage && localStorage.getItem(KEY_LANG) === "en") lang = "en";
+    } catch (e) {}
+
+    var subs = [];
+    var TR = {};
+    try {
+      TR = JSON.parse(localStorage.getItem(KEY_TR) || "{}") || {};
+    } catch (e) {}
+    function trSave() {
+      try {
+        localStorage.setItem(KEY_TR, JSON.stringify(TR));
+      } catch (e) {}
+    }
+
+    function trOne(src) {
+      var url =
+        "https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl=en&dt=t&q=" +
+        encodeURIComponent(src);
+      return fetch(url)
+        .then(function (r) {
+          return r.ok ? r.json() : null;
+        })
+        .then(function (j) {
+          var out =
+            j && j[0]
+              ? j[0]
+                  .map(function (seg) {
+                    return seg && seg[0] ? seg[0] : "";
+                  })
+                  .join("")
+              : "";
+          if (out) TR[src] = out;
+        })
+        .catch(function () {
+          /* leave untranslated; a later toggle retries */
+        });
+    }
+    function trResolve(list) {
+      var miss = [];
+      list.forEach(function (s) {
+        s = (s || "").trim();
+        if (s && !(s in TR) && miss.indexOf(s) < 0) miss.push(s);
+      });
+      if (!miss.length) return Promise.resolve(TR);
+      var idx = 0;
+      function wave() {
+        if (idx >= miss.length) {
+          trSave();
+          return Promise.resolve(TR);
+        }
+        var batch = miss.slice(idx, idx + 8);
+        idx += 8;
+        return Promise.all(batch.map(trOne)).then(wave);
+      }
+      return wave();
+    }
+
+    function textNodes(rootEl) {
+      var walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          var p = node.parentElement;
+          while (p && p !== rootEl.parentElement) {
+            if (p.nodeName === "A") return NodeFilter.FILTER_REJECT;
+            if (p.classList && p.classList.contains("no-tx")) return NodeFilter.FILTER_REJECT;
+            p = p.parentElement;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      var nodes = [];
+      var nd;
+      while ((nd = walker.nextNode())) nodes.push(nd);
+      return nodes;
+    }
+
+    function translate(rootEl, done) {
+      if (lang !== "en" || !rootEl || !window.fetch) {
+        if (done) done();
+        return;
+      }
+      var nodes = textNodes(rootEl);
+      if (!nodes.length) {
+        if (done) done();
+        return;
+      }
+      trResolve(
+        nodes.map(function (n) {
+          return n.nodeValue;
+        })
+      ).then(function (map) {
+        nodes.forEach(function (n) {
+          var key = n.nodeValue.trim();
+          if (map[key] && map[key] !== key) {
+            if (n.__wiIt == null) n.__wiIt = n.nodeValue;
+            n.nodeValue = n.nodeValue.replace(key, map[key]);
+          }
+        });
+        if (done) done();
+      });
+    }
+
+    function restore(rootEl) {
+      if (!rootEl) return;
+      textNodes(rootEl).forEach(function (n) {
+        if (n.__wiIt != null) {
+          n.nodeValue = n.__wiIt;
+          n.__wiIt = null;
+        }
+      });
+    }
+
+    function notify() {
+      subs.forEach(function (fn) {
+        try {
+          fn(lang);
+        } catch (e) {}
+      });
+    }
+
+    function section() {
+      return document.querySelector(".passions-section") || document.body;
+    }
+
+    function setLang(l) {
+      l = l === "en" ? "en" : "it";
+      if (l === lang) return;
+      lang = l;
+      window.WineI18n.lang = lang;
+      try {
+        if (window.localStorage) localStorage.setItem(KEY_LANG, lang);
+      } catch (e) {}
+      if (lang === "en") translate(section());
+      else restore(section());
+      notify();
+    }
+
+    window.WineI18n = {
+      lang: lang,
+      setLang: setLang,
+      onChange: function (fn) {
+        if (typeof fn === "function") subs.push(fn);
+      },
+      translate: translate,
+      restore: restore,
+    };
+
+    function init() {
+      var btn = document.getElementById("wine-lang-toggle");
+      if (btn) {
+        var sync = function () {
+          btn.textContent = lang === "it" ? "EN" : "IT";
+          btn.setAttribute(
+            "aria-label",
+            lang === "it" ? "Show this section in English" : "Mostra questa sezione in italiano"
+          );
+        };
+        sync();
+        btn.addEventListener("click", function () {
+          btn.setAttribute("aria-busy", "true");
+          setLang(lang === "it" ? "en" : "it");
+          sync();
+          setTimeout(function () {
+            btn.removeAttribute("aria-busy");
+          }, 700);
+        });
+        subs.push(sync);
+      }
+      if (lang === "en") translate(section());
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
