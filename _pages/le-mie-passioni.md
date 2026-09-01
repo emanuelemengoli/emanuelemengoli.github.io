@@ -54,6 +54,7 @@ hide_header: true # keeps "Le mie passioni" in the navbar but hides the page's <
     grows as I explore new regions, producers and bottles.
   </p>
   {% include wine_map.liquid %}
+  {% include wine_finder.liquid %}
 </section>
 
 <!--

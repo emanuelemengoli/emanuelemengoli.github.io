@@ -266,7 +266,8 @@ sass:
 # -----------------------------------------------------------------------------
 
 jekyll-minifier:
-  exclude: ["robots.txt"]
+  # wine_finder_semantic.js uses dynamic import() / ESM syntax uglifier can't parse
+  exclude: ["robots.txt", "assets/js/wine_finder_semantic.js"]
   uglifier_args:
     harmony: true
 

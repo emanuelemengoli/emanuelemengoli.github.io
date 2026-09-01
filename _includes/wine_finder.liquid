@@ -1,0 +1,754 @@
+{% comment %}
+  Wine finder for /le-mie-passioni/ — sits under the map (wine_map.liquid).
+
+  A: deterministic facet + keyword filter over _data/wines.yml. No dependencies,
+     works offline, instant. Facets (type / region / price / occasion) and food
+     tags are derived from the existing fields, with optional `occasions:` and
+     `food_tags:` overrides in the YAML.
+  B: optional semantic re-ranking via assets/js/wine_finder_semantic.js
+     (transformers.js + all-MiniLM-L6-v2, loaded from CDN on first use, cached).
+     Falls back to A if the model can't load.
+
+  A result's "Mostra sulla mappa" button fires a `winefinder:show` event that
+  wine_map.liquid listens for.
+{% endcomment %}
+
+<style>
+  #wine-finder {
+    margin-top: 1.6rem;
+  }
+  #wine-finder .wf-title {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    font-weight: 500;
+  }
+  #wine-finder .wf-hint {
+    margin: 0 0 0.9rem;
+    font-size: 0.9rem;
+    color: var(--global-text-color-light);
+  }
+  #wine-finder .wf-empty {
+    font-size: 0.92rem;
+    color: var(--global-text-color-light);
+  }
+
+  .wf-controls {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
+    padding: 0.9rem 1rem 1rem;
+  }
+  .wf-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.4rem;
+    margin-bottom: 0.7rem;
+  }
+  .wf-facet {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .wf-facet.wf-price {
+    flex: 1 1 12rem;
+  }
+  .wf-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--global-text-color-light);
+  }
+  .wf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .wf-chip {
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.34rem 0.6rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--global-text-color);
+    cursor: pointer;
+  }
+  .wf-chip[aria-pressed="true"] {
+    background: var(--global-theme-color);
+    border-color: var(--global-theme-color);
+    color: #fff;
+  }
+  #wine-finder select,
+  #wine-finder input[type="search"] {
+    font: inherit;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  #wine-finder input[type="range"] {
+    width: 100%;
+    accent-color: var(--global-theme-color);
+  }
+  .wf-search {
+    align-items: center;
+  }
+  .wf-search input[type="search"] {
+    flex: 1 1 16rem;
+  }
+  #wine-finder button.wf-ghost,
+  #wine-finder button#wf-go {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.44rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  #wine-finder button#wf-go {
+    border: none;
+    background: var(--global-theme-color);
+    color: #fff;
+  }
+  #wine-finder button.wf-ghost {
+    border: 1px solid var(--global-divider-color);
+    background: transparent;
+    color: var(--global-text-color-light);
+  }
+  .wf-sem-toggle {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
+  .wf-sem-toggle small {
+    opacity: 0.8;
+  }
+  .wf-status {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--global-theme-color);
+  }
+
+  .wf-results {
+    margin-top: 1rem;
+  }
+  .wf-count {
+    margin: 0 0 0.6rem;
+    font-size: 0.8rem;
+    color: var(--global-text-color-light);
+  }
+  .wf-card {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
+    padding: 0.7rem 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+  .wf-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .wf-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: #fff;
+    background: #6b6b6b;
+  }
+  .wf-badge-red { background: #b3402a; }
+  .wf-badge-white { background: #b39a2a; }
+  .wf-badge-rose { background: #c76f8e; }
+  .wf-badge-sparkling { background: #7d8241; }
+  .wf-badge-orange { background: #c9772f; }
+  .wf-stars {
+    color: #c8a951;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+  }
+  .wf-price-tag {
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
+  .wf-card-name {
+    font-weight: 600;
+    font-size: 0.96rem;
+  }
+  .wf-card-prod {
+    font-size: 0.86rem;
+  }
+  .wf-card-meta {
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: var(--global-text-color-light);
+  }
+  .wf-card-why {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--global-theme-color);
+  }
+  .wf-show {
+    margin-top: 0.5rem;
+    font: inherit;
+    font-size: 0.76rem;
+    padding: 0.24rem 0.6rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--global-theme-color);
+    cursor: pointer;
+  }
+  .wf-show:hover {
+    border-color: var(--global-theme-color);
+  }
+</style>
+
+<div id="wine-finder" hidden>
+  <h3 class="wf-title">Trova un vino</h3>
+  <p class="wf-hint">
+    Filtra la collezione per tipo, regione, prezzo e occasione, oppure descrivi il
+    piatto o il momento e lascia che sia la ricerca a suggerire.
+  </p>
+
+  <form id="wf-form" class="wf-controls">
+    <div class="wf-row">
+      <div class="wf-facet">
+        <span class="wf-label">Tipo</span>
+        <div class="wf-chips" id="wf-type"></div>
+      </div>
+      <div class="wf-facet">
+        <span class="wf-label">Occasione</span>
+        <div class="wf-chips" id="wf-occasion"></div>
+      </div>
+    </div>
+    <div class="wf-row">
+      <label class="wf-facet">
+        <span class="wf-label">Regione</span>
+        <select id="wf-region"><option value="">Tutte</option></select>
+      </label>
+      <label class="wf-facet wf-price">
+        <span class="wf-label">Prezzo massimo <b id="wf-price-out"></b></span>
+        <input type="range" id="wf-price" />
+      </label>
+    </div>
+    <div class="wf-row wf-search">
+      <input
+        type="search"
+        id="wf-q"
+        autocomplete="off"
+        placeholder="es. brasato di manzo · aperitivo in terrazza · un regalo importante"
+      />
+      <button type="submit" id="wf-go">Consiglia</button>
+      <button type="button" id="wf-clear" class="wf-ghost">Pulisci</button>
+    </div>
+    <label class="wf-sem-toggle">
+      <input type="checkbox" id="wf-sem" />
+      <span>ricerca semantica <small>(un modello ~25&nbsp;MB scaricato al primo uso, poi resta in cache)</small></span>
+    </label>
+    <div id="wf-status" class="wf-status" hidden></div>
+  </form>
+
+  <div id="wf-results" class="wf-results" aria-live="polite"></div>
+</div>
+
+<script>
+  window.WINE_FINDER_DATA = {{ site.data.wines | jsonify | replace: '</', '<\/' }};
+</script>
+
+<script>
+  (function () {
+    function ready(fn) {
+      if (document.readyState === "complete") fn();
+      else window.addEventListener("load", fn);
+    }
+
+    ready(function () {
+      var root = document.getElementById("wine-finder");
+      if (!root) return;
+      var wines = Array.isArray(window.WINE_FINDER_DATA) ? window.WINE_FINDER_DATA.slice() : [];
+      root.hidden = false;
+      if (!wines.length) {
+        root.innerHTML =
+          '<p class="wf-empty">Ancora nessun vino in archivio: la ricerca comparirà con la prima degustazione.</p>';
+        return;
+      }
+
+      // -------------------------------------------------- helpers
+      function norm(s) {
+        return String(s == null ? "" : s)
+          .toLowerCase()
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+      function tokens(s) {
+        var n = norm(s);
+        return n ? n.split(" ") : [];
+      }
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      function uniq(a) {
+        var o = {}, r = [];
+        a.forEach(function (x) {
+          if (x && !o[x]) {
+            o[x] = 1;
+            r.push(x);
+          }
+        });
+        return r;
+      }
+      function wineKey(w) {
+        return norm(w.producer) + "|" + norm(w.name) + "|" + (w.vintage || "");
+      }
+      function priceNum(w) {
+        var m = String(w.price == null ? "" : w.price).replace(",", ".").match(/\d+(\.\d+)?/);
+        return m ? parseFloat(m[0]) : null;
+      }
+      function hash(s) {
+        var h = 5381, i = s.length;
+        while (i) h = (h * 33) ^ s.charCodeAt(--i);
+        return (h >>> 0).toString(36);
+      }
+      var TYPE_LABEL = {
+        red: "Rosso", white: "Bianco", "rosé": "Rosé", rose: "Rosé",
+        sparkling: "Spumante", orange: "Arancione",
+      };
+      function typeKey(w) {
+        var c = norm(w.color);
+        return c === "rose" ? "rosé" : c;
+      }
+      function badgeSlug(t) {
+        return t === "rosé" ? "rose" : t || "other";
+      }
+
+      // -------------------------------------------------- concept lexicon (query expansion)
+      var LEX = [
+        { s: ["carne rossa", "manzo", "beef", "bistecca", "steak", "brasato", "brasati", "stufato", "stew", "arrosto", "roast", "selvaggina", "game", "cinghiale", "agnello", "lamb", "cervo"], a: ["rosso", "tannico", "strutturato", "corpo pieno", "invecchiato"] },
+        { s: ["maiale", "pork", "salumi", "prosciutto", "salame", "porchetta"], a: ["rosso", "medio corpo", "fresco", "bollicine"] },
+        { s: ["pollo", "chicken", "tacchino", "coniglio", "carne bianca", "white meat"], a: ["bianco strutturato", "rosso leggero", "rosato"] },
+        { s: ["pesce", "fish", "branzino", "orata", "spigola", "tonno", "tuna", "salmone", "salmon", "merluzzo", "cod"], a: ["bianco", "fresco", "sapido", "acidita alta", "leggero"] },
+        { s: ["crudo", "sashimi", "sushi", "ostriche", "oyster", "crostacei", "shellfish", "gamberi", "scampi", "frutti di mare", "vongole", "clams", "tartare"], a: ["bianco", "bollicine", "sapido", "minerale", "acidita alta"] },
+        { s: ["formaggio", "formaggi", "cheese", "pecorino", "parmigiano", "gorgonzola", "erborinato", "blue cheese", "brie", "camembert", "caprino", "goat cheese", "stagionato"], a: ["strutturato", "rosso", "bianco maturo", "dolce", "passito"] },
+        { s: ["pasta", "risotto", "primo", "gnocchi", "lasagne", "ragu", "ragout", "tagliatelle", "carbonara", "amatriciana", "pomodoro", "tomato"], a: ["rosso", "medio corpo", "acidita", "fresco"] },
+        { s: ["pizza", "focaccia"], a: ["rosso fresco", "bollicine", "medio corpo"] },
+        { s: ["tartufo", "truffle", "funghi", "mushroom", "porcini"], a: ["rosso", "evoluto", "terziario", "strutturato"] },
+        { s: ["dessert", "dolce", "torta", "cake", "pasticceria", "cioccolato", "chocolate", "biscotti", "crostata"], a: ["dolce", "passito", "spumante dolce", "vendemmia tardiva"] },
+        { s: ["aperitivo", "aperitif", "stuzzichini", "snack", "tapas", "cicchetti", "fritto", "fried", "patatine", "olive", "finger food"], a: ["bollicine", "bianco", "rosato", "fresco", "leggero", "secco"] },
+        { s: ["piccante", "spicy", "speziato", "curry", "peperoncino", "messicano", "mexican", "thai", "indiano", "indian"], a: ["bianco aromatico", "morbido", "dolce", "bassa acidita", "fruttato"] },
+        { s: ["vegetariano", "vegan", "verdure", "vegetables", "insalata", "salad", "zuppa", "soup", "legumi"], a: ["bianco", "rosato", "leggero", "fresco", "erbaceo"] },
+        { s: ["barbecue", "bbq", "grigliata", "grill", "affumicato", "smoked"], a: ["rosso", "tannico", "corpo pieno", "speziato"] },
+        { s: ["estate", "summer", "picnic", "spiaggia", "beach", "caldo", "terrazza", "giardino", "garden"], a: ["bianco", "rosato", "bollicine", "fresco", "leggero", "beva"] },
+        { s: ["inverno", "winter", "freddo", "cold", "camino", "fireplace", "comfort"], a: ["rosso", "strutturato", "caldo", "corpo pieno", "invecchiato"] },
+        { s: ["celebrazione", "festa", "party", "brindisi", "toast", "celebration", "anniversario", "anniversary", "compleanno", "birthday", "matrimonio", "wedding", "laurea"], a: ["bollicine", "spumante", "champagne", "metodo classico", "pregiato"] },
+        { s: ["regalo", "gift", "dono", "present", "da collezione", "collector"], a: ["pregiato", "icona", "invecchiato", "punteggio alto"] },
+        { s: ["cena importante", "cena elegante", "fine dining", "occasione speciale", "special occasion", "romantica", "romantic"], a: ["rosso strutturato", "pregiato", "complesso", "punteggio alto", "invecchiato"] },
+        { s: ["tutti i giorni", "everyday", "quotidiano", "weeknight", "semplice", "easy", "economico", "cheap", "budget", "informale", "casual"], a: ["prezzo basso", "beva", "leggero", "fruttato", "versatile"] },
+      ];
+      function expandQuery(q) {
+        var qn = " " + norm(q) + " ";
+        var bag = tokens(q);
+        LEX.forEach(function (row) {
+          var hit = row.s.some(function (term) {
+            return qn.indexOf(" " + norm(term) + " ") >= 0 || qn.indexOf(norm(term)) >= 0;
+          });
+          if (hit) bag = bag.concat(tokens(row.a.join(" ")), tokens(row.s[0]));
+        });
+        return uniq(bag);
+      }
+
+      // -------------------------------------------------- per-wine derived facets + text
+      var REGION_ALIAS = {
+        piemonte: "piedmont", borgogna: "burgundy", toscana: "tuscany", sicilia: "sicily",
+        lombardia: "lombardy", "alto adige": "south tyrol", italia: "italy", francia: "france",
+      };
+      function structured(w) {
+        var p = (w.tasting && w.tasting.palate) || {};
+        return /strutturato|pieno|potent/i.test((p.corpo || "") + " " + (p.tannini || ""));
+      }
+      function crisp(w) {
+        var p = (w.tasting && w.tasting.palate) || {};
+        return /elevat|alta/i.test(p.acidita || "");
+      }
+      function sweetish(w) {
+        var p = (w.tasting && w.tasting.palate) || {};
+        return /dolce|demi|morbid/i.test(p.zucchero || "");
+      }
+      function occasionsOf(w) {
+        if (Array.isArray(w.occasions) && w.occasions.length) return uniq(w.occasions.map(norm));
+        var t = typeKey(w), r = Number(w.rating) || 0, pr = priceNum(w), out = [];
+        if (t === "sparkling" || w.sparkling) out.push("aperitivo", "celebrazione", "estate");
+        if (t === "white" || t === "rosé") out.push("aperitivo", "estate");
+        if (t === "red") out.push("cena importante", "inverno");
+        if (t === "orange") out.push("cena importante");
+        if (structured(w)) out.push("cena importante");
+        if (r >= 4.5) out.push("occasione speciale", "regalo");
+        if (pr != null && pr >= 40) out.push("regalo", "celebrazione");
+        if (pr != null && pr <= 15) out.push("tutti i giorni");
+        return uniq(out);
+      }
+      function foodTagsOf(w) {
+        var out = tokens(w.pairing).concat(tokens(w.notes));
+        if (Array.isArray(w.food_tags)) out = out.concat(tokens(w.food_tags.join(" ")));
+        var t = typeKey(w);
+        if (t === "red" && structured(w)) out = out.concat(tokens("carne rossa brasati selvaggina formaggi stagionati tartufo"));
+        if (t === "red" && !structured(w)) out = out.concat(tokens("pasta pizza salumi pollo"));
+        if (t === "white" && crisp(w)) out = out.concat(tokens("pesce crostacei ostriche fritti insalata"));
+        if (t === "white" && !crisp(w)) out = out.concat(tokens("pollo risotto formaggi molli"));
+        if (t === "rosé") out = out.concat(tokens("aperitivo pesce insalata salumi estate"));
+        if (t === "sparkling") out = out.concat(tokens("aperitivo fritti sushi ostriche celebrazione"));
+        if (t === "orange") out = out.concat(tokens("formaggi speziato cucina orientale"));
+        if (sweetish(w)) out = out.concat(tokens("dessert dolce pasticceria formaggi erborinati"));
+        return uniq(out);
+      }
+      function attrTokensOf(w) {
+        var t = typeKey(w), out = [TYPE_LABEL[t] || t];
+        if (t === "sparkling" || w.sparkling) out.push("bollicine", "spumante");
+        if (structured(w)) out.push("strutturato", "corpo pieno", "tannico");
+        else out.push("leggero", "beva");
+        if (crisp(w)) out.push("fresco", "acidita alta", "sapido");
+        if (sweetish(w)) out.push("dolce", "passito");
+        var ev = (w.tasting && w.tasting.nose && w.tasting.nose.evoluzione) || "";
+        if (/evolu|corso|totalment/i.test(ev)) out.push("evoluto", "terziario", "invecchiato");
+        var pr = priceNum(w);
+        if (pr != null && pr >= 40) out.push("pregiato", "punteggio alto");
+        if (pr != null && pr <= 15) out.push("prezzo basso", "versatile");
+        if ((Number(w.rating) || 0) >= 4.5) out.push("pregiato", "punteggio alto", "icona");
+        return tokens(out.join(" "));
+      }
+      function profileText(w) {
+        var parts = [
+          w.name, w.vintage, w.producer, w.denominazione, w.region, w.country, w.grape,
+          TYPE_LABEL[typeKey(w)],
+          (w.region && REGION_ALIAS[norm(w.region)]) || "",
+          (w.country && REGION_ALIAS[norm(w.country)]) || "",
+          occasionsOf(w).join(" "),
+          foodTagsOf(w).join(" "),
+          attrTokensOf(w).join(" "),
+          w.pairing, w.notes,
+        ];
+        var tv = w.tasting || {};
+        ["visual", "nose", "palate"].forEach(function (sec) {
+          var o = tv[sec];
+          if (!o) return;
+          Object.keys(o).forEach(function (k) {
+            var v = o[k];
+            parts.push(Array.isArray(v) ? v.join(" ") : v);
+          });
+        });
+        return parts.filter(Boolean).join(" · ");
+      }
+
+      var META = wines.map(function (w) {
+        var text = profileText(w);
+        return {
+          w: w,
+          key: wineKey(w),
+          type: typeKey(w),
+          region: w.region || "",
+          price: priceNum(w),
+          rating: Number(w.rating) || 0,
+          occ: occasionsOf(w),
+          kw: uniq(attrTokensOf(w).concat(foodTagsOf(w), tokens(text))),
+          text: text,
+          vhash: hash(text),
+        };
+      });
+
+      // -------------------------------------------------- facet controls
+      var typesPresent = uniq(META.map(function (m) { return m.type; })).filter(Boolean);
+      var regionsPresent = uniq(META.map(function (m) { return m.region; }).filter(Boolean)).sort();
+      var prices = META.map(function (m) { return m.price; }).filter(function (p) { return p != null; });
+      var priceMax = prices.length ? Math.ceil(Math.max.apply(null, prices) / 5) * 5 : 100;
+      var priceMin = prices.length ? Math.floor(Math.min.apply(null, prices) / 5) * 5 : 0;
+      var OCCASIONS = ["aperitivo", "cena importante", "celebrazione", "tutti i giorni", "estate", "inverno", "regalo"];
+
+      var sel = { type: {}, occ: {}, region: "", price: priceMax, q: "" };
+
+      var elType = document.getElementById("wf-type");
+      var elOcc = document.getElementById("wf-occasion");
+      var elRegion = document.getElementById("wf-region");
+      var elPrice = document.getElementById("wf-price");
+      var elPriceOut = document.getElementById("wf-price-out");
+      var elQ = document.getElementById("wf-q");
+      var elSem = document.getElementById("wf-sem");
+      var elStatus = document.getElementById("wf-status");
+      var elResults = document.getElementById("wf-results");
+      var elForm = document.getElementById("wf-form");
+
+      function chip(container, value, label, store) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "wf-chip";
+        b.textContent = label;
+        b.setAttribute("aria-pressed", "false");
+        b.onclick = function () {
+          if (store[value]) {
+            delete store[value];
+            b.setAttribute("aria-pressed", "false");
+          } else {
+            store[value] = 1;
+            b.setAttribute("aria-pressed", "true");
+          }
+          run();
+        };
+        container.appendChild(b);
+      }
+      typesPresent.forEach(function (t) { chip(elType, t, TYPE_LABEL[t] || t, sel.type); });
+      OCCASIONS.forEach(function (o) { chip(elOcc, o, o.charAt(0).toUpperCase() + o.slice(1), sel.occ); });
+      regionsPresent.forEach(function (r) {
+        var o = document.createElement("option");
+        o.value = norm(r);
+        o.textContent = r;
+        elRegion.appendChild(o);
+      });
+      elRegion.onchange = function () { sel.region = elRegion.value; run(); };
+      elPrice.min = priceMin;
+      elPrice.max = priceMax;
+      elPrice.step = 5;
+      elPrice.value = priceMax;
+      elPriceOut.textContent = "€ " + priceMax;
+      elPrice.oninput = function () {
+        sel.price = Number(elPrice.value);
+        elPriceOut.textContent = "€ " + sel.price;
+        run();
+      };
+
+      var semWanted = true;
+      try { semWanted = localStorage.getItem("wine-finder-sem") !== "0"; } catch (e) {}
+      elSem.checked = semWanted;
+      elSem.onchange = function () {
+        semWanted = elSem.checked;
+        try { localStorage.setItem("wine-finder-sem", semWanted ? "1" : "0"); } catch (e) {}
+        if (semWanted) {
+          ensureModuleTag();
+          if (sel.q) ensureSemantic();
+        }
+        run();
+      };
+
+      document.getElementById("wf-clear").onclick = function () {
+        sel = { type: {}, occ: {}, region: "", price: priceMax, q: "" };
+        elQ.value = "";
+        elRegion.value = "";
+        elPrice.value = priceMax;
+        elPriceOut.textContent = "€ " + priceMax;
+        Array.prototype.forEach.call(root.querySelectorAll(".wf-chip"), function (b) {
+          b.setAttribute("aria-pressed", "false");
+        });
+        run();
+      };
+      elForm.onsubmit = function (ev) {
+        ev.preventDefault();
+        sel.q = elQ.value.trim();
+        if (semWanted && sel.q) ensureSemantic();
+        run();
+      };
+      var qDebounce;
+      elQ.oninput = function () {
+        clearTimeout(qDebounce);
+        qDebounce = setTimeout(function () {
+          sel.q = elQ.value.trim();
+          run();
+        }, 250);
+      };
+
+      // -------------------------------------------------- semantic layer (optional)
+      var SEM = { ready: false, loading: false, vecs: null, qcache: {} };
+      function setStatus(msg) {
+        if (!msg) {
+          elStatus.hidden = true;
+          elStatus.textContent = "";
+          return;
+        }
+        elStatus.hidden = false;
+        elStatus.textContent = msg;
+      }
+      function ensureModuleTag() {
+        if (document.getElementById("wf-sem-mod")) return;
+        var s = document.createElement("script");
+        s.type = "module";
+        s.id = "wf-sem-mod";
+        s.src = "{{ '/assets/js/wine_finder_semantic.js' | relative_url }}";
+        document.head.appendChild(s);
+      }
+      function ensureSemantic() {
+        if (SEM.ready || SEM.loading) return;
+        if (!("indexedDB" in window)) return;
+        ensureModuleTag();
+        SEM.loading = true;
+        setStatus("Carico il modello semantico…");
+        var start = function () {
+          window.WineSemantic
+            .pipe(function (pct) { setStatus("Scarico il modello semantico… " + pct + "%"); })
+            .then(function () {
+              setStatus("Analizzo la collezione…");
+              var items = META.map(function (m) { return { key: "wf:" + m.vhash, text: m.text }; });
+              return window.WineSemantic.embedCorpus(items, function (done, total) {
+                setStatus("Analizzo la collezione… " + done + "/" + total);
+              });
+            })
+            .then(function (vecs) {
+              SEM.vecs = vecs;
+              SEM.ready = true;
+              SEM.loading = false;
+              setStatus("");
+              run();
+            })
+            .catch(function (err) {
+              SEM.loading = false;
+              setStatus("Ricerca semantica non disponibile — uso le parole chiave.");
+              setTimeout(function () { setStatus(""); }, 4500);
+              if (window.console) console.warn("wine-finder semantic:", err);
+            });
+        };
+        if (window.WineSemantic) start();
+        else window.addEventListener("winesemantic:ready", start, { once: true });
+      }
+      if (semWanted) ensureModuleTag(); // warm the module (not the model)
+
+      function semScoreFor(m) {
+        if (!SEM.ready || !sel.q) return null;
+        var qv = SEM.qcache[sel.q];
+        var wv = SEM.vecs && SEM.vecs["wf:" + m.vhash];
+        if (!qv || !wv) return null;
+        return (window.WineSemantic.cosine(qv, wv) + 1) / 2;
+      }
+      function ensureQueryVector(cb) {
+        if (!SEM.ready || !sel.q || SEM.qcache[sel.q]) {
+          cb();
+          return;
+        }
+        window.WineSemantic.embed(sel.q)
+          .then(function (v) { SEM.qcache[sel.q] = v; cb(); })
+          .catch(function () { cb(); });
+      }
+
+      // -------------------------------------------------- filter + score + render
+      function passesFacets(m) {
+        if (Object.keys(sel.type).length && !sel.type[m.type]) return false;
+        if (sel.region && norm(m.region) !== sel.region) return false;
+        if (m.price != null && m.price > sel.price + 0.001) return false;
+        var occSel = Object.keys(sel.occ);
+        if (occSel.length && !occSel.some(function (o) { return m.occ.indexOf(o) >= 0; })) return false;
+        return true;
+      }
+      function keywordScore(expanded, m) {
+        if (!expanded.length) return 0;
+        var set = {};
+        m.kw.forEach(function (t) { set[t] = 1; });
+        var hits = 0;
+        expanded.forEach(function (t) { if (set[t]) hits += 1; });
+        return hits / Math.sqrt(expanded.length);
+      }
+      function starStr(r) {
+        r = Math.max(0, Math.min(5, Number(r) || 0));
+        var full = Math.floor(r), half = r - full >= 0.5, s = "";
+        var i;
+        for (i = 0; i < full; i++) s += "★";
+        if (half) s += "⯪";
+        for (i = full + (half ? 1 : 0); i < 5; i++) s += "☆";
+        return s;
+      }
+      function whyText(r, expanded) {
+        var m = r.m, bits = [];
+        if (r.sm != null && r.sm >= 0.6) bits.push("forte affinità semantica");
+        else if (r.sm != null && r.sm >= 0.45) bits.push("affinità semantica");
+        if (r.kw > 0 && expanded.length) {
+          var set = {};
+          m.kw.forEach(function (t) { set[t] = 1; });
+          var got = uniq(expanded.filter(function (t) { return set[t] && t.length > 2; })).slice(0, 4);
+          if (got.length) bits.push(got.join(", "));
+        }
+        var occSel = Object.keys(sel.occ).filter(function (o) { return m.occ.indexOf(o) >= 0; });
+        if (occSel.length) bits.push(occSel.join(", "));
+        return bits.join(" · ");
+      }
+      function cardHtml(r, expanded) {
+        var w = r.m.w;
+        var reason = sel.q || Object.keys(sel.occ).length ? whyText(r, expanded) : "";
+        var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" · ");
+        return (
+          '<article class="wf-card">' +
+          '<div class="wf-card-top">' +
+          '<span class="wf-badge wf-badge-' + badgeSlug(r.m.type) + '">' + esc(TYPE_LABEL[r.m.type] || r.m.type) + "</span>" +
+          '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
+          (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
+          "</div>" +
+          '<div class="wf-card-name">' + esc(w.name) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
+          '<div class="wf-card-prod">' + esc(w.producer) + "</div>" +
+          (meta ? '<div class="wf-card-meta">' + meta + "</div>" : "") +
+          (reason ? '<div class="wf-card-why">' + esc(reason) + "</div>" : "") +
+          '<button type="button" class="wf-show" data-name="' + esc(w.name) + '" data-producer="' + esc(w.producer) + '">Mostra sulla mappa</button>' +
+          "</article>"
+        );
+      }
+      function render() {
+        var expanded = sel.q ? expandQuery(sel.q) : [];
+        var rows = [];
+        META.forEach(function (m) {
+          if (!passesFacets(m)) return;
+          var kw = keywordScore(expanded, m);
+          var sm = semScoreFor(m);
+          var facetBonus =
+            (Object.keys(sel.type).length ? 0.12 : 0) +
+            (sel.region ? 0.08 : 0) +
+            (Object.keys(sel.occ).length ? 0.12 : 0);
+          var score;
+          if (sel.q) {
+            score = (sm != null ? 0.62 * sm + 0.16 * kw : 0.55 * kw) + 0.2 * (m.rating / 5) + facetBonus;
+          } else {
+            score = 0.8 * (m.rating / 5) + facetBonus;
+          }
+          rows.push({ m: m, score: score, kw: kw, sm: sm });
+        });
+        rows.sort(function (a, b) { return b.score - a.score || b.m.rating - a.m.rating; });
+
+        if (!rows.length) {
+          elResults.innerHTML =
+            '<p class="wf-empty">Nessun vino con questi criteri. Allarga il prezzo o togli un filtro.</p>';
+          return;
+        }
+        var top = rows.slice(0, 6);
+        var count =
+          rows.length <= top.length
+            ? top.length + (top.length === 1 ? " suggerimento" : " suggerimenti")
+            : top.length + " suggerimenti su " + rows.length + " corrispondenze";
+        elResults.innerHTML =
+          '<p class="wf-count">' + count + "</p>" +
+          top
+            .map(function (r) { return cardHtml(r, expanded); })
+            .join("");
+        Array.prototype.forEach.call(elResults.querySelectorAll(".wf-show"), function (btn) {
+          btn.onclick = function () {
+            window.dispatchEvent(
+              new CustomEvent("winefinder:show", {
+                detail: { name: btn.getAttribute("data-name"), producer: btn.getAttribute("data-producer") },
+              })
+            );
+          };
+        });
+      }
+
+      function run() {
+        if (sel.q && SEM.ready) ensureQueryVector(render);
+        else render();
+      }
+
+      run();
+    });
+  })();
+</script>

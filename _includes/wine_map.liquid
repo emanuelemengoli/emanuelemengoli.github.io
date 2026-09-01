@@ -497,7 +497,7 @@
             ["alcol", "Alcol"],
             ["corpo", "Corpo"],
             ["intensita_sapori", "Intensità dei sapori"],
-            ["finale", "Persistenza / finale"],
+            ["finale", "Persistenza"],
           ],
           [["aromi_palato", "Aromi al palato (per fase)"]],
           [],
@@ -759,6 +759,18 @@
       } else {
         map.setView([46, 6], 4);
       }
+
+      // The finder (wine_finder.liquid) asks the map to focus one wine.
+      window.addEventListener("winefinder:show", function (ev) {
+        var d = (ev && ev.detail) || {};
+        var hit = markers.filter(function (m) {
+          return m._wine && m._wine.name === d.name && m._wine.producer === d.producer;
+        })[0];
+        if (!hit) return;
+        map.setView(hit.getLatLng(), Math.max(map.getZoom(), 7), { animate: true });
+        hit.openPopup();
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
     });
   })();
 </script>

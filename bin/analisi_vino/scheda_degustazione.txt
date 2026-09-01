@@ -434,7 +434,7 @@ Caratteristiche degli aromi al palato [selezione multipla]
 ☐ Secondari
 ☐ Terziari
 
-Persistenza / finale:
+Persistenza:
 ☐ Corto
 ☐ Medio
 ☐ Lungo

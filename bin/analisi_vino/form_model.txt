@@ -253,7 +253,7 @@ Intensità dei sapori [selezione singola]
 ○ Media
 ○ Pronunciata
 
-Persistenza / finale [selezione singola]
+Persistenza [selezione singola]
 ○ Corto
 ○ Medio
 ○ Lungo
