@@ -1029,7 +1029,23 @@
         });
       }
 
+      function hasCriteria() {
+        return (
+          !!sel.q ||
+          Object.keys(sel.type).length > 0 ||
+          Object.keys(sel.occ).length > 0 ||
+          !!sel.region ||
+          isFinite(sel.price)
+        );
+      }
+
       function render() {
+        // Nothing asked for yet (fresh load, or the query box was cleared) -> no results.
+        if (!hasCriteria()) {
+          elResults.innerHTML = "";
+          updateBoostVisibility();
+          return;
+        }
         var expanded = sel.q ? expandQuery(sel.q) : [];
         var rows = [];
         META.forEach(function (m) {

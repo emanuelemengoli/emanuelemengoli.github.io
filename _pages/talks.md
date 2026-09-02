@@ -15,6 +15,9 @@ Toulouse, France. December 2024.
 
 ## Contributed talks
 
+**XXIX Brazilian School of Probability** 
+Poster session. Rio de Janeiro, Brazil. August, 2026
+
 **5th Italian Meeting on Probability and Mathematical Statistics**
 Speaker and organizer of a contributed session. Palermo, Italy. June 2026.
 
