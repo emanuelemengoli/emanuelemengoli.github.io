@@ -103,6 +103,7 @@
   lat: 42.793
   lng: 10.18
   vintage: 2024
+  grape: ansonica
   price: "€ 14"
   color: white
   rating: 3
@@ -140,6 +141,7 @@
   lat: 44.76
   lng: 7.98
   vintage: 2020
+  grape: nebbiolo
   price: "€ 20"
   color: red
   rating: 3.5
@@ -168,3 +170,43 @@
       corpo: Medio
       intensita_sapori: Media
       finale: Medio
+
+- name: raboso
+  producer: redentore
+  url: https://www.de-stefani.it
+  denominazione: igt
+  territorio: veneto
+  region: veneto
+  country: Italia
+  lat: 45.64
+  lng: 12.51
+  vintage: 2022
+  grape: raboso veronese
+  price: "€ 20"
+  color: red
+  rating: 4
+  tasted: '2026-01-09'
+  notes: vino corposo adatto alla degustazione di carni cotte alla brace
+  pairing: grigliate
+  tasting:
+    visual:
+      intensita_colore: Intenso
+      colore: Rosso granato
+    nose:
+      condizione: Netti
+      intensita: Pronunciata
+      aromi:
+      - Frutti rossi
+      - Frutti neri
+      - Animale
+      - Tostati
+      - Ossidazione deliberata
+      - non aromatizzato perfettamente
+    palate:
+      zucchero: Secco
+      acidita: Flebile
+      tannini: Medi
+      alcol: Elevato
+      corpo: Strutturato
+      intensita_sapori: Pronunciata
+      finale: Lungo
