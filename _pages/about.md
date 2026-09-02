@@ -43,7 +43,7 @@ developing probabilistic models that capture the spatial and temporal
 dynamics of large-scale communication systems, with a current emphasis on
 **Non-Terrestrial Networks (NTNs)** and **6G**.
 
-More broadly, I am interested in how probabilistic modelling can be
+More broadly, I am interested in how **probabilistic modelling** can be
 combined with **optimisation and learning methods** when the underlying
 network is dynamic, partially observed, or analytically intractable.
 
