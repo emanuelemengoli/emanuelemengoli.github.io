@@ -965,7 +965,7 @@
       function primaryCardHtml(r) {
         var w = r.m.w;
         var reason = reasonSentence(r.m);
-        var meta = [w.region, w.grape].filter(Boolean).map(esc).join(" · ");
+        var meta = [w.region, w.grape].filter(Boolean).map(function (x) { return esc(cap(x)); }).join(" · ");
         var sheet = hasSheet(w)
           ? '<button type="button" class="wf-sheet" data-name="' + esc(w.name) + '" data-producer="' + esc(w.producer) + '">Scheda completa</button>'
           : "";
@@ -976,8 +976,8 @@
           '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
           (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
           "</div>" +
-          '<div class="wf-primary-name no-tx">' + esc(w.name) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
-          '<div class="wf-card-prod no-tx">' + esc(w.producer) + "</div>" +
+          '<div class="wf-primary-name no-tx">' + esc(cap(w.name)) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
+          '<div class="wf-card-prod no-tx">' + esc(cap(w.producer)) + "</div>" +
           (meta ? '<div class="wf-card-meta">' + meta + "</div>" : "") +
           (reason ? '<p class="wf-reason">' + esc(reason) + "</p>" : "") +
           '<div class="wf-actions">' +
@@ -991,7 +991,7 @@
       // rank it, and the sentence would just repeat "La mia scelta".
       function compactCardHtml(r, strength) {
         var w = r.m.w;
-        var meta = [w.region, w.grape].filter(Boolean).map(esc).join(" · ");
+        var meta = [w.region, w.grape].filter(Boolean).map(function (x) { return esc(cap(x)); }).join(" · ");
         return (
           '<article class="wf-card">' +
           '<div class="wf-card-top">' +
@@ -1000,8 +1000,8 @@
           '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
           (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
           "</div>" +
-          '<div class="wf-card-name no-tx">' + esc(w.name) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
-          '<div class="wf-card-prod no-tx">' + esc(w.producer) + "</div>" +
+          '<div class="wf-card-name no-tx">' + esc(cap(w.name)) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
+          '<div class="wf-card-prod no-tx">' + esc(cap(w.producer)) + "</div>" +
           (meta ? '<div class="wf-card-meta">' + meta + "</div>" : "") +
           '<button type="button" class="wf-show" data-name="' + esc(w.name) + '" data-producer="' + esc(w.producer) + '">Vedi sulla mappa →</button>' +
           "</article>"

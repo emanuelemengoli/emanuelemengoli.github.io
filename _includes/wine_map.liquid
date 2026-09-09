@@ -286,6 +286,12 @@
       function blankStr(v) {
         return v == null || String(v).trim() === "";
       }
+      // Display names / descriptions come from a form and are inconsistently cased —
+      // capitalise the first letter only, leaving the rest (e.g. "AZ", "DOCG") intact.
+      function cap(s) {
+        s = String(s == null ? "" : s).trim();
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+      }
       function safeUrl(u) {
         u = String(u || "").trim();
         if (!u) return "";
@@ -440,15 +446,18 @@
       function identHtml(w) {
         var url = safeUrl(w.url);
         var vintage = w.vintage ? ' <span class="wine-vintage">' + esc(w.vintage) + "</span>" : "";
-        var meta = [w.denominazione, w.region, w.country, w.grape].filter(Boolean).map(esc).join(" &middot; ");
+        var meta = [w.denominazione, cap(w.region), cap(w.country), cap(w.grape)]
+          .filter(Boolean)
+          .map(esc)
+          .join(" &middot; ");
         var site = url
           ? '<a class="wine-site no-tx" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
             esc(hostOf(url)) + " ↗</a>"
           : "";
         return (
-          '<div class="wine-name no-tx">' + esc(w.name) + vintage + "</div>" +
+          '<div class="wine-name no-tx">' + esc(cap(w.name)) + vintage + "</div>" +
           stars(w.rating) +
-          '<div class="wine-producer no-tx">' + esc(w.producer) + "</div>" +
+          '<div class="wine-producer no-tx">' + esc(cap(w.producer)) + "</div>" +
           site +
           (meta ? '<div class="wine-meta">' + meta + "</div>" : "")
         );
@@ -456,10 +465,10 @@
 
       function cardHtml(w) {
         var price = w.price ? '<div class="wine-meta no-tx">' + esc(w.price) + "</div>" : "";
-        var notes = blankStr(w.notes) ? "" : '<p class="wine-notes">' + esc(w.notes) + "</p>";
+        var notes = blankStr(w.notes) ? "" : '<p class="wine-notes">' + esc(cap(w.notes)) + "</p>";
         var pairing = blankStr(w.pairing)
           ? ""
-          : '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> Abbinamento: ' + esc(w.pairing) + "</div>";
+          : '<div class="wine-meta"><i class="fa-solid fa-utensils"></i> Abbinamento: ' + esc(cap(w.pairing)) + "</div>";
         var tasted = w.tasted
           ? '<div class="wine-tasted">Degustato il <span class="no-tx">' + esc(w.tasted) + "</span></div>"
           : "";
@@ -531,7 +540,7 @@
         box.className = "wine-modal";
         box.setAttribute("role", "dialog");
         box.setAttribute("aria-modal", "true");
-        box.setAttribute("aria-label", (w.name || "") + (w.vintage ? " " + w.vintage : ""));
+        box.setAttribute("aria-label", cap(w.name) + (w.vintage ? " " + w.vintage : ""));
         box.innerHTML =
           '<button type="button" class="wine-modal-close no-tx" aria-label="Chiudi">&times;</button>' +
           '<div class="wine-modal-head">' +
@@ -610,7 +619,7 @@
         }
         var m = L.marker([lat, lng], {
           icon: bottleIcon(w.color),
-          title: (w.name || "") + (w.producer ? " — " + w.producer : ""),
+          title: cap(w.name) + (w.producer ? " — " + cap(w.producer) : ""),
         })
           .addTo(map)
           .bindPopup(cardNode(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
