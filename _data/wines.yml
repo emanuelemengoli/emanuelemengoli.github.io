@@ -96,6 +96,7 @@
 
 - name: ansonica
   producer: farkas AZ agricola
+  url: https://imieivini.it/product/stefano-farkas-lazarus-ansonica-2025/
   denominazione: docg
   territorio: Elba isola
   region: toscana
@@ -134,6 +135,7 @@
 
 - name: Roero riserva colla
   producer: Battaglini AZ agricola
+  url: https://battaglino.com
   denominazione: roero docg
   territorio: Langhe roero
   region: piemonte
@@ -210,3 +212,78 @@
       corpo: Strutturato
       intensita_sapori: Pronunciata
       finale: Lungo
+
+- name: Ocellus
+  producer: Abbaye de Fontfroide
+  url: https://www.vins-de-fontfroide.fr/product/ocellus-rouge/
+  denominazione: AOP Corbières
+  territorio: Languedoc-Roussillon
+  region: Languedoc-Roussillon
+  country: Francia
+  lat: 43.654203
+  lng: 3.67467
+  vintage: 2023
+  grape: Syrah, Grenache
+  price: "€ 14"
+  color: red
+  rating: 3
+  tasted: '2026-09-09'
+  notes: Vino corposo e rotondo, dalle note aromatiche e gustative nette.
+  pairing: Carne rossa o bianca alla griglia, zuppe
+  tasting:
+    visual:
+      intensita_colore: Intenso
+      colore: Rosso sangue
+    nose:
+      condizione: Netti
+      intensita: Media
+      aromi:
+      - Frutti rossi
+      - Spezie dolci
+    palate:
+      zucchero: Secco
+      acidita: Flebile
+      tannini: Potenti
+      alcol: Medio
+      corpo: Medio
+      intensita_sapori: Media
+      finale: Medio
+
+- name: Trousseau, En Treize Vent
+  producer: Château d'Arlay
+  url: https://www.domaine-arlay.com/product-page/vin-rouge-trousseau-en-treize-vent-2019
+  denominazione: Côtes du Jura
+  territorio: Jura
+  region: Jura
+  country: Francia
+  lat: 46.758993
+  lng: 5.538132
+  vintage: 2023
+  grape: Trousseau
+  price: "€ 27"
+  color: red
+  rating: 4
+  tasted: '2026-09-09'
+  notes: Estremamente curato, con barrique che conferisce una tostatura piacevole che si sposa perfettamente con i frutti rossi. Complessivamente un ottimo vino.
+  pairing: Carni rosse nobili (e.g. cervo, capriolo etc…) e selvaggina. Risotti e piatti dai sapori complessi tendenti all’amaro o al saporito (e.g. sughi tartufati, gorgonzola o formaggi preponderanti)
+  tasting:
+    visual:
+      intensita_colore: Intenso
+      colore: Rosso porpora
+    nose:
+      condizione: Netti
+      intensita: Pronunciata
+      aromi:
+      - Frutti rossi
+      - Frutti neri
+      - Spezie forti
+      - Tostati
+      - Ossidazione deliberata
+    palate:
+      zucchero: Morbido
+      acidita: Flebile
+      tannini: Medi
+      alcol: Medio
+      corpo: Strutturato
+      intensita_sapori: Pronunciata
+      finale: Medio
