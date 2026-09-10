@@ -259,6 +259,9 @@
     letter-spacing: 0.08em;
     font-size: 0.85rem;
   }
+  .wf-stars .empty {
+    opacity: 0.5;
+  }
   .wf-price-tag {
     margin-left: auto;
     font-size: 0.82rem;
@@ -791,20 +794,20 @@
         });
         run();
       };
+      // The typed query is only acted on when "Consiglia" is pressed — no
+      // suggestion appears while the visitor is still typing their request.
       elForm.onsubmit = function (ev) {
         ev.preventDefault();
         sel.q = elQ.value.trim();
         if (boostOn && sel.q) ensureSemantic();
         run();
       };
-      var qDebounce;
+      // Emptying the box drops any showing suggestion so a stale one doesn't linger.
       elQ.oninput = function () {
-        clearTimeout(qDebounce);
-        qDebounce = setTimeout(function () {
-          sel.q = elQ.value.trim();
-          if (boostOn && sel.q) ensureSemantic();
+        if (!elQ.value.trim() && sel.q) {
+          sel.q = "";
           run();
-        }, 250);
+        }
       };
 
       // -------------------------------------------------- semantic layer (optional, opt-in)
@@ -925,14 +928,17 @@
         expanded.forEach(function (t) { if (set[t]) hits += 1; });
         return hits / Math.sqrt(expanded.length);
       }
+      // Font Awesome icons, not unicode star glyphs: the half-star code point (U+2BEA)
+      // has no glyph in the default mobile system fonts and rendered as tofu on phones.
+      // Mirrors stars() in wine_map.liquid.
       function starStr(r) {
         r = Math.max(0, Math.min(5, Number(r) || 0));
-        var full = Math.floor(r), half = r - full >= 0.5, s = "";
+        var full = Math.floor(r), half = r - full >= 0.5, out = "";
         var i;
-        for (i = 0; i < full; i++) s += "★";
-        if (half) s += "⯪";
-        for (i = full + (half ? 1 : 0); i < 5; i++) s += "☆";
-        return s;
+        for (i = 0; i < full; i++) out += '<i class="fa-solid fa-star"></i>';
+        if (half) out += '<i class="fa-solid fa-star-half-stroke"></i>';
+        for (i = full + (half ? 1 : 0); i < 5; i++) out += '<i class="fa-regular fa-star empty"></i>';
+        return out;
       }
       function strengthHtml(v) {
         var n = Math.max(1, Math.min(5, Math.round(v * 5)));
@@ -973,7 +979,7 @@
           '<article class="wf-primary">' +
           '<div class="wf-card-top">' +
           '<span class="wf-badge wf-badge-' + badgeSlug(r.m.type) + '">' + esc(cap(TYPE_LABEL[r.m.type] || r.m.type)) + "</span>" +
-          '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
+          '<span class="wf-stars no-tx" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
           (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
           "</div>" +
           '<div class="wf-primary-name no-tx">' + esc(cap(w.name)) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
@@ -997,7 +1003,7 @@
           '<div class="wf-card-top">' +
           '<span class="wf-badge wf-badge-' + badgeSlug(r.m.type) + '">' + esc(cap(TYPE_LABEL[r.m.type] || r.m.type)) + "</span>" +
           strengthHtml(strength) +
-          '<span class="wf-stars" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
+          '<span class="wf-stars no-tx" aria-label="' + r.m.rating + ' / 5">' + starStr(r.m.rating) + "</span>" +
           (r.m.price != null ? '<span class="wf-price-tag">€ ' + esc(r.m.price) + "</span>" : "") +
           "</div>" +
           '<div class="wf-card-name no-tx">' + esc(cap(w.name)) + (w.vintage ? " " + esc(w.vintage) : "") + "</div>" +
@@ -1075,7 +1081,7 @@
         }
 
         var primary = rows[0];
-        var rest = rows.slice(1, 6);
+        var rest = rows.slice(1, 3); // "Altre buone scelte": at most 2 runner-ups
         var best = primary.score || 1;
         var html = '<h3 class="wf-h">La mia scelta</h3>' + primaryCardHtml(primary);
         if (rest.length) {
