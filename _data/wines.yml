@@ -287,3 +287,41 @@
       corpo: Strutturato
       intensita_sapori: Pronunciata
       finale: Medio
+
+- name: Paradí
+  producer: Fabrizio Battaglino
+  url: https://battaglino.com/vino/nebbiolo-alba-paradi-doc-2020/
+  denominazione: Nebbiolo d’Alba (DOC)
+  territorio: Vezza d’Alba
+  region: Piemonte
+  country: Italia
+  lat: 45.060735
+  lng: 7.923549
+  vintage: 2022
+  grape: Nebbiolo
+  price: "€ 18"
+  color: red
+  rating: 4
+  tasted: '2026-12-09'
+  notes: Un ottimo vino, molto rotondo nei sapori e sentori. Lavorato molto bene in barrique.
+  pairing: Ottimo vino da accompagnare a pasti corposi o complessi, e.g. brasato, arrosto, selvaggina, paste con sughi di carne.
+  tasting:
+    visual:
+      intensita_colore: Medio
+      colore: Rosso sangue
+    nose:
+      condizione: Netti
+      intensita: Media
+      aromi:
+      - Frutti rossi
+      - Spezie forti
+      - Animale
+      - Tostati
+    palate:
+      zucchero: Morbido
+      acidita: Flebile
+      tannini: Medi
+      alcol: Medio
+      corpo: Strutturato
+      intensita_sapori: Media
+      finale: Medio
