@@ -495,6 +495,13 @@
         return tpl.content.firstElementChild || tpl.firstElementChild;
       }
 
+      // A wine with a long note/pairing can make the popup taller than the map itself.
+      // Leaflet doesn't cap or scroll popup content unless told to — without maxHeight
+      // the card just grows past the map's own edge, where the map's overflow:hidden
+      // silently clips it with no way to scroll down to the rest. Capping it switches
+      // Leaflet into its built-in scrollable-popup mode instead.
+      var popupMaxHeight = Math.max(180, Math.round(el.clientHeight * 0.7));
+
       var map = L.map(el, { scrollWheelZoom: false, worldCopyJump: true });
       map.on("click", function () {
         map.scrollWheelZoom.enable();
@@ -622,7 +629,13 @@
           title: cap(w.name) + (w.producer ? " — " + cap(w.producer) : ""),
         })
           .addTo(map)
-          .bindPopup(cardNode(w), { className: "wine-popup", maxWidth: 340, minWidth: 200 });
+          .bindPopup(cardNode(w), {
+            className: "wine-popup",
+            maxWidth: 340,
+            minWidth: 200,
+            maxHeight: popupMaxHeight,
+            autoPanPadding: [16, 16],
+          });
         m._wine = w;
         markers.push(m);
         pts.push([lat, lng]);

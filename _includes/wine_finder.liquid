@@ -741,24 +741,41 @@
         };
         container.appendChild(b);
       }
+      // Type chips (quick row + "Altro tipo") are a single-select group, not a
+      // multi-select one like occasion: a wine's color is one value, so picking a
+      // second type chip can never add a wine on top of the first — it can only
+      // ever intersect down to zero. Selecting a new type chip here replaces the
+      // previous one instead, so every click keeps having a visible effect.
+      var typeChips = [];
+      function selectType(value, btn) {
+        var wasOn = !!sel.type[value];
+        sel.type = {};
+        typeChips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+        if (!wasOn) {
+          sel.type[value] = 1;
+          btn.setAttribute("aria-pressed", "true");
+        }
+        run();
+      }
       Array.prototype.forEach.call(document.querySelectorAll("#wf-type-quick .wf-chip"), function (b) {
         var t = b.getAttribute("data-type");
-        b.onclick = function () {
-          if (sel.type[t]) {
-            delete sel.type[t];
-            b.setAttribute("aria-pressed", "false");
-          } else {
-            sel.type[t] = 1;
-            b.setAttribute("aria-pressed", "true");
-          }
-          run();
-        };
+        typeChips.push(b);
+        b.onclick = function () { selectType(t, b); };
       });
       var QUICK_TYPES = ["red", "white", "rosé", "sparkling"];
       var extraTypes = typesPresent.filter(function (t) { return QUICK_TYPES.indexOf(t) < 0; });
       if (extraTypes.length) {
         elTypeExtraWrap.hidden = false;
-        extraTypes.forEach(function (t) { chip(elTypeExtra, t, cap(TYPE_LABEL[t] || t), sel.type); });
+        extraTypes.forEach(function (t) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.className = "wf-chip";
+          b.textContent = cap(TYPE_LABEL[t] || t);
+          b.setAttribute("aria-pressed", "false");
+          b.onclick = function () { selectType(t, b); };
+          elTypeExtra.appendChild(b);
+          typeChips.push(b);
+        });
       }
       OCCASIONS.forEach(function (o) { chip(elOcc, o, cap(o), sel.occ); });
       regionsPresent.forEach(function (r) {
@@ -913,11 +930,10 @@
 
       // -------------------------------------------------- filter + score
       // Every selected criterion must hold at once (intersection, not union) — across
-      // facet groups (type AND region AND price AND occasion) and within a group with
-      // more than one chip picked. A wine's color is a single value, so picking two
-      // type chips together (e.g. Bollicine + Rosso) can only pass for a wine that is
-      // both at once; with none in the cellar that's correctly an empty result, not a
-      // silent fallback to whichever chip was clicked first.
+      // facet groups (type AND region AND price AND occasion) and, for occasion, within
+      // the group too when several chips are picked (a wine can genuinely carry more
+      // than one occasion tag). Type stays a single value per wine — selectType() above
+      // already keeps at most one active — so this check is just an equality guard.
       function passesFacets(m) {
         var typeSel = Object.keys(sel.type);
         if (typeSel.length && !typeSel.every(function (t) { return t === m.type; })) return false;
