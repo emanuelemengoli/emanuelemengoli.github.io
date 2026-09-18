@@ -42,7 +42,8 @@
         encodeURIComponent(src);
       return fetch(url)
         .then(function (r) {
-          return r.ok ? r.json() : null;
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
         })
         .then(function (j) {
           var out =
@@ -54,9 +55,14 @@
                   .join("")
               : "";
           if (out) TR[src] = out;
+          else throw new Error("empty translation response");
         })
-        .catch(function () {
-          /* leave untranslated; a later toggle retries */
+        .catch(function (err) {
+          // Leave untranslated; a later toggle retries. Logged (not surfaced in the UI)
+          // so a "translation doesn't work" report can be diagnosed from the console —
+          // this endpoint is an unofficial, keyless one and Google does sometimes block
+          // or rate-limit it outright.
+          if (window.console) console.warn("wine i18n:", err);
         });
     }
     function trResolve(list) {
@@ -146,16 +152,25 @@
       return document.querySelector(".passions-section") || document.body;
     }
 
-    function setLang(l) {
+    // done (optional) fires once the switch has actually finished — for "en" that means
+    // the translate() network round-trips settled (success or not), not a fixed guess.
+    function setLang(l, done) {
       l = l === "en" ? "en" : "it";
-      if (l === lang) return;
+      if (l === lang) {
+        if (done) done();
+        return;
+      }
       lang = l;
       window.WineI18n.lang = lang;
       try {
         if (window.localStorage) localStorage.setItem(KEY_LANG, lang);
       } catch (e) {}
-      if (lang === "en") translate(section());
-      else restore(section());
+      if (lang === "en") {
+        translate(section(), done);
+      } else {
+        restore(section());
+        if (done) done();
+      }
       notify();
     }
 
@@ -182,11 +197,14 @@
         sync();
         btn.addEventListener("click", function () {
           btn.setAttribute("aria-busy", "true");
-          setLang(lang === "it" ? "en" : "it");
-          sync();
-          setTimeout(function () {
+          // A wine section has dozens of text nodes to translate in batches of 8;
+          // a full pass can run past a second, so wait for it instead of guessing
+          // a fixed delay — otherwise "busy" clears before the text has actually
+          // changed and a slow translate looks like it silently did nothing.
+          setLang(lang === "it" ? "en" : "it", function () {
             btn.removeAttribute("aria-busy");
-          }, 700);
+          });
+          sync();
         });
         subs.push(sync);
       }

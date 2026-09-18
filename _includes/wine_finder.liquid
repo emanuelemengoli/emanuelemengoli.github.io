@@ -912,12 +912,19 @@
       }
 
       // -------------------------------------------------- filter + score
+      // Every selected criterion must hold at once (intersection, not union) — across
+      // facet groups (type AND region AND price AND occasion) and within a group with
+      // more than one chip picked. A wine's color is a single value, so picking two
+      // type chips together (e.g. Bollicine + Rosso) can only pass for a wine that is
+      // both at once; with none in the cellar that's correctly an empty result, not a
+      // silent fallback to whichever chip was clicked first.
       function passesFacets(m) {
-        if (Object.keys(sel.type).length && !sel.type[m.type]) return false;
+        var typeSel = Object.keys(sel.type);
+        if (typeSel.length && !typeSel.every(function (t) { return t === m.type; })) return false;
         if (sel.region && norm(m.region) !== sel.region) return false;
         if (m.price != null && m.price > sel.price + 0.001) return false;
         var occSel = Object.keys(sel.occ);
-        if (occSel.length && !occSel.some(function (o) { return m.occ.indexOf(o) >= 0; })) return false;
+        if (occSel.length && !occSel.every(function (o) { return m.occ.indexOf(o) >= 0; })) return false;
         return true;
       }
       function keywordScore(expanded, m) {
