@@ -24,7 +24,7 @@ This project provides a configurable simulator for **Joint Communication and Sen
 
 Communication is modelled through **Lindley queues** with SINR-dependent service rates, over either a **ray-traced channel** parameterised from a University of Oulu ray-tracing campaign or a **Rayleigh-fading power-law** model. User equipments and sensing objects move under stationary, **Gauss–Markov**, or **ρ-persistent random-walk** motion, and targets are tracked with **Kalman / Extended Kalman filters** for linear and radar-style (range, bearing, range rate) observations. Optional **sector beamforming** and a cyclic **TDD** communication/sensing schedule are supported.
 
-The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) = E[XY] / (E[X]·E[Y])` and the Pearson correlation, for the interference, SINR and queue-versus-covariance pairs — that quantify the trade-off between the communication and sensing functions sharing the same infrastructure. Two operation modes are available: a *captive* full large-scale simulation, and a *non-captive* single-track toy model that benchmarks JCAS tracking against a sensing-only baseline. Every run is fully determined by a `master_seed` driving a per-stream seeded random-number manager, so results are exactly reproducible.
+The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) = E[XY] / (E[X]·E[Y])` and the Pearson correlation, for the interference, SINR and queue-versus-covariance pairs — that quantify the trade-off between the communication and sensing functions sharing the same infrastructure. Two operation modes are available: the full **large-scale simulator**, and a **non-captive toy model** — a simplified single-track experiment that benchmarks JCAS tracking against a sensing-only baseline [3]. Every run is fully determined by a `master_seed` driving a per-stream seeded random-number manager, so results are exactly reproducible.
 
 ## Features
 
@@ -37,10 +37,11 @@ The simulator reports **coupling metrics** — an *association ratio* `A(X, Y) =
 - Optional **sector beamforming** and **TDD scheduling**.
 - **Communication–sensing coupling metrics** (association ratios, Pearson correlations).
 - Configured through a single immutable **`SimulationConfig`** dataclass tree, validated on construction; `jcas_simulator/config.py` documents every field and default, `main.ipynb` has worked examples.
+- The Streamlit app exports a run as a ZIP of every figure (with the trajectory animation) or as a ready-to-compile LaTeX table of the run's parameters.
 
 ## Example output
 
-Figures from a single captive-scenario run under the default (`exponential` channel) configuration, produced by `jcas_simulator.visualization`.
+Figures from a single large-scale-simulator run under the ray-traced (`rt`) channel configuration, produced by `jcas_simulator.visualization`.
 
 ### Steady-state distributions
 
@@ -110,3 +111,5 @@ Released under the MIT License.
 [1] J. Pyhtilä, J. Kokkoniemi, P. Sangi, N. Vaara and M. Juntti, "Ray Tracing Based Radio Channel Modelling Applied to RIS," in *WSA & SCC 2023; 26th International ITG Workshop on Smart Antennas and 13th Conference on Systems, Communications, and Coding*, 2023, pp. 1–6.
 
 [2] [INSTINCT — Joint Sensing and Communication for Future Connectivity, Barkhausen Institut.](https://www.barkhauseninstitut.org/en/instinct-joint-sensing-and-communication-for-future-connectivity)
+
+[3] A. Balakrishnan, N. Soprano-Loto and F. Baccelli, ["Kalman Filtering for Sensing Aided Communication to Mobile Users in Large Cellular Networks."](https://hal.science/hal-05612297) 2026.
