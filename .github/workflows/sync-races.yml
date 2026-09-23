@@ -1,0 +1,78 @@
+name: Sync races
+
+# Refreshes _data/races.yml from every source in bin/race_sources/ on a schedule, with no
+# manual data entry — see bin/races-sync.md. The result is proposed as a pull request
+# (not pushed straight to master) so a bad/malformed fetch can't silently go live;
+# merging that PR is the owner's only manual step, and it triggers the normal deploy
+# workflow like any other push. This is a plain stdlib-only Ruby script (no gems), so no
+# `bundle install` step is needed here.
+#
+# One-time setup this workflow needs and can't do for itself: repo Settings -> Actions ->
+# General -> "Allow GitHub Actions to create and approve pull requests" must be turned on,
+# or the "Open pull request" step below silently can't open one.
+
+on:
+  schedule:
+    - cron: "0 5 1 * *" # 05:00 UTC on the 1st of each month
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Only run these comma-separated sources (e.g. aims,duv) — blank runs all"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-races
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.2"
+
+      - name: Sync races 🏁
+        id: sync
+        run: |
+          set -o pipefail
+          if [ -n "${{ github.event.inputs.source }}" ]; then
+            ruby bin/sync-races --source="${{ github.event.inputs.source }}" 2>&1 | tee sync-races.log
+          else
+            ruby bin/sync-races 2>&1 | tee sync-races.log
+          fi
+          summary=$(grep -m1 " races · " sync-races.log || echo "See the workflow run log for details.")
+          {
+            echo "summary<<RACES_SUMMARY_EOF"
+            echo "$summary"
+            echo "RACES_SUMMARY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: _data/races.yml
+          commit-message: "races: monthly sync"
+          branch: races-sync/auto
+          delete-branch: true
+          title: "races: monthly sync — ${{ steps.sync.outputs.summary }}"
+          body: |
+            Automated refresh of `_data/races.yml` from every source in `bin/race_sources/`
+            (triggered by ${{ github.event_name }}).
+
+            ```
+            ${{ steps.sync.outputs.summary }}
+            ```
+
+            Review the diff below, then merge to publish — merging runs the normal deploy
+            workflow like any other push. Full adapter log: this workflow run's "Sync races"
+            step.

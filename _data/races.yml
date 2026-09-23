@@ -1,0 +1,565 @@
+# Races shown on the /le-mie-passioni/ races section (rendered by
+# _includes/race_finder.liquid and _includes/race_map.liquid).
+#
+# This file is regenerated automatically — don't hand-maintain entries beyond an
+# occasional correction. A scheduled GitHub Action (.github/workflows/sync-races.yml)
+# runs `ruby bin/sync-races` monthly, re-fetching every source under bin/race_sources/
+# and opening a pull request with the result; merging that PR is the only manual step.
+# Source list, setup and the one-time repo settings this needs: bin/races-sync.md.
+#
+# Rolling feed, not an archive: on every run, any existing entry whose `date` is more
+# than 7 days in the past is dropped, so this file only ever holds upcoming races.
+#
+# Fields (all optional except name/date/category/source/source_url):
+#   name          race name
+#   date          "YYYY-MM-DD", the race's (first) start date — together with name and
+#                 country, the key a re-sync uses to update rather than duplicate an entry
+#   category      trail | ultra | triathlon | road
+#   country       Italia | Francia | Spagna | Svizzera | Austria — kept in Italian, like
+#                 wines.yml, since both sections share one page-level IT->EN translator
+#   region        sub-country region/province/city, when the source states one
+#   distance_km   headline distance; use distances_km (a list) instead when one listing
+#                 genuinely bundles several distances under a single entry
+#   elevation_gain_m, difficulty   best-effort, populated only when the source has them
+#                 (mainly trail/ultra) — never required, and a missing value never
+#                 excludes a race from a search
+#   lat, lng      geocoded from name/region/country
+#   price         free text ("€ 30" or similar); almost never populated today — none of
+#                 the sources under bin/race_sources/ publish entry fees
+#   organizer, url, notes, series
+#   source        which adapter in bin/race_sources/ produced this entry (traceability)
+#   source_url    the page/feed the adapter actually read
+#   last_synced   "YYYY-MM-DD" this entry was last confirmed present by a sync run
+
+- name: StraLugano
+  date: '2026-09-26'
+  category: road
+  country: Svizzera
+  region: Lugano, Piazza della Riforma
+  lat: 46.003516
+  lng: 8.951276
+  organizer: Luca Ferretti
+  url: https://www.stralugano.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Trento Half Marathon
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Trento
+  distance_km: 21.1
+  lat: 46.102954
+  lng: 11.129743
+  organizer: Gianni Valler
+  url: https://www.trentorunningfestival.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: 3 Country Sparkasse Marathon
+  date: '2026-10-11'
+  category: road
+  country: Austria
+  distance_km: 42.195
+  lat: 47.59397
+  lng: 14.12456
+  organizer: Günter Ernst
+  url: https://www.sparkasse-3-laender-marathon.at
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: TUI Palma Marathon Mallorca
+  date: '2026-10-18'
+  category: road
+  country: Spagna
+  region: Palma de Mallorca
+  distance_km: 42.195
+  lat: 39.569582
+  lng: 2.650075
+  organizer: David Thompson Foronda
+  url: https://www.palmademallorcamarathon.com/english
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Half Marathon Valencia Trinidad Alfonso Zurich
+  date: '2026-10-25'
+  category: road
+  country: Spagna
+  distance_km: 21.1
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Paco Borao
+  url: https://www.valenciaciudaddelrunning.com/medio-maraton
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Venicemarathon
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 45.480476
+  lng: 12.245307
+  organizer: Piero Rosa Salva
+  url: https://www.venicemarathon.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Lausanne Marathon
+  date: '2026-10-25'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Josette Bruchez
+  url: https://www.lausanne-marathon.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: SwissCityMarathon – Lucerne
+  date: '2026-10-25'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Reto Schorno
+  url: https://www.swisscitymarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Ravenna Marathon City of Art
+  date: '2026-11-08'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Stefano Righini
+  url: https://www.maratonadiravenna.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: French Riviera Marathon Nice-Cannes
+  date: '2026-11-08'
+  category: road
+  country: Francia
+  distance_km: 42.195
+  lat: 46.603354
+  lng: 1.888334
+  organizer: 'Hugues Lelievre '
+  url: https://www.marathon06.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Verona Run Marathon
+  date: '2026-11-15'
+  category: road
+  country: Italia
+  region: Verona
+  distance_km: 42.195
+  lat: 45.442498
+  lng: 10.985738
+  organizer: Stefano Stanzial
+  url: https://www.veronarunmarathon.it/?lang=en
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Powerade Milano Half Marathon
+  date: '2026-11-22'
+  category: road
+  country: Italia
+  distance_km: 21.1
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Andrea Trabuio, Luca Lamera
+  url: https://followyourpassion.it/milano21/
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Serge Vigot La Rochelle International Marathon
+  date: '2026-11-29'
+  category: road
+  country: Francia
+  distance_km: 42.195
+  lat: 46.603354
+  lng: 1.888334
+  organizer: Mauny Nicolas
+  url: https://marathondelarochelle.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Estra Firenze Marathon
+  date: '2026-11-29'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Giancarlo Romiti
+  url: https://www.firenzemarathon.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Valencia Trinidad Alfonso Marathon
+  date: '2026-12-06'
+  category: road
+  country: Spagna
+  distance_km: 42.195
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Paco Borao
+  url: https://www.valenciaciudaddelrunning.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Neujahrsmarathon Zürich
+  date: '2027-01-01'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Andreina Schwarz
+  url: https://www.neujahrsmarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: 10K Valencia Ibercaja by Kiprun
+  date: '2027-01-10'
+  category: road
+  country: Spagna
+  region: Valencia
+  distance_km: 10.0
+  lat: 39.469707
+  lng: -0.376335
+  organizer: Alex Aparicio
+  url: https://www.10kvalencia.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Mitja Marató Internacional Vila de Santa Pola
+  date: '2027-01-24'
+  category: road
+  country: Spagna
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Roque M. Alemañ Bonet
+  url: https://www.mitjasantapola.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Hyundai Mitja Marató de Barcelona by Brooks
+  date: '2027-02-14'
+  category: road
+  country: Spagna
+  region: Barcelona
+  lat: 41.38258
+  lng: 2.177073
+  organizer: Cristian Llorens Codinach
+  url: https://mitjamarato.barcelona
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Romeo&Giulietta Run Half Marathon
+  date: '2027-02-14'
+  category: road
+  country: Italia
+  distance_km: 21.1
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Stefano Stanzial
+  url: https://www.romeoegiuliettarunhalfmarathon.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Maratona di San Valentino
+  date: '2027-02-21'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Marcello Vettese
+  url: https://www.maratonadisanvalentino.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Zurich Maratón de Sevilla
+  date: '2027-02-21'
+  category: road
+  country: Spagna
+  region: Parque de Maria Luisa, Sevilla
+  lat: 37.374771
+  lng: -5.988794
+  organizer: Francisco Javier Gavela Rodríguez
+  url: https://en.zurichmaratonsevilla.es
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Napoli City Half Marathon
+  date: '2027-02-21'
+  category: road
+  country: Italia
+  distance_km: 21.1
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Carlo Capalbo
+  url: https://www.napolirunning.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Zurich Marató de Barcelona
+  date: '2027-03-14'
+  category: road
+  country: Spagna
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Cristian Llorens Codinach
+  url: https://www.zurichmaratobarcelona.es
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Movistar Madrid Medio Maratón
+  date: '2027-04-04'
+  category: road
+  country: Spagna
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Alejandro Sánchez Perrote
+  url: https://www.mediomaratonmadrid.es
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Milano Marathon
+  date: '2027-04-04'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Luca Onofrio
+  url: https://www.milanomarathon.it/en/
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Ochsner Sport Zürich Marathon
+  date: '2027-04-11'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Fabian Lips
+  url: https://www.zuerichmarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Padova Marathon
+  date: '2027-04-18'
+  category: road
+  country: Italia
+  region: Padua
+  distance_km: 42.195
+  lat: 45.398443
+  lng: 11.895683
+  organizer: Francesca Facco
+  url: https://www.padovamarathon.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Vienna City Marathon
+  date: '2027-04-18'
+  category: road
+  country: Austria
+  distance_km: 42.195
+  lat: 47.59397
+  lng: 14.12456
+  organizer: Dominik Konrad
+  url: https://www.vienna-marathon.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Zurich Rock ’n’ Roll Running Series Madrid
+  date: '2027-04-25'
+  category: road
+  country: Spagna
+  lat: 39.326069
+  lng: -4.837979
+  organizer: Pedro Rumbao
+  url: https://www.rocknrollmadridrun.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Generali Genève Marathon
+  date: '2027-05-09'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Benjamin Chandelier
+  url: https://www.generaligenevemarathon.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Moonlight Half Marathon
+  date: '2027-05-22'
+  category: road
+  country: Italia
+  distance_km: 21.1
+  lat: 42.638426
+  lng: 12.674297
+  organizer: Piero Rosa Salva
+  url: https://www.moonlighthalfmarathon.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Salzburg Marathon
+  date: '2027-05-23'
+  category: road
+  country: Austria
+  distance_km: 42.195
+  lat: 47.59397
+  lng: 14.12456
+  organizer: Johannes Langer
+  url: https://www.salzburg-marathon.at
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Gornergrat Zermatt Marathon
+  date: '2027-07-02'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Vanessa Lorenz
+  url: https://www.zermattmarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Swissalpine Flims
+  date: '2027-07-17'
+  category: road
+  country: Svizzera
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Andrea Tuffli
+  url: https://www.swissalpine.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: 27th International WACHAUmarathon
+  date: '2027-09-26'
+  category: road
+  country: Austria
+  distance_km: 42.195
+  lat: 47.59397
+  lng: 14.12456
+  organizer: Michael Buchleitner
+  url: https://www.wachaumarathon.com
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Greifenseelauf Uster
+  date: '2027-09-28'
+  category: road
+  country: Svizzera
+  region: Zürichstrasse, Uster
+  lat: 47.36591
+  lng: 8.697745
+  organizer: Markus Ryffel
+  url: https://www.greifenseelauf.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: 3 Country Sparkasse Marathon
+  date: '2027-10-10'
+  category: road
+  country: Austria
+  distance_km: 42.195
+  lat: 47.59397
+  lng: 14.12456
+  organizer: Günter Ernst
+  url: https://www.sparkasse-3-laender-marathon.at
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: Venicemarathon
+  date: '2027-10-24'
+  category: road
+  country: Italia
+  distance_km: 42.195
+  lat: 45.480476
+  lng: 12.245307
+  organizer: Piero Rosa Salva
+  url: https://www.venicemarathon.it
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: SwissCityMarathon – Lucerne
+  date: '2027-10-31'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Reto Schorno
+  url: https://www.swisscitymarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'
+
+- name: SwissCityMarathon – Lucerne
+  date: '2028-10-29'
+  category: road
+  country: Svizzera
+  distance_km: 42.195
+  lat: 46.798562
+  lng: 8.231974
+  organizer: Reto Schorno
+  url: https://www.swisscitymarathon.ch
+  source: aims
+  source_url: https://aims-worldrunning.org/events.ics
+  last_synced: '2026-09-23'

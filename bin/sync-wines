@@ -19,16 +19,14 @@ require "csv"
 require "json"
 require "yaml"
 require "date"
-require "net/http"
-require "uri"
+
+require_relative "lib/http"
+require_relative "lib/geocode"
 
 ROOT       = File.expand_path("..", __dir__)
 WINES_YML  = File.join(ROOT, "_data", "wines.yml")
 CACHE_FILE = File.join(ROOT, "bin", ".wines_geocache.json")
 URL_FILE   = File.join(ROOT, "bin", "wines_csv_url.txt")
-
-USER_AGENT = "emanuelemengoli.github.io wine-map sync " \
-             "(+https://github.com/emanuelemengoli/emanuelemengoli.github.io)"
 
 # Exact form question titles (normalised: accent-folded, lower-cased, non-alphanumerics
 # removed) -> entry path + kind. A field may map to SEVERAL columns because the form
@@ -281,51 +279,9 @@ def deep_merge!(dst, src)
   dst
 end
 
-def http_get(url, limit = 5)
-  raise "too many redirects" if limit <= 0
-  uri = URI(url)
-  req = Net::HTTP::Get.new(uri)
-  req["User-Agent"] = USER_AGENT
-  res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == "https",
-                        open_timeout: 15, read_timeout: 30) { |http| http.request(req) }
-  case res
-  when Net::HTTPSuccess     then res.body
-  when Net::HTTPRedirection then http_get(res["location"], limit - 1)
-  else raise "HTTP #{res.code} for #{url}"
-  end
-end
-
 # --------------------------------------------------------------------------- geocode
 
-CACHE = File.exist?(CACHE_FILE) ? ((JSON.parse(File.read(CACHE_FILE)) rescue {})) : {}
-$geocoded_this_run = 0
-
-def geocode(*parts)
-  query = parts.map { |p| p.to_s.strip }.reject(&:empty?).join(", ")
-  return nil if query.empty?
-  return CACHE[query] if CACHE.key?(query)
-
-  result = nominatim(query)
-  if result.nil? && parts.length > 1
-    fallback = parts.drop(1).map { |p| p.to_s.strip }.reject(&:empty?).join(", ")
-    result = nominatim(fallback) unless fallback.empty? || fallback == query
-  end
-  CACHE[query] = result
-  result
-end
-
-def nominatim(query)
-  uri = URI("https://nominatim.openstreetmap.org/search")
-  uri.query = URI.encode_www_form(q: query, format: "json", limit: 1, addressdetails: 0)
-  body = http_get(uri.to_s)
-  sleep 1 # Nominatim usage policy: <= 1 request/second
-  $geocoded_this_run += 1
-  hit = JSON.parse(body).first
-  hit && [hit["lat"].to_f.round(6), hit["lon"].to_f.round(6)]
-rescue StandardError => e
-  warn "  ! geocode failed for #{query.inspect}: #{e.class}: #{e.message}"
-  nil
-end
+geocoder = Geocode::Client.new(CACHE_FILE)
 
 # --------------------------------------------------------------------------- load CSV
 
@@ -334,7 +290,7 @@ csv_url = File.read(URL_FILE).strip if (csv_url.nil? || csv_url.empty?) && File.
 abort "No CSV URL. Set WINES_CSV_URL or create #{URL_FILE} (see bin/wines-sync.md)." if csv_url.nil? || csv_url.empty?
 
 warn "Fetching form responses…"
-csv_text = utf8(http_get(csv_url)).sub(/\A\uFEFF/, "")
+csv_text = utf8(Http.get(csv_url)).sub(/\A\uFEFF/, "")
 rows = CSV.parse(csv_text)
 abort "The CSV is empty." if rows.empty?
 head = rows.shift.map { |h| key_norm(h) } # normalised header, by column index
@@ -447,7 +403,7 @@ incoming.each_value do |inc|
     if override
       cur["lat"], cur["lng"] = override
     elsif blank?(cur["lat"]) || blank?(cur["lng"])
-      if (coords = geocode(cur["producer"], cur["region"], cur["country"]))
+      if (coords = geocoder.lookup(cur["producer"], cur["region"], cur["country"]))
         cur["lat"], cur["lng"] = coords
       end
     end
@@ -459,7 +415,7 @@ incoming.each_value do |inc|
       inc["lat"], inc["lng"] = override
     elsif (coords = producer_coords[norm(inc["producer"])])
       inc["lat"], inc["lng"] = coords
-    elsif (coords = geocode(inc["producer"], inc["region"], inc["country"]))
+    elsif (coords = geocoder.lookup(inc["producer"], inc["region"], inc["country"]))
       inc["lat"], inc["lng"] = coords
     end
     warn "  ! #{inc['producer']} — #{inc['name']}: no coordinates (won't appear on the map)" if blank?(inc["lat"])
@@ -485,7 +441,7 @@ new_body = new_body.gsub(/(\n)(- name:)/, "\\1\n\\2") # blank line between entri
 new_file = "#{header}\n\n#{new_body}"
 
 summary = "#{existing.size} wines · #{added} added · #{updated} updated · " \
-          "#{$geocoded_this_run} geocoded · #{skipped} skipped"
+          "#{geocoder.lookups} geocoded · #{skipped} skipped"
 
 if options[:dry_run]
   warn "[dry-run] #{summary}"
@@ -493,7 +449,7 @@ if options[:dry_run]
 else
   changed = new_file != raw_yaml
   File.write(WINES_YML, new_file) if changed
-  File.write(CACHE_FILE, JSON.pretty_generate(CACHE) + "\n")
+  geocoder.save
   warn summary
   if changed
     warn "Wrote _data/wines.yml"

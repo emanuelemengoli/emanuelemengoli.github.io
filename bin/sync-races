@@ -1,0 +1,241 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Auto-compile races (trail running, triathlon, ultra, road) across France, Italy, Spain,
+# Switzerland and Austria into _data/races.yml (merge / upsert), from every adapter under
+# bin/race_sources/. No manual data entry — this is meant to run unattended on a schedule
+# (.github/workflows/sync-races.yml, monthly) which opens a pull request with the result;
+# merging that PR is the owner's only manual step. Setup / source list: bin/races-sync.md.
+#
+# Usage:
+#   ruby bin/sync-races                 fetch every source, merge into _data/races.yml
+#   ruby bin/sync-races --source=aims,duv   run only the named source(s) (debugging)
+#   ruby bin/sync-races --sort           also re-order soonest-first
+#   ruby bin/sync-races --commit         also `git commit` the result (local convenience;
+#                                        the scheduled workflow opens a PR instead)
+#   ruby bin/sync-races --dry-run        show what would change, write nothing
+
+require "yaml"
+require "date"
+
+require_relative "lib/http"
+require_relative "lib/text"
+require_relative "lib/geocode"
+require_relative "race_sources/base"
+require_relative "race_sources/aims"
+require_relative "race_sources/duv"
+
+ROOT       = File.expand_path("..", __dir__)
+RACES_YML  = File.join(ROOT, "_data", "races.yml")
+CACHE_FILE = File.join(ROOT, "bin", ".races_geocache.json")
+
+PRUNE_HORIZON_DAYS = 7 # a race more than this many days in the past is dropped, not kept forever
+
+# Every source this feature is meant to cover, in the order the plan lays them out. Only
+# a few are wired up today (M1); the rest are explicit stubs so the full intended shape is
+# visible in every run's output, not just in a design doc.
+SOURCES = [
+  RaceSources::Aims.new,
+  RaceSources::Duv.new,
+  RaceSources::Stub.new("ffa", note: "France athletics (road + trail) — athle.fr scraper not built yet"),
+  RaceSources::Stub.new("fftri", note: "France triathlon — fftri.com scraper not built yet"),
+  RaceSources::Stub.new("fidal", note: "Italy athletics (road + trail) — fidal.it scraper not built yet"),
+  RaceSources::Stub.new("fitri", note: "Italy triathlon — calendar URL not identified yet"),
+  RaceSources::Stub.new("skyrunning_it", note: "Italy skyrunning/trail — skyrunningitalia.it scraper not built yet"),
+  RaceSources::Stub.new("utmb_itra", note: "Trail — utmb.world / itra.run scraper not built yet " \
+                                            "(may be a JS-rendered page, needs checking first)"),
+  RaceSources::Stub.new("spain", note: "Spain federations (athletics + triathlon) not identified yet"),
+  RaceSources::Stub.new("switzerland", note: "Switzerland federations not identified yet"),
+  RaceSources::Stub.new("austria", note: "Austria federations not identified yet")
+].freeze
+
+TOP_ORDER = %w[name date category country region distance_km distances_km elevation_gain_m
+               difficulty lat lng price organizer url notes series source source_url last_synced].freeze
+
+options = { sort: false, commit: false, dry_run: false, sources: nil }
+ARGV.each do |a|
+  case a
+  when "--sort"          then options[:sort] = true
+  when "--commit"        then options[:commit] = true
+  when "--dry-run", "-n" then options[:dry_run] = true
+  when /\A--source=(.+)\z/ then options[:sources] = Regexp.last_match(1).split(",").map(&:strip)
+  when "-h", "--help"
+    puts <<~USAGE
+      Auto-compile races into _data/races.yml (merge / upsert) from bin/race_sources/.
+      Setup: bin/races-sync.md
+
+        ruby bin/sync-races                   fetch every source
+        ruby bin/sync-races --source=aims,duv run only the named source(s)
+        ruby bin/sync-races --sort            also re-order soonest-first
+        ruby bin/sync-races --commit          also `git commit` the result
+        ruby bin/sync-races --dry-run         show what would change, write nothing
+    USAGE
+    exit 0
+  else
+    abort "unknown option: #{a}"
+  end
+end
+
+# --------------------------------------------------------------------------- utils
+
+def entry_key(entry)
+  [Text.norm(entry["name"]), entry["date"].to_s.strip, Text.norm(entry["country"])].join("|")
+end
+
+def deep_merge!(dst, src)
+  src.each do |k, v|
+    if v.is_a?(Hash) && dst[k].is_a?(Hash)
+      deep_merge!(dst[k], v)
+    else
+      dst[k] = v
+    end
+  end
+  dst
+end
+
+def canonicalize(entry)
+  out = {}
+  TOP_ORDER.each { |k| out[k] = entry[k] unless Text.blank?(entry[k]) }
+  (entry.keys - TOP_ORDER).each { |k| out[k] = entry[k] unless Text.blank?(entry[k]) }
+  out
+end
+
+REQUIRED = %w[name date category source source_url].freeze
+
+def valid?(entry)
+  REQUIRED.all? { |f| !Text.blank?(entry[f]) }
+end
+
+# --------------------------------------------------------------------------- fetch
+
+today  = Date.today
+cutoff = today - PRUNE_HORIZON_DAYS
+
+active_sources = options[:sources] ? SOURCES.select { |s| options[:sources].include?(s.name) } : SOURCES
+if options[:sources]
+  unknown = options[:sources] - SOURCES.map(&:name)
+  abort "unknown --source: #{unknown.join(', ')} (known: #{SOURCES.map(&:name).join(', ')})" unless unknown.empty?
+end
+
+incoming = []
+skipped_invalid = 0
+per_source = {}
+
+active_sources.each do |source|
+  warn "Fetching #{source.name}…"
+  fetched =
+    begin
+      source.fetch
+    rescue StandardError => e
+      # Belt-and-braces on top of each adapter's own rescue: nothing a source does should
+      # ever be able to take the rest of the run down with it.
+      warn "  ! #{source.name}: unexpected #{e.class}: #{e.message} — skipping this source"
+      []
+    end
+  kept = fetched.select do |e|
+    ok = valid?(e)
+    skipped_invalid += 1 unless ok
+    ok
+  end
+  per_source[source.name] = kept.size
+  incoming.concat(kept)
+end
+
+# --------------------------------------------------------------------------- load YAML
+
+raw_yaml = File.exist?(RACES_YML) ? File.read(RACES_YML) : ""
+lines = raw_yaml.lines
+hdr_end = 0
+lines.each_with_index do |ln, i|
+  (ln.strip.empty? || ln.lstrip.start_with?("#")) ? (hdr_end = i + 1) : break
+end
+header = lines[0...hdr_end].join.rstrip
+body   = lines[hdr_end..].to_a.join
+
+existing = body.strip.empty? ? [] : YAML.safe_load(body, permitted_classes: [Date], aliases: false)
+existing = [] unless existing.is_a?(Array)
+existing.each { |e| e["date"] = e["date"].strftime("%Y-%m-%d") if e["date"].is_a?(Date) }
+by_key = existing.each_with_object({}) { |e, h| h[entry_key(e)] = e }
+
+# --------------------------------------------------------------------------- merge
+
+geocoder = Geocode::Client.new(CACHE_FILE)
+added = updated = 0
+
+incoming.each do |inc|
+  inc["last_synced"] = today.strftime("%Y-%m-%d")
+  key = entry_key(inc)
+  cur = by_key[key]
+
+  if cur
+    before = Marshal.load(Marshal.dump(cur))
+    deep_merge!(cur, inc)
+    if Text.blank?(cur["lat"]) || Text.blank?(cur["lng"])
+      coords = geocoder.lookup(cur["name"], cur["region"], cur["country"])
+      cur["lat"], cur["lng"] = coords if coords
+    end
+    cur.replace(canonicalize(cur))
+    updated += 1 unless cur == before
+  else
+    coords = geocoder.lookup(inc["name"], inc["region"], inc["country"])
+    inc["lat"], inc["lng"] = coords if coords
+
+    entry = canonicalize(inc)
+    existing << entry
+    by_key[key] = entry
+    added += 1
+  end
+end
+
+# --------------------------------------------------------------------------- prune
+
+before_prune = existing.size
+existing.reject! do |e|
+  d = e["date"]
+  next false if Text.blank?(d)
+
+  begin
+    Date.parse(d) < cutoff
+  rescue ArgumentError
+    false
+  end
+end
+pruned = before_prune - existing.size
+
+if options[:sort]
+  existing.sort! do |a, b|
+    cmp = a["date"].to_s <=> b["date"].to_s
+    cmp.zero? ? a["name"].to_s.casecmp(b["name"].to_s) : cmp
+  end
+end
+
+# --------------------------------------------------------------------------- write
+
+new_body = Psych.dump(existing, line_width: -1).sub(/\A---\n/, "")
+new_body = new_body.gsub(/(\n)(- name:)/, "\\1\n\\2") # blank line between entries
+new_file = "#{header}\n\n#{new_body}"
+
+per_source_summary = per_source.map { |n, c| "#{n}=#{c}" }.join(" ")
+summary = "#{existing.size} races · #{added} added · #{updated} updated · #{pruned} pruned · " \
+          "#{geocoder.lookups} geocoded · #{skipped_invalid} skipped (invalid) · [#{per_source_summary}]"
+
+if options[:dry_run]
+  warn "[dry-run] #{summary}"
+  warn "[dry-run] #{new_file == raw_yaml ? 'no change to' : 'would rewrite'} _data/races.yml"
+else
+  changed = new_file != raw_yaml
+  File.write(RACES_YML, new_file) if changed
+  geocoder.save
+  warn summary
+  if changed
+    warn "Wrote _data/races.yml"
+    if options[:commit]
+      system("git", "-C", ROOT, "add", "_data/races.yml") &&
+        system("git", "-C", ROOT, "commit", "-m", "races: monthly sync")
+    else
+      warn "Review with:  git diff _data/races.yml    then commit & push (or let the scheduled workflow open a PR)."
+    end
+  else
+    warn "_data/races.yml already up to date."
+  end
+end

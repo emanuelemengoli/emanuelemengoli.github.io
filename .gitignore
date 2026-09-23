@@ -15,6 +15,9 @@ vendor
 bin/wines_csv_url.txt
 bin/.wines_geocache.json
 
+# bin/sync-races local state (see bin/races-sync.md)
+bin/.races_geocache.json
+
 # local dev launcher — machine-specific, never committed
 bin/local_loader
 
