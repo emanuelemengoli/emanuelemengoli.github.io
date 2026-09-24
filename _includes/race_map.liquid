@@ -1,0 +1,327 @@
+{% comment %}
+  Interactive race map for /le-mie-passioni/, mirroring wine_map.liquid's architecture.
+  Data source: _data/races.yml, auto-compiled by bin/sync-races (see that file's header
+  and bin/races-sync.md) — not hand-edited.
+
+  Unlike the wine map (a handful of pins), this can carry hundreds of races across 5
+  countries, so markers are clustered (Leaflet.markercluster, loaded here only — see
+  _config.yml's leaflet_markercluster entry — not from the shared leaflet.liquid, so the
+  wine map doesn't pay for a plugin it doesn't need).
+
+  The popup is authored in Italian; the shared IT/EN toggle (wine_i18n.liquid, included
+  once at the top of the page) translates it at runtime through Google Translate's free
+  endpoint, same as the wine map.
+{% endcomment %}
+
+<style>
+  #race-map {
+    height: clamp(340px, 60vh, 560px);
+    width: 100%;
+    border-radius: 8px;
+    z-index: 0;
+  }
+  @media (max-width: 576px) {
+    #race-map {
+      height: clamp(300px, 52vh, 420px);
+    }
+  }
+  #race-map .leaflet-container {
+    background: var(--global-bg-color);
+    font: inherit;
+  }
+  html[data-theme="dark"] #race-map .leaflet-tile {
+    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95);
+  }
+  html[data-theme="dark"] #race-map .leaflet-container {
+    background: #1c1c1d;
+  }
+
+  .race-marker {
+    background: none;
+    border: none;
+  }
+  .race-marker svg {
+    display: block;
+    filter: drop-shadow(0 2px 2.5px rgba(0, 0, 0, 0.55));
+  }
+  html[data-theme="dark"] .race-marker svg {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.8));
+  }
+  .race-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--global-theme-color);
+    color: #fff;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.65);
+  }
+  html[data-theme="dark"] .race-cluster {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.45);
+  }
+
+  .leaflet-popup.race-popup .leaflet-popup-content-wrapper,
+  .leaflet-popup.race-popup .leaflet-popup-tip {
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  .leaflet-popup.race-popup .leaflet-popup-content-wrapper {
+    border-radius: 6px;
+  }
+  .leaflet-popup.race-popup .leaflet-popup-content {
+    margin: 0.7rem 0.9rem;
+    line-height: 1.45;
+  }
+  .race-popup-card {
+    width: 220px;
+  }
+  .race-popup-card .race-name {
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .race-popup-card .race-badge {
+    display: inline-block;
+    margin: 0.2rem 0 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .race-popup-card .race-meta {
+    margin-top: 0.15rem;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
+  .race-popup-card .race-site {
+    display: inline-block;
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--global-theme-color);
+  }
+</style>
+
+<link
+  rel="stylesheet"
+  href="{{ site.third_party_libraries.leaflet_markercluster.url.css }}"
+  integrity="{{ site.third_party_libraries.leaflet_markercluster.integrity.css }}"
+  crossorigin=""
+/>
+<link
+  rel="stylesheet"
+  href="{{ site.third_party_libraries.leaflet_markercluster.url.css_default }}"
+  integrity="{{ site.third_party_libraries.leaflet_markercluster.integrity.css_default }}"
+  crossorigin=""
+/>
+<script
+  src="{{ site.third_party_libraries.leaflet_markercluster.url.js }}"
+  integrity="{{ site.third_party_libraries.leaflet_markercluster.integrity.js }}"
+  crossorigin=""
+></script>
+
+<div id="race-map"></div>
+
+<script>
+  window.RACE_MAP_DATA = {{ site.data.races | jsonify | replace: '</', '<\/' }};
+</script>
+
+<script>
+  (function () {
+    function ready(fn) {
+      if (document.readyState === "complete") fn();
+      else window.addEventListener("load", fn);
+    }
+
+    ready(function () {
+      var el = document.getElementById("race-map");
+      if (!el || !window.L) return;
+      var races = Array.isArray(window.RACE_MAP_DATA) ? window.RACE_MAP_DATA : [];
+
+      var COLORS = { trail: "#7d5a36", ultra: "#8e3b46", triathlon: "#2a6f97", road: "#4a7c3f" };
+      var CATEGORY_LABEL = { trail: "Trail", ultra: "Ultra", triathlon: "Triathlon", road: "Strada" };
+
+      // Language + IT->EN translation are shared with the finder via window.WineI18n
+      // (wine_i18n.liquid, included once at the top of the page). Everything here is
+      // authored in Italian.
+      var I18N = window.WineI18n || { lang: "it", translate: function (e, d) { if (d) d(); }, onChange: function () {} };
+
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      function cap(s) {
+        s = String(s == null ? "" : s).trim();
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+      }
+      function safeUrl(u) {
+        u = String(u || "").trim();
+        if (!u) return "";
+        if (/^(https?:\/\/|\/)/i.test(u)) return u;
+        return /^[\w-]+(\.[\w-]+)+([/?#].*)?$/.test(u) ? "https://" + u : "";
+      }
+      function hostOf(u) {
+        try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; }
+      }
+      var DATE_FMT = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric" });
+      function fmtDate(iso) {
+        if (!iso) return "";
+        var d = new Date(iso + "T00:00:00");
+        return isNaN(d) ? iso : DATE_FMT.format(d);
+      }
+      function raceKey(r) {
+        return (r.name || "") + "|" + (r.date || "");
+      }
+
+      function bottlePin(color) {
+        var d = "M12 0C6.5 0 2 4.5 2 10c0 7.5 10 14 10 14s10-6.5 10-14c0-5.5-4.5-10-10-10z";
+        var svg =
+          '<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">' +
+          '<path d="' + d + '" fill="' + color + '" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke"/>' +
+          '<circle cx="12" cy="10" r="3.4" fill="#ffffff" fill-opacity="0.85"/>' +
+          "</svg>";
+        return L.divIcon({
+          html: svg,
+          className: "race-marker",
+          iconSize: [28, 28],
+          iconAnchor: [14, 27],
+          popupAnchor: [0, -24],
+        });
+      }
+
+      function cardHtml(r) {
+        var color = COLORS[r.category] || "#6b6b6b";
+        var meta = [];
+        if (r.region) meta.push(esc(cap(r.region)));
+        var dist = r.distance_km != null ? r.distance_km : (Array.isArray(r.distances_km) ? r.distances_km[0] : null);
+        if (dist != null) meta.push(dist + " km");
+        if (r.elevation_gain_m != null) meta.push("D+ " + r.elevation_gain_m + " m");
+
+        var url = safeUrl(r.url);
+        var site = url
+          ? '<a class="race-site no-tx" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' +
+            esc(hostOf(url)) + " ↗</a>"
+          : "";
+
+        return (
+          '<div class="race-popup-card">' +
+          '<span class="race-badge no-tx" style="background:' + color + '">' + esc(CATEGORY_LABEL[r.category] || r.category) + "</span>" +
+          '<div class="race-name no-tx">' + esc(cap(r.name)) + "</div>" +
+          '<div class="race-meta no-tx">' + esc(fmtDate(r.date)) + "</div>" +
+          (meta.length ? '<div class="race-meta">' + meta.join(" · ") + "</div>" : "") +
+          site +
+          "</div>"
+        );
+      }
+
+      function cardNode(r) {
+        var tpl = document.createElement("template");
+        tpl.innerHTML = cardHtml(r).trim();
+        return tpl.content.firstElementChild || tpl.firstElementChild;
+      }
+
+      var map = L.map(el, { scrollWheelZoom: false, worldCopyJump: true });
+      map.on("click", function () { map.scrollWheelZoom.enable(); });
+      map.on("mouseout", function () { map.scrollWheelZoom.disable(); });
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      var clusters = window.L.markerClusterGroup
+        ? L.markerClusterGroup({
+            maxClusterRadius: 45,
+            iconCreateFunction: function (cluster) {
+              return L.divIcon({
+                html: '<div class="race-cluster no-tx">' + cluster.getChildCount() + "</div>",
+                className: "",
+                iconSize: [34, 34],
+              });
+            },
+          })
+        : L.layerGroup(); // graceful fallback if the clustering plugin failed to load
+      clusters.addTo(map);
+
+      var markers = [];
+      var pts = [];
+      races.forEach(function (r) {
+        var lat = Number(r.lat);
+        var lng = Number(r.lng);
+        if (!isFinite(lat) || !isFinite(lng)) return;
+        var m = L.marker([lat, lng], {
+          icon: bottlePin(COLORS[r.category] || "#6b6b6b"),
+          title: cap(r.name) + (r.date ? " — " + r.date : ""),
+        }).bindPopup(cardNode(r), { className: "race-popup", maxWidth: 260, minWidth: 180 });
+        m._race = r;
+        clusters.addLayer(m);
+        markers.push(m);
+        pts.push([lat, lng]);
+      });
+
+      if (pts.length) {
+        map.fitBounds(pts, { padding: [30, 30], maxZoom: 8 });
+      } else {
+        map.setView([46, 6], 4);
+      }
+
+      var openPopup = null;
+      map.on("popupopen", function (e) { openPopup = e.popup; });
+      map.on("popupclose", function () { openPopup = null; });
+
+      function refreshOpenPopup() {
+        if (!openPopup) return;
+        var content = openPopup.getContent();
+        if (content && content.nodeType) I18N.translate(content);
+      }
+      I18N.onChange(function () {
+        markers.forEach(function (m) {
+          var fresh = cardNode(m._race);
+          m.setPopupContent(fresh);
+          if (I18N.lang === "en") I18N.translate(fresh);
+        });
+        refreshOpenPopup();
+      });
+
+      // The finder (race_finder.liquid) asks the map to focus one race.
+      window.addEventListener("racefinder:show", function (ev) {
+        var d = (ev && ev.detail) || {};
+        var key = (d.name || "") + "|" + (d.date || "");
+        var target = markers.filter(function (m) { return raceKey(m._race) === key; })[0];
+        if (!target) return;
+        if (clusters.zoomToShowLayer) {
+          clusters.zoomToShowLayer(target, function () {
+            map.panTo(target.getLatLng());
+            target.openPopup();
+          });
+        } else {
+          map.panTo(target.getLatLng());
+          target.openPopup();
+        }
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+
+      // Legend, driven by the categories actually present in the data.
+      var legend = document.getElementById("race-legend");
+      if (legend) {
+        var present = [];
+        races.forEach(function (r) { if (r.category && present.indexOf(r.category) < 0) present.push(r.category); });
+        ["trail", "ultra", "triathlon", "road"].forEach(function (c) {
+          if (present.indexOf(c) < 0) return;
+          var li = document.createElement("li");
+          li.innerHTML =
+            '<span class="wine-legend-dot" style="background:' + COLORS[c] + '"></span>' +
+            esc(CATEGORY_LABEL[c]);
+          legend.appendChild(li);
+        });
+      }
+    });
+  })();
+</script>

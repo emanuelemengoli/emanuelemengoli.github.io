@@ -1,18 +1,25 @@
 {% comment %}
-  Shared IT -> EN runtime translation for the Degustando section (/le-mie-passioni/).
-  Include ONCE, before wine_finder.liquid and wine_map.liquid.
+  Shared IT -> EN runtime translation for every "passions" section on this page
+  (Degustando/wine and Gare/races so far). Include ONCE, before any of
+  wine_finder.liquid, wine_map.liquid, race_finder.liquid, race_map.liquid.
 
   window.WineI18n:
     .lang                "it" | "en"  (plain property, kept in sync)
-    .setLang(l)          switch language: persist, re-translate / restore the section, notify
-    .onChange(fn)        subscribe fn(lang) — finder re-renders, map rebuilds popups
+    .setLang(l)          switch language: persist, re-translate / restore every
+                         .passions-section on the page, notify
+    .onChange(fn)        subscribe fn(lang) — each section's finder re-renders, its map
+                         rebuilds popups
     .translate(el, done) walk el's text nodes IT -> EN via Google's keyless endpoint,
                          cache in localStorage, stash the Italian for restore.
                          Skips <a> and .no-tx; DOES translate <button> text.
     .restore(el)         put stashed Italian back (used on EN -> IT)
 
-  English is produced on the fly and cached — no hand-maintained copies. One toggle
-  (#wine-lang-toggle in the page) drives the finder, the map popups and the tasting sheet.
+  .translate/.restore take an explicit element (each section's finder/map calls them on
+  just its own re-rendered subtree); the page-wide "translate everything" pass below
+  loops over every .passions-section itself — a page can carry more than one, and the
+  single shared toggle (#passions-lang-toggle in the page) switches all of them together.
+
+  English is produced on the fly and cached — no hand-maintained copies.
 {% endcomment %}
 
 <script>
@@ -148,8 +155,30 @@
       });
     }
 
-    function section() {
-      return document.querySelector(".passions-section") || document.body;
+    function sections() {
+      var list = document.querySelectorAll(".passions-section");
+      return list.length ? Array.prototype.slice.call(list) : [document.body];
+    }
+
+    // Translate every .passions-section on the page, calling done() once every one of
+    // them has actually finished (not after the first) — a page with two sections
+    // shouldn't clear a "busy" toggle while the second one is still mid-translation.
+    function translateAll(done) {
+      var pending = sections().length;
+      if (!pending) {
+        if (done) done();
+        return;
+      }
+      sections().forEach(function (el) {
+        translate(el, function () {
+          pending -= 1;
+          if (pending === 0 && done) done();
+        });
+      });
+    }
+
+    function restoreAll() {
+      sections().forEach(restore);
     }
 
     // done (optional) fires once the switch has actually finished — for "en" that means
@@ -166,9 +195,9 @@
         if (window.localStorage) localStorage.setItem(KEY_LANG, lang);
       } catch (e) {}
       if (lang === "en") {
-        translate(section(), done);
+        translateAll(done);
       } else {
-        restore(section());
+        restoreAll();
         if (done) done();
       }
       notify();
@@ -185,22 +214,22 @@
     };
 
     function init() {
-      var btn = document.getElementById("wine-lang-toggle");
+      var btn = document.getElementById("passions-lang-toggle");
       if (btn) {
         var sync = function () {
           btn.textContent = lang === "it" ? "EN" : "IT";
           btn.setAttribute(
             "aria-label",
-            lang === "it" ? "Show this section in English" : "Mostra questa sezione in italiano"
+            lang === "it" ? "Show this page in English" : "Mostra questa pagina in italiano"
           );
         };
         sync();
         btn.addEventListener("click", function () {
           btn.setAttribute("aria-busy", "true");
-          // A wine section has dozens of text nodes to translate in batches of 8;
-          // a full pass can run past a second, so wait for it instead of guessing
-          // a fixed delay — otherwise "busy" clears before the text has actually
-          // changed and a slow translate looks like it silently did nothing.
+          // Translating every section can run past a second (dozens of text nodes,
+          // batched 8 at a time), so wait for it instead of guessing a fixed delay —
+          // otherwise "busy" clears before the text has actually changed and a slow
+          // translate looks like it silently did nothing.
           setLang(lang === "it" ? "en" : "it", function () {
             btn.removeAttribute("aria-busy");
           });
@@ -208,7 +237,7 @@
         });
         subs.push(sync);
       }
-      if (lang === "en") translate(section());
+      if (lang === "en") translateAll();
     }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", init);

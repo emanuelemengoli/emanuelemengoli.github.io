@@ -1,0 +1,817 @@
+{% comment %}
+  Race finder for /le-mie-passioni/ — the "plan a season" interaction in the Correndo
+  section, above the map (race_map.liquid). Language is shared with the map via
+  window.WineI18n (wine_i18n.liquid, included once at the top of the page).
+
+  Unlike wine_finder.liquid's "one recommendation" framing, this is primarily a browse
+  tool: with no free-text query, it's a sortable, soonest-first list of every race that
+  passes the active filters — the actual season-planning view. Typing a query and
+  pressing "Cerca" switches to a single best-match card + up to 2 runner-ups, same
+  shape as the wine finder's recommendation, for the "find me a specific race" ask.
+
+  Data comes from _data/races.yml, auto-compiled by bin/sync-races — see that file's
+  header and bin/races-sync.md. Missing distance/elevation/difficulty/price never
+  excludes a race from a search; those fields are best-effort by design.
+{% endcomment %}
+
+<style>
+  #race-finder {
+    margin-top: 1.4rem;
+  }
+  #race-finder .rf-empty {
+    font-size: 0.92rem;
+    color: var(--global-text-color-light);
+  }
+
+  /* ---- primary input ---- */
+  .rf-hero {
+    margin-bottom: 0.8rem;
+  }
+  .rf-hero-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .rf-hero-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+  #race-finder input[type="search"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  #race-finder button#rf-go {
+    flex: 0 0 auto;
+    font: inherit;
+    font-size: 0.88rem;
+    padding: 0 1.1rem;
+    border: none;
+    border-radius: 6px;
+    background: var(--global-theme-color);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  /* ---- filters ---- */
+  .rf-quick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .rf-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .rf-chip {
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1;
+    padding: 0.36rem 0.65rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--global-text-color);
+    cursor: pointer;
+  }
+  .rf-chip[aria-pressed="true"] {
+    background: var(--global-theme-color);
+    border-color: var(--global-theme-color);
+    color: #fff;
+  }
+  #race-finder select {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.36rem 0.5rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  .rf-range {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.82rem;
+    color: var(--global-text-color-light);
+  }
+  #race-finder input[type="number"] {
+    font: inherit;
+    font-size: 0.85rem;
+    width: 4.2rem;
+    padding: 0.36rem 0.4rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  #race-finder input[type="number"]::-webkit-outer-spin-button,
+  #race-finder input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  #race-finder input[type="date"] {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.3rem 0.4rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: var(--global-bg-color);
+    color: var(--global-text-color);
+  }
+  #race-finder button.rf-ghost {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.36rem 0.7rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--global-text-color-light);
+    cursor: pointer;
+  }
+  .rf-more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.6rem;
+    margin: 0.3rem 0 0.6rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
+  }
+  .rf-facet {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .rf-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--global-text-color-light);
+  }
+
+  /* ---- results ---- */
+  .rf-results {
+    margin-top: 0.6rem;
+  }
+  .rf-h {
+    margin: 1.1rem 0 0.5rem;
+    font-size: 0.98rem;
+    font-weight: 500;
+  }
+  .rf-h:first-child {
+    margin-top: 0.4rem;
+  }
+  .rf-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    color: #fff;
+    background: #6b6b6b;
+  }
+  .rf-badge-trail { background: #7d5a36; }
+  .rf-badge-ultra { background: #8e3b46; }
+  .rf-badge-triathlon { background: #2a6f97; }
+  .rf-badge-road { background: #4a7c3f; }
+
+  /* browse table */
+  .rf-table-wrap {
+    overflow-x: auto;
+  }
+  table.rf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+  table.rf-table th {
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--global-text-color-light);
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid var(--global-divider-color);
+    white-space: nowrap;
+  }
+  table.rf-table td {
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--global-divider-color);
+    vertical-align: top;
+  }
+  table.rf-table tr:last-child td {
+    border-bottom: none;
+  }
+  .rf-race-name {
+    font-weight: 600;
+  }
+  .rf-race-meta {
+    font-size: 0.78rem;
+    color: var(--global-text-color-light);
+  }
+  .rf-table a.rf-link {
+    color: var(--global-theme-color);
+  }
+  .rf-table button.rf-map-btn {
+    font: inherit;
+    font-size: inherit;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--global-theme-color);
+    cursor: pointer;
+  }
+  .rf-show-more {
+    margin-top: 0.6rem;
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--global-theme-color);
+    cursor: pointer;
+  }
+
+  /* query-mode cards, mirroring the wine finder's pick + runner-ups */
+  .rf-primary {
+    border: 1px solid var(--global-divider-color);
+    border-left: 3px solid var(--global-theme-color);
+    border-radius: 8px;
+    padding: 1rem 1.1rem 1.1rem;
+    background: var(--global-card-bg-color);
+  }
+  .rf-primary-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .rf-reason {
+    margin: 0.6rem 0 0;
+    font-size: 0.94rem;
+  }
+  .rf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+  .rf-primary .rf-show {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.85rem;
+    border: none;
+    border-radius: 6px;
+    background: var(--global-theme-color);
+    color: #fff;
+    cursor: pointer;
+  }
+  .rf-primary .rf-link-btn {
+    font: inherit;
+    font-size: 0.82rem;
+    padding: 0.38rem 0.85rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--global-text-color);
+    text-decoration: none;
+  }
+  .rf-primary .rf-link-btn:hover {
+    border-color: var(--global-theme-color);
+    color: var(--global-theme-color);
+  }
+  .rf-more-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  @media (min-width: 768px) {
+    .rf-more-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .rf-card {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 8px;
+    padding: 0.65rem 0.8rem;
+  }
+  .rf-card .rf-race-name {
+    font-size: 0.94rem;
+  }
+  .rf-card .rf-show {
+    margin-top: 0.5rem;
+    font: inherit;
+    font-size: 0.76rem;
+    padding: 0.24rem 0.6rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--global-theme-color);
+    cursor: pointer;
+  }
+  .rf-card .rf-show:hover {
+    border-color: var(--global-theme-color);
+  }
+
+  @media (max-width: 576px) {
+    .rf-hero-row {
+      flex-direction: column;
+    }
+    #race-finder button#rf-go {
+      padding: 0.55rem 1rem;
+    }
+    table.rf-table .rf-col-region {
+      display: none;
+    }
+  }
+</style>
+
+<div id="race-finder" hidden>
+  <div class="rf-hero">
+    <label class="rf-hero-label" for="rf-q">Cerchi una gara in particolare?</label>
+    <form id="rf-form" class="rf-hero-row">
+      <input
+        type="search"
+        id="rf-q"
+        autocomplete="off"
+        placeholder="ultra in montagna, maratona a marzo, triathlon in Svizzera…"
+      />
+      <button type="submit" id="rf-go">Cerca</button>
+    </form>
+  </div>
+
+  <div class="rf-quick">
+    <div class="rf-chips" id="rf-category-quick">
+      <button type="button" class="rf-chip" data-category="trail">Trail</button>
+      <button type="button" class="rf-chip" data-category="ultra">Ultra</button>
+      <button type="button" class="rf-chip" data-category="triathlon">Triathlon</button>
+      <button type="button" class="rf-chip" data-category="road">Strada</button>
+    </div>
+    <select id="rf-country" aria-label="Paese"><option value="">Paese</option></select>
+    <button type="button" id="rf-more-toggle" class="rf-ghost" aria-expanded="false" aria-controls="rf-more">Altri filtri</button>
+    <button type="button" id="rf-clear" class="rf-ghost">Pulisci</button>
+  </div>
+
+  <div id="rf-more" class="rf-more" hidden>
+    <div class="rf-facet">
+      <span class="rf-label">Distanza (km)</span>
+      <span class="rf-range">
+        <input type="number" id="rf-dist-min" min="0" step="1" aria-label="Distanza minima" />
+        –
+        <input type="number" id="rf-dist-max" min="0" step="1" aria-label="Distanza massima" />
+      </span>
+    </div>
+    <div class="rf-facet" id="rf-elev-wrap" hidden>
+      <span class="rf-label">Dislivello (m D+)</span>
+      <span class="rf-range">
+        <input type="number" id="rf-elev-min" min="0" step="100" aria-label="Dislivello minimo" />
+        –
+        <input type="number" id="rf-elev-max" min="0" step="100" aria-label="Dislivello massimo" />
+      </span>
+    </div>
+    <div class="rf-facet">
+      <span class="rf-label">Periodo</span>
+      <span class="rf-range">
+        <input type="date" id="rf-date-min" aria-label="Dal" />
+        –
+        <input type="date" id="rf-date-max" aria-label="Al" />
+      </span>
+    </div>
+  </div>
+
+  <div id="rf-results" class="rf-results" aria-live="polite"></div>
+</div>
+
+<script>
+  window.RACE_FINDER_DATA = {{ site.data.races | jsonify | replace: '</', '<\/' }};
+</script>
+
+<script>
+  (function () {
+    function ready(fn) {
+      if (document.readyState === "complete") fn();
+      else window.addEventListener("load", fn);
+    }
+
+    ready(function () {
+      var root = document.getElementById("race-finder");
+      if (!root) return;
+      var races = Array.isArray(window.RACE_FINDER_DATA) ? window.RACE_FINDER_DATA.slice() : [];
+      root.hidden = false;
+      if (!races.length) {
+        root.innerHTML =
+          '<p class="rf-empty">Ancora nessuna gara in archivio: la ricerca comparirà al prossimo aggiornamento automatico.</p>';
+        return;
+      }
+
+      // -------------------------------------------------- helpers (shared shape with wine_finder.liquid)
+      function norm(s) {
+        return String(s == null ? "" : s)
+          .toLowerCase()
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9\s]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+      function tokens(s) {
+        var n = norm(s);
+        return n ? n.split(" ") : [];
+      }
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+      }
+      function cap(s) {
+        s = String(s == null ? "" : s).trim();
+        return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+      }
+      function uniq(a) {
+        var o = {}, r = [];
+        a.forEach(function (x) {
+          if (x && !o[x]) {
+            o[x] = 1;
+            r.push(x);
+          }
+        });
+        return r;
+      }
+
+      var CATEGORY_LABEL = { trail: "Trail", ultra: "Ultra", triathlon: "Triathlon", road: "Strada" };
+      var DATE_FMT = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", year: "numeric" });
+      function fmtDate(iso) {
+        if (!iso) return "";
+        var d = new Date(iso + "T00:00:00");
+        return isNaN(d) ? iso : DATE_FMT.format(d);
+      }
+
+      // -------------------------------------------------- small concept lexicon: query
+      // expansion + the "why this one" sentence. Deliberately smaller than wine's LEX —
+      // races don't need a food-pairing table, just type/terrain/effort/season concepts.
+      var LEX = [
+        { s: ["montagna", "mountain", "alpin", "dislivello", "d+", "salita", "impegnativ"], a: ["trail", "ultra", "dislivello alto"], label: "gare di montagna" },
+        { s: ["facile", "easy", "principiante", "beginner", "primo", "corta", "breve"], a: ["distanza corta", "strada"], label: "una gara accessibile" },
+        { s: ["lunga", "lungo", "impegnativa", "estrema", "hard", "tosta"], a: ["ultra", "distanza lunga", "dislivello alto"], label: "una sfida lunga" },
+        { s: ["acqua", "nuoto", "swim", "bici", "triathlon", "duathlon", "aquathlon"], a: ["triathlon"], label: "il triathlon" },
+        { s: ["strada", "road", "asfalto", "maratona", "marathon", "mezza"], a: ["strada", "maratona"], label: "le gare su strada" },
+        { s: ["trail", "sentiero", "bosco", "natura", "forest"], a: ["trail"], label: "il trail running" },
+        { s: ["inverno", "winter", "gennaio", "febbraio", "dicembre"], a: ["stagione invernale"], label: "l'inverno" },
+        { s: ["estate", "summer", "giugno", "luglio", "agosto"], a: ["stagione estiva"], label: "l'estate" },
+        { s: ["francia", "france", "francese"], a: ["francia"], label: "la Francia" },
+        { s: ["italia", "italy", "italiana"], a: ["italia"], label: "l'Italia" },
+        { s: ["spagna", "spain", "spagnola"], a: ["spagna"], label: "la Spagna" },
+        { s: ["svizzera", "switzerland", "svizzera"], a: ["svizzera"], label: "la Svizzera" },
+        { s: ["austria", "austriaca"], a: ["austria"], label: "l'Austria" }
+      ];
+      function matchedLexRows(q) {
+        var qn = " " + norm(q) + " ";
+        return LEX.filter(function (row) {
+          return row.s.some(function (term) {
+            return qn.indexOf(" " + norm(term) + " ") >= 0 || qn.indexOf(norm(term)) >= 0;
+          });
+        });
+      }
+      function expandQuery(q) {
+        var bag = tokens(q);
+        matchedLexRows(q).forEach(function (row) {
+          bag = bag.concat(tokens(row.a.join(" ")));
+        });
+        return uniq(bag);
+      }
+
+      // -------------------------------------------------- per-race derived facets + text
+      function primaryDistance(r) {
+        if (r.distance_km != null) return Number(r.distance_km);
+        if (Array.isArray(r.distances_km) && r.distances_km.length) return Number(r.distances_km[0]);
+        return null;
+      }
+      function keywordsOf(r) {
+        var t = [r.name, r.region, r.series, r.country, CATEGORY_LABEL[r.category], r.organizer, r.notes];
+        return uniq(tokens(t.filter(Boolean).join(" ")));
+      }
+
+      var META = races.map(function (r) {
+        return {
+          r: r,
+          category: r.category || "",
+          country: r.country || "",
+          date: r.date || "",
+          distance: primaryDistance(r),
+          elevation: r.elevation_gain_m != null ? Number(r.elevation_gain_m) : null,
+          kw: keywordsOf(r)
+        };
+      });
+
+      // -------------------------------------------------- controls
+      var countriesPresent = uniq(META.map(function (m) { return m.country; }).filter(Boolean)).sort();
+      var hasElevation = META.some(function (m) { return m.elevation != null; });
+
+      var NO_MIN = -Infinity, NO_MAX = Infinity;
+      var sel = {
+        category: {}, country: "", q: "",
+        distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
+        dateMin: "", dateMax: ""
+      };
+
+      var elCountry = document.getElementById("rf-country");
+      var elQ = document.getElementById("rf-q");
+      var elForm = document.getElementById("rf-form");
+      var elMoreToggle = document.getElementById("rf-more-toggle");
+      var elMore = document.getElementById("rf-more");
+      var elElevWrap = document.getElementById("rf-elev-wrap");
+      var elResults = document.getElementById("rf-results");
+
+      Array.prototype.forEach.call(document.querySelectorAll("#rf-category-quick .rf-chip"), function (b) {
+        var c = b.getAttribute("data-category");
+        b.onclick = function () {
+          // Single-select: a race has exactly one category, so a second pick can only
+          // ever intersect a first one down to zero — replace, don't add (same fix the
+          // wine finder's type chips needed once they hit this same structural trap).
+          var wasOn = !!sel.category[c];
+          sel.category = {};
+          Array.prototype.forEach.call(document.querySelectorAll("#rf-category-quick .rf-chip"), function (o) {
+            o.setAttribute("aria-pressed", "false");
+          });
+          if (!wasOn) {
+            sel.category[c] = 1;
+            b.setAttribute("aria-pressed", "true");
+          }
+          run();
+        };
+      });
+      countriesPresent.forEach(function (c) {
+        var o = document.createElement("option");
+        o.value = norm(c);
+        o.textContent = cap(c);
+        o.setAttribute("data-label", cap(c));
+        elCountry.appendChild(o);
+      });
+      elCountry.onchange = function () {
+        sel.country = elCountry.value;
+        run();
+      };
+      if (hasElevation) elElevWrap.hidden = false;
+
+      function numInput(id, key) {
+        document.getElementById(id).oninput = function () {
+          var v = parseFloat(this.value);
+          sel[key] = isFinite(v) ? v : (key.indexOf("Min") >= 0 ? NO_MIN : NO_MAX);
+          run();
+        };
+      }
+      numInput("rf-dist-min", "distMin");
+      numInput("rf-dist-max", "distMax");
+      numInput("rf-elev-min", "elevMin");
+      numInput("rf-elev-max", "elevMax");
+      document.getElementById("rf-date-min").onchange = function () { sel.dateMin = this.value; run(); };
+      document.getElementById("rf-date-max").onchange = function () { sel.dateMax = this.value; run(); };
+
+      elMoreToggle.onclick = function () {
+        var open = elMore.hidden;
+        elMore.hidden = !open;
+        elMoreToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      };
+      document.getElementById("rf-clear").onclick = function () {
+        sel = {
+          category: {}, country: "", q: "",
+          distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
+          dateMin: "", dateMax: ""
+        };
+        elQ.value = "";
+        elCountry.value = "";
+        ["rf-dist-min", "rf-dist-max", "rf-elev-min", "rf-elev-max", "rf-date-min", "rf-date-max"].forEach(function (id) {
+          document.getElementById(id).value = "";
+        });
+        Array.prototype.forEach.call(root.querySelectorAll(".rf-chip"), function (b) {
+          b.setAttribute("aria-pressed", "false");
+        });
+        run();
+      };
+      // The typed query only takes effect on submit — no result flickers into view while
+      // the visitor is still typing (same fix wine_finder.liquid's query box needed).
+      elForm.onsubmit = function (ev) {
+        ev.preventDefault();
+        sel.q = elQ.value.trim();
+        run();
+      };
+      elQ.oninput = function () {
+        if (!elQ.value.trim() && sel.q) {
+          sel.q = "";
+          run();
+        }
+      };
+
+      // -------------------------------------------------- filter + score
+      function passesFacets(m) {
+        var catSel = Object.keys(sel.category);
+        if (catSel.length && catSel.indexOf(m.category) < 0) return false;
+        if (sel.country && norm(m.country) !== sel.country) return false;
+        if (m.distance != null && (m.distance < sel.distMin || m.distance > sel.distMax)) return false;
+        if (m.elevation != null && (m.elevation < sel.elevMin || m.elevation > sel.elevMax)) return false;
+        if (sel.dateMin && m.date && m.date < sel.dateMin) return false;
+        if (sel.dateMax && m.date && m.date > sel.dateMax) return false;
+        return true;
+      }
+      function keywordScore(expanded, m) {
+        if (!expanded.length) return 0;
+        var set = {};
+        m.kw.forEach(function (t) { set[t] = 1; });
+        var hits = 0;
+        expanded.forEach(function (t) { if (set[t]) hits += 1; });
+        return hits / Math.sqrt(expanded.length);
+      }
+
+      function reasonSentence(m) {
+        var rows = sel.q ? matchedLexRows(sel.q) : [];
+        if (rows.length) return "In linea con " + rows[0].label + ".";
+        var catSel = Object.keys(sel.category);
+        if (catSel.length) return "Tra le gare di categoria " + (CATEGORY_LABEL[catSel[0]] || catSel[0]) + ".";
+        return "";
+      }
+
+      function metaLine(r) {
+        var bits = [];
+        if (r.region) bits.push(esc(cap(r.region)));
+        var dist = primaryDistance(r);
+        if (dist != null) bits.push(dist + " km");
+        if (r.elevation_gain_m != null) bits.push("D+ " + r.elevation_gain_m + " m");
+        return bits.join(" · ");
+      }
+
+      function badgeSlug(cat) {
+        return cat || "other";
+      }
+
+      function primaryCardHtml(m) {
+        var r = m.r;
+        var reason = reasonSentence(m);
+        var meta = metaLine(r);
+        var link = r.url
+          ? '<a class="rf-link-btn no-tx" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">Sito della gara →</a>'
+          : "";
+        return (
+          '<article class="rf-primary">' +
+          '<span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span>" +
+          '<div class="rf-primary-name no-tx">' + esc(cap(r.name)) + "</div>" +
+          '<div class="rf-race-meta no-tx">' + esc(fmtDate(r.date)) + (meta ? " · " + meta : "") + "</div>" +
+          (reason ? '<p class="rf-reason">' + esc(reason) + "</p>" : "") +
+          '<div class="rf-actions">' +
+          '<button type="button" class="rf-show" data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">Vedi sulla mappa →</button>' +
+          link +
+          "</div>" +
+          "</article>"
+        );
+      }
+      function compactCardHtml(m) {
+        var r = m.r;
+        var meta = metaLine(r);
+        return (
+          '<article class="rf-card">' +
+          '<span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span>" +
+          '<div class="rf-race-name no-tx">' + esc(cap(r.name)) + "</div>" +
+          '<div class="rf-race-meta no-tx">' + esc(fmtDate(r.date)) + (meta ? " · " + meta : "") + "</div>" +
+          '<button type="button" class="rf-show" data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">Vedi sulla mappa →</button>' +
+          "</article>"
+        );
+      }
+
+      var BROWSE_PAGE = 20;
+      var browseShown = BROWSE_PAGE;
+
+      function browseTableHtml(rows) {
+        var shown = rows.slice(0, browseShown);
+        var html =
+          '<div class="rf-table-wrap"><table class="rf-table"><thead><tr>' +
+          "<th>Data</th><th>Gara</th><th class='rf-col-region'>Luogo</th><th>Tipo</th><th>Km</th><th></th>" +
+          "</tr></thead><tbody>" +
+          shown
+            .map(function (m) {
+              var r = m.r;
+              var link = r.url
+                ? '<a class="rf-link no-tx" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">info</a>'
+                : "";
+              return (
+                "<tr>" +
+                '<td class="no-tx">' + esc(fmtDate(r.date)) + "</td>" +
+                '<td><span class="rf-race-name no-tx">' + esc(cap(r.name)) + "</span></td>" +
+                '<td class="rf-col-region no-tx">' + esc(cap(r.region || "")) + "</td>" +
+                '<td><span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span></td>" +
+                '<td class="no-tx">' + (m.distance != null ? m.distance : "") + "</td>" +
+                "<td>" +
+                '<button type="button" class="rf-map-btn no-tx" ' +
+                'data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">mappa</button> ' +
+                link +
+                "</td>" +
+                "</tr>"
+              );
+            })
+            .join("") +
+          "</tbody></table></div>";
+        if (rows.length > shown.length) {
+          html += '<button type="button" class="rf-show-more">Mostra altre (' + (rows.length - shown.length) + ")</button>";
+        }
+        return html;
+      }
+
+      function wireActions() {
+        Array.prototype.forEach.call(elResults.querySelectorAll("[data-name][data-date]"), function (btn) {
+          btn.onclick = function () {
+            window.dispatchEvent(
+              new CustomEvent("racefinder:show", {
+                detail: { name: btn.getAttribute("data-name"), date: btn.getAttribute("data-date") },
+              })
+            );
+          };
+        });
+        var more = elResults.querySelector(".rf-show-more");
+        if (more) {
+          more.onclick = function () {
+            browseShown += BROWSE_PAGE;
+            render();
+          };
+        }
+      }
+
+      function hasCriteria() {
+        return (
+          !!sel.q ||
+          Object.keys(sel.category).length > 0 ||
+          !!sel.country ||
+          isFinite(sel.distMin) || isFinite(sel.distMax) ||
+          isFinite(sel.elevMin) || isFinite(sel.elevMax) ||
+          !!sel.dateMin || !!sel.dateMax
+        );
+      }
+
+      function render() {
+        if (!hasCriteria()) {
+          elResults.innerHTML = "";
+          return;
+        }
+        var expanded = sel.q ? expandQuery(sel.q) : [];
+        var rows = [];
+        META.forEach(function (m) {
+          if (!passesFacets(m)) return;
+          rows.push({ m: m, kw: keywordScore(expanded, m) });
+        });
+
+        if (!rows.length) {
+          elResults.innerHTML =
+            '<p class="rf-empty">Nessuna gara con questi criteri. Allarga il periodo o togli un filtro.</p>';
+          return;
+        }
+
+        var html;
+        if (sel.q) {
+          // Query mode: rank by keyword match, tie-broken soonest-first, mirroring the
+          // wine finder's single-recommendation shape.
+          rows.sort(function (a, b) { return b.kw - a.kw || a.m.date.localeCompare(b.m.date); });
+          var primary = rows[0];
+          var rest = rows.slice(1, 3);
+          html = '<h3 class="rf-h">La mia scelta</h3>' + primaryCardHtml(primary.m);
+          if (rest.length) {
+            html +=
+              '<h3 class="rf-h">Altre buone scelte</h3><div class="rf-more-grid">' +
+              rest.map(function (r) { return compactCardHtml(r.m); }).join("") +
+              "</div>";
+          }
+        } else {
+          // Browse mode: every match, soonest first — the actual season-planning view.
+          rows.sort(function (a, b) { return a.m.date.localeCompare(b.m.date); });
+          html = '<h3 class="rf-h">' + rows.length + (rows.length === 1 ? " gara trovata" : " gare trovate") + "</h3>" +
+            browseTableHtml(rows.map(function (r) { return r.m; }));
+        }
+        elResults.innerHTML = html;
+        wireActions();
+
+        if (window.WineI18n && window.WineI18n.lang === "en") window.WineI18n.translate(elResults);
+      }
+
+      function run() {
+        browseShown = BROWSE_PAGE;
+        render();
+      }
+
+      if (window.WineI18n) window.WineI18n.onChange(function () { render(); });
+
+      run();
+    });
+  })();
+</script>

@@ -24,6 +24,12 @@ require_relative "lib/geocode"
 require_relative "race_sources/base"
 require_relative "race_sources/aims"
 require_relative "race_sources/duv"
+require_relative "race_sources/ffa"
+require_relative "race_sources/fitri"
+require_relative "race_sources/skyrunning_it"
+require_relative "race_sources/utmb"
+require_relative "race_sources/switzerland"
+require_relative "race_sources/austria"
 
 ROOT       = File.expand_path("..", __dir__)
 RACES_YML  = File.join(ROOT, "_data", "races.yml")
@@ -31,22 +37,25 @@ CACHE_FILE = File.join(ROOT, "bin", ".races_geocache.json")
 
 PRUNE_HORIZON_DAYS = 7 # a race more than this many days in the past is dropped, not kept forever
 
-# Every source this feature is meant to cover, in the order the plan lays them out. Only
-# a few are wired up today (M1); the rest are explicit stubs so the full intended shape is
-# visible in every run's output, not just in a design doc.
+# Every source this feature is meant to cover, in the order the plan lays them out.
 SOURCES = [
   RaceSources::Aims.new,
   RaceSources::Duv.new,
-  RaceSources::Stub.new("ffa", note: "France athletics (road + trail) — athle.fr scraper not built yet"),
+  RaceSources::Ffa.new,
   RaceSources::Stub.new("fftri", note: "France triathlon — fftri.com scraper not built yet"),
-  RaceSources::Stub.new("fidal", note: "Italy athletics (road + trail) — fidal.it scraper not built yet"),
-  RaceSources::Stub.new("fitri", note: "Italy triathlon — calendar URL not identified yet"),
-  RaceSources::Stub.new("skyrunning_it", note: "Italy skyrunning/trail — skyrunningitalia.it scraper not built yet"),
-  RaceSources::Stub.new("utmb_itra", note: "Trail — utmb.world / itra.run scraper not built yet " \
-                                            "(may be a JS-rendered page, needs checking first)"),
-  RaceSources::Stub.new("spain", note: "Spain federations (athletics + triathlon) not identified yet"),
-  RaceSources::Stub.new("switzerland", note: "Switzerland federations not identified yet"),
-  RaceSources::Stub.new("austria", note: "Austria federations not identified yet")
+  RaceSources::Stub.new("fidal", note: "Italy athletics (road + trail) — fidal.it's calendar is " \
+                                        "PDF-only per region, not a simple HTML scrape"),
+  RaceSources::Fitri.new,
+  RaceSources::SkyrunningIt.new,
+  RaceSources::Utmb.new,
+  # ITRA's own calendar was checked and ruled out: it loads via client-side JS and the
+  # site sits behind a bot-challenging WAF — see bin/race_sources/utmb.rb's header comment.
+  RaceSources::Stub.new("spain", note: "RFEA's calendar is AJAX-gated (Drupal) and FETRI's is a " \
+                                        "Blazor SPA — neither is a plain HTTP scrape; RFEA does " \
+                                        "have a small server-rendered trail-championships list " \
+                                        "(atletismorfea.es/competicion/trail-running) not wired up yet"),
+  RaceSources::Switzerland.new,
+  RaceSources::Austria.new
 ].freeze
 
 TOP_ORDER = %w[name date category country region distance_km distances_km elevation_gain_m

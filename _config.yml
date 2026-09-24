@@ -477,6 +477,19 @@ third_party_libraries:
       js: "https://cdn.jsdelivr.net/npm/leaflet@{{version}}/dist/leaflet.js"
       js_map: "https://cdn.jsdelivr.net/npm/leaflet@{{version}}/dist/leaflet.js.map"
     version: "1.9.4"
+  # Marker clustering for race_map.liquid only (hundreds of race pins vs. wine's ~handful)
+  # — loaded from inside that include itself, not the shared leaflet.liquid, so wine's map
+  # doesn't pay for it too.
+  leaflet_markercluster:
+    integrity:
+      css: "sha256-YU3qCpj/P06tdPBJGPax0bm6Q1wltfwjsho5TR4+TYc="
+      css_default: "sha256-YSWCMtmNZNwqex4CEw1nQhvFub2lmU7vcCKP+XVwwXA="
+      js: "sha256-Hk4dIpcqOSb0hZjgyvFOP+cEmDXUKKNE/tT542ZbNQg="
+    url:
+      css: "https://cdn.jsdelivr.net/npm/leaflet.markercluster@{{version}}/dist/MarkerCluster.css"
+      css_default: "https://cdn.jsdelivr.net/npm/leaflet.markercluster@{{version}}/dist/MarkerCluster.Default.css"
+      js: "https://cdn.jsdelivr.net/npm/leaflet.markercluster@{{version}}/dist/leaflet.markercluster.js"
+    version: "1.5.3"
   mathjax:
     local:
       fonts: "output/chtml/fonts/woff-v2/"

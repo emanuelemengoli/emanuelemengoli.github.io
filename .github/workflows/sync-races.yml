@@ -4,8 +4,10 @@ name: Sync races
 # manual data entry — see bin/races-sync.md. The result is proposed as a pull request
 # (not pushed straight to master) so a bad/malformed fetch can't silently go live;
 # merging that PR is the owner's only manual step, and it triggers the normal deploy
-# workflow like any other push. This is a plain stdlib-only Ruby script (no gems), so no
-# `bundle install` step is needed here.
+# workflow like any other push. The only non-stdlib dependency across bin/sync-races and
+# its bin/race_sources/*.rb adapters is nokogiri (HTML parsing) — installed directly
+# below rather than a full `bundle install`, since nothing here needs the rest of the
+# site's Gemfile (Jekyll, mini_racer, ...).
 #
 # One-time setup this workflow needs and can't do for itself: repo Settings -> Actions ->
 # General -> "Allow GitHub Actions to create and approve pull requests" must be turned on,
@@ -40,6 +42,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.2.2"
+
+      - name: Install nokogiri
+        run: gem install nokogiri --no-document
 
       - name: Sync races 🏁
         id: sync

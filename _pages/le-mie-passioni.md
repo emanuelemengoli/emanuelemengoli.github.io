@@ -26,8 +26,12 @@ map: true
     color: var(--global-theme-color);
     font-size: 0.8em;
   }
-  .wine-lang-toggle {
-    margin-left: auto;
+  .passions-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+  .passions-lang-toggle {
     font: inherit;
     font-size: 0.75rem;
     font-weight: 700;
@@ -38,11 +42,11 @@ map: true
     color: var(--global-text-color-light);
     cursor: pointer;
   }
-  .wine-lang-toggle:hover {
+  .passions-lang-toggle:hover {
     border-color: var(--global-theme-color);
     color: var(--global-theme-color);
   }
-  .wine-lang-toggle[aria-busy="true"] {
+  .passions-lang-toggle[aria-busy="true"] {
     opacity: 0.55;
     cursor: progress;
   }
@@ -87,17 +91,20 @@ map: true
   }
 </style>
 
+{% include wine_i18n.liquid %}
+<div class="passions-toolbar">
+  <button id="passions-lang-toggle" class="passions-lang-toggle no-tx" type="button">EN</button>
+</div>
+
 <section class="passions-section">
   <h2>
     <i class="fa-solid fa-wine-glass"></i><span class="no-tx">Degustando</span>
-    <button id="wine-lang-toggle" class="wine-lang-toggle no-tx" type="button">EN</button>
   </h2>
   <p class="section-desc">
     Una raccolta dei vini che ho degustato: esplorali sulla mappa o chiedimi un
     consiglio in base al piatto, alla regione o all'occasione.
   </p>
 
-  {% include wine_i18n.liquid %}
   {% include wine_finder.liquid %}
 
   <h3 class="section-sub">La mia mappa del vino</h3>
@@ -114,6 +121,34 @@ map: true
   <ul id="wine-legend" class="wine-legend"></ul>
 
   {% include wine_map.liquid %}
+</section>
+
+<section class="passions-section">
+  <h2>
+    <i class="fa-solid fa-person-running"></i><span class="no-tx">Correndo</span>
+  </h2>
+  <p class="section-desc">
+    Gare di corsa su strada, trail, ultra e triathlon in Francia, Italia, Spagna,
+    Svizzera e Austria — la lista si aggiorna da sola ogni mese. Esplorale sulla mappa
+    o chiedimi di aiutarti a pianificare la tua stagione.
+  </p>
+
+  {% include race_finder.liquid %}
+
+  <h3 class="section-sub">La mappa delle gare</h3>
+  {% assign _r = site.data.races %}
+  {% if _r and _r.size > 0 %}
+    {% assign _countries_r = _r | map: "country" | compact | uniq %}
+    {% assign _categories_r = _r | map: "category" | compact | uniq %}
+    <p class="wine-stats">
+      {{ _r.size }} {% if _r.size == 1 %}gara{% else %}gare{% endif %} ·
+      {{ _categories_r.size }} {% if _categories_r.size == 1 %}categoria{% else %}categorie{% endif %} ·
+      {{ _countries_r.size }} {% if _countries_r.size == 1 %}paese{% else %}paesi{% endif %}
+    </p>
+  {% endif %}
+  <ul id="race-legend" class="wine-legend"></ul>
+
+  {% include race_map.liquid %}
 </section>
 
 <!--
