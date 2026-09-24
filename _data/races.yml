@@ -12,13 +12,27 @@
 # Entries from a source no longer configured in bin/sync-races' SOURCES list are dropped
 # too, rather than lingering forever with a stale last_synced.
 #
+# `road` entries are also filtered by distance: half marathon (21.1km) or longer only,
+# with a standing exception for 15km races — a road race whose distance can't be
+# determined at all is dropped, not kept, since the whole point is cutting the flood of
+# short local races a source like FFA's "Running" bucket otherwise returns. Other
+# categories aren't distance-filtered.
+#
 # Fields (all optional except name/date/category/source/source_url):
 #   name          race name
 #   date          "YYYY-MM-DD", the race's (first) start date — together with name and
 #                 country, the key a re-sync uses to update rather than duplicate an entry
 #   category      trail | ultra | triathlon | road | skyrun
-#   country       Italia | Francia | Spagna | Svizzera | Austria — kept in Italian, like
-#                 wines.yml, since both sections share one page-level IT->EN translator
+#   tags          cross-cutting themes, independent of category — currently just "wine"
+#                 (a race that pairs with a wine region/event, e.g. Marathon des
+#                 Châteaux du Médoc), auto-detected from name/region text (WineTag in
+#                 bin/lib/wine_tag.rb), applied the same way regardless of source
+#   country       kept in Italian (Francia, Regno Unito, Stati Uniti, ...), like
+#                 wines.yml, since both sections share one page-level IT->EN translator.
+#                 In scope: Italy, France, Spain, Switzerland, Austria, Greece, Portugal,
+#                 the UK, the Netherlands, the Nordic countries; North & Central America;
+#                 South America; Japan — see bin/lib/countries.rb's own comment for the
+#                 exact list and why it's not simply "every country a source covers"
 #   region        sub-country region/province/city, when the source states one
 #   distance_km   headline distance; use distances_km (a list) instead when one listing
 #                 genuinely bundles several distances under a single entry
@@ -38,6 +52,7 @@
   category: road
   country: Francia
   region: Metz
+  distance_km: 100.0
   lat: 49.119696
   lng: 6.176355
   source: ffa
@@ -137,6 +152,7 @@
   category: road
   country: Francia
   region: Macon
+  distance_km: 21.1
   lat: 46.303668
   lng: 4.832227
   source: ffa
@@ -181,6 +197,7 @@
   category: road
   country: Francia
   region: Saint Just
+  distance_km: 21.1
   lat: 45.334806
   lng: 0.507848
   source: ffa
@@ -203,6 +220,7 @@
   category: road
   country: Francia
   region: Papeari
+  distance_km: 21.1
   lat: -17.715452
   lng: -149.374808
   source: ffa
@@ -225,6 +243,7 @@
   category: road
   country: Francia
   region: Rouen
+  distance_km: 42.195
   lat: 49.440459
   lng: 1.093966
   source: ffa
@@ -269,6 +288,7 @@
   category: road
   country: Francia
   region: Auxerre
+  distance_km: 42.195
   lat: 47.796129
   lng: 3.570579
   source: ffa
@@ -291,6 +311,7 @@
   category: road
   country: Francia
   region: A Determiner
+  distance_km: 21.1
   lat: 49.812399
   lng: 4.610028
   source: ffa
@@ -300,8 +321,11 @@
 - name: Semi-Marathon Des Vignobles
   date: '2026-09-27'
   category: road
+  tags:
+  - wine
   country: Francia
   region: Saint Maximin La Ste Baume
+  distance_km: 21.1
   lat: 43.452205
   lng: 5.862294
   source: ffa
@@ -313,6 +337,7 @@
   category: road
   country: Francia
   region: Chalonnes Sur Loire
+  distance_km: 21.1
   lat: 47.351621
   lng: -0.76311
   source: ffa
@@ -665,6 +690,7 @@
   category: road
   country: Francia
   region: Epinay Sur Seine
+  distance_km: 21.1
   lat: 48.952518
   lng: 2.314504
   source: ffa
@@ -720,6 +746,7 @@
   category: road
   country: Francia
   region: Saint Doulchard
+  distance_km: 42.195
   lat: 47.099973
   lng: 2.372968
   source: ffa
@@ -863,6 +890,7 @@
   category: road
   country: Francia
   region: Bois Guillaume
+  distance_km: 21.1
   lat: 49.470482
   lng: 1.119948
   source: ffa
@@ -940,6 +968,7 @@
   category: road
   country: Francia
   region: Porto Vecchio
+  distance_km: 21.1
   lat: 41.591138
   lng: 9.279447
   source: ffa
@@ -962,6 +991,7 @@
   category: road
   country: Francia
   region: Val De Reuil
+  distance_km: 42.195
   lat: 49.271684
   lng: 1.212899
   source: ffa
@@ -1039,6 +1069,7 @@
   category: road
   country: Francia
   region: Saint Jean De Luz
+  distance_km: 42.195
   lat: 43.387219
   lng: -1.663695
   source: ffa
@@ -1116,6 +1147,7 @@
   category: road
   country: Francia
   region: La Baule
+  distance_km: 42.195
   lat: 47.284373
   lng: -2.39516
   source: ffa
@@ -1182,6 +1214,7 @@
   category: road
   country: Francia
   region: Pont Audemer
+  distance_km: 21.1
   lat: 49.356241
   lng: 0.515331
   source: ffa
@@ -1457,6 +1490,7 @@
   category: road
   country: Francia
   region: Saint Hilaire De Riez
+  distance_km: 21.1
   lat: 46.719949
   lng: -1.946144
   source: ffa
@@ -1774,6 +1808,7 @@
   category: trail
   country: Francia
   region: La Plaine Des Cafres
+  distance_km: 67.0
   lat: -21.225298
   lng: 55.55521
   source: ffa
@@ -2016,6 +2051,7 @@
   category: road
   country: Francia
   region: Saint Sylvain D'anjou
+  distance_km: 21.1
   lat: 47.512979
   lng: -0.47799
   source: ffa
@@ -2027,6 +2063,7 @@
   category: road
   country: Francia
   region: Montargis
+  distance_km: 21.1
   lat: 47.997863
   lng: 2.731007
   source: ffa
@@ -2038,6 +2075,7 @@
   category: road
   country: Francia
   region: Chateauroux
+  distance_km: 21.1
   lat: 46.820379
   lng: 1.677096
   source: ffa
@@ -2049,6 +2087,7 @@
   category: road
   country: Francia
   region: Tulle
+  distance_km: 21.1
   lat: 45.267835
   lng: 1.77068
   source: ffa
@@ -2060,6 +2099,7 @@
   category: road
   country: Francia
   region: Antony
+  distance_km: 21.1
   lat: 48.753613
   lng: 2.295803
   source: ffa
@@ -2082,6 +2122,7 @@
   category: road
   country: Francia
   region: Thionville
+  distance_km: 21.1
   lat: 49.357927
   lng: 6.167587
   source: ffa
@@ -2093,6 +2134,7 @@
   category: road
   country: Francia
   region: Marcq En Baroeul
+  distance_km: 21.1
   lat: 50.676702
   lng: 3.104303
   source: ffa
@@ -2104,6 +2146,7 @@
   category: road
   country: Francia
   region: Millau
+  distance_km: 42.195
   lat: 44.100669
   lng: 3.077759
   source: ffa
@@ -2115,6 +2158,7 @@
   category: road
   country: Francia
   region: Tours
+  distance_km: 42.195
   lat: 47.390047
   lng: 0.688927
   source: ffa
@@ -2137,6 +2181,7 @@
   category: road
   country: Francia
   region: Amiens
+  distance_km: 21.1
   lat: 49.894171
   lng: 2.295695
   source: ffa
@@ -2181,6 +2226,7 @@
   category: road
   country: Francia
   region: Niort
+  distance_km: 21.1
   lat: 46.323923
   lng: -0.464606
   source: ffa
@@ -2236,6 +2282,7 @@
   category: road
   country: Francia
   region: Pointe A Pitre
+  distance_km: 21.1
   lat: 16.240864
   lng: -61.533408
   source: ffa
@@ -2247,6 +2294,7 @@
   category: road
   country: Francia
   region: Deauville
+  distance_km: 42.195
   lat: 49.359502
   lng: 0.074664
   source: ffa
@@ -2269,6 +2317,7 @@
   category: road
   country: Francia
   region: Magny Cours
+  distance_km: 42.195
   lat: 46.88387
   lng: 3.148081
   source: ffa
@@ -2346,6 +2395,7 @@
   category: road
   country: Francia
   region: La Rochelle
+  distance_km: 21.1
   lat: 46.159732
   lng: -1.151595
   source: ffa
@@ -2355,6 +2405,8 @@
 - name: Trail Du Petit Ballon Et Circuit Des Grands Crus
   date: '2027-03-14'
   category: trail
+  tags:
+  - wine
   country: Francia
   region: Rouffach
   lat: 47.956915
@@ -2412,6 +2464,7 @@
   category: road
   country: Francia
   region: Rennes
+  distance_km: 42.195
   lat: 48.111339
   lng: -1.68002
   source: ffa
@@ -2434,6 +2487,7 @@
   category: road
   country: Francia
   region: Lille
+  distance_km: 42.195
   lat: 50.636565
   lng: 3.063528
   source: ffa
@@ -2454,8 +2508,11 @@
 - name: Marathon, Semi & 10Km De Bordeaux(WA)
   date: '2026-11-08'
   category: road
+  tags:
+  - wine
   country: Francia
   region: Bordeaux
+  distance_km: 42.195
   lat: 44.841225
   lng: -0.580036
   source: ffa
@@ -2467,6 +2524,7 @@
   category: road
   country: Francia
   region: Nice
+  distance_km: 42.195
   lat: 43.700936
   lng: 7.268391
   source: ffa
@@ -2478,6 +2536,7 @@
   category: road
   country: Francia
   region: Boulogne Billancourt
+  distance_km: 21.1
   lat: 48.835665
   lng: 2.240206
   source: ffa
@@ -2489,6 +2548,7 @@
   category: road
   country: Francia
   region: La Rochelle
+  distance_km: 42.195
   lat: 46.159732
   lng: -1.151595
   source: ffa
@@ -2500,6 +2560,7 @@
   category: road
   country: Francia
   region: Fort De France
+  distance_km: 21.1
   lat: 14.602796
   lng: -61.067672
   source: ffa
@@ -2566,6 +2627,7 @@
   category: road
   country: Francia
   region: Ames
+  distance_km: 100.0
   lat: 50.536715
   lng: 2.408654
   source: ffa
@@ -2753,15 +2815,16 @@
 
 - name: Podone SkyTrail
   date: '2026-10-04'
-  category: skyrun
+  category: trail
   country: Italia
-  region: Nembro  (BG)
-  lat: 45.744241
-  lng: 9.761587
-  url: https://www.podoneskytrail.info/
+  region: Nembro (Bg)
+  distance_km: 15.0
+  lat: 45.744249
+  lng: 9.767812
+  url: https://www.calendariopodismo.it/gara/80624/podone-skytrail/
   series: SkyRun
-  source: skyrunning_it
-  source_url: https://www.skyrunningitalia.it/pages/Calendario-gare-2026
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
   last_synced: '2026-09-24'
 
 - name: Podone SkyTrail Short
@@ -2840,16 +2903,18 @@
   source_url: https://www.skyrunningitalia.it/pages/Calendario-gare-2026
   last_synced: '2026-09-24'
 
-- name: Monte Morello SkyRun
+- name: Monte Morello Skyrun
   date: '2026-11-01'
-  category: skyrun
+  category: road
   country: Italia
-  region: Sesto Fiorentino (FI)
-  lat: 43.823719
-  lng: 11.219723
+  region: Sesto Fiorentino (Fi)
+  distance_km: 21.5
+  lat: 43.8393031
+  lng: 11.2085927
+  url: https://www.calendariopodismo.it/gara/79703/monte-morello-skyrun/
   series: SkyRun
-  source: skyrunning_it
-  source_url: https://www.skyrunningitalia.it/pages/Calendario-gare-2026
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
   last_synced: '2026-09-24'
 
 - name: Vertical Punta Martin
@@ -2907,6 +2972,8 @@
 - name: Chianti Ultra Trail by UTMB
   date: '2027-03-18'
   category: trail
+  tags:
+  - wine
   country: Italia
   region: Radda in Chianti
   lat: 43.487
@@ -3097,4 +3164,3966 @@
   series: UTMB World Series
   source: utmb
   source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Pontevedra
+  date: '2026-09-23'
+  category: triathlon
+  country: Spagna
+  lat: 42.428065
+  lng: -8.604145
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: Rome
+  date: '2026-10-03'
+  category: triathlon
+  country: Italia
+  lat: 41.89332
+  lng: 12.482932
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: Rome
+  date: '2026-10-04'
+  category: triathlon
+  country: Italia
+  lat: 41.89332
+  lng: 12.482932
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: French Riviera
+  date: '2026-09-19'
+  category: triathlon
+  country: Francia
+  lat: 43.952551
+  lng: 7.479428
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: Triathlon Youth Championships
+  date: '2026-10-16'
+  category: triathlon
+  country: Spagna
+  lat: 39.326069
+  lng: -4.837979
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/europe/
+  last_synced: '2026-09-24'
+
+- name: Ceuta
+  date: '2026-10-04'
+  category: triathlon
+  country: Spagna
+  lat: 35.894422
+  lng: -5.355817
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/europe/
+  last_synced: '2026-09-24'
+
+- name: Tenerife
+  date: '2026-10-11'
+  category: triathlon
+  country: Spagna
+  lat: 28.293579
+  lng: -16.621447
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/europe/
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Calella-Barcelona
+  date: '2026-10-04'
+  category: triathlon
+  country: Spagna
+  region: Calella, Spain
+  url: https://ironman.com/race/84436
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Versailles
+  date: '2026-10-11'
+  category: triathlon
+  country: Francia
+  region: Versailles, France
+  lat: 48.80354
+  lng: 2.126689
+  url: https://ironman.com/race/132041
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: Miyazaki
+  date: '2026-11-14'
+  category: triathlon
+  country: Giappone
+  lat: 32.097681
+  lng: 131.294542
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: Chiba
+  date: '2026-10-12'
+  category: triathlon
+  country: Giappone
+  lat: 35.549399
+  lng: 140.26473
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/monde/
+  last_synced: '2026-09-24'
+
+- name: São Martinho do Porto
+  date: '2026-09-19'
+  category: triathlon
+  country: Portogallo
+  lat: 39.513531
+  lng: -9.133591
+  source: fftri
+  source_url: https://www.fftri.com/competitions/competitions-internationales/europe/
+  last_synced: '2026-09-24'
+
+- name: Trail della Crocetta
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: L'Aquila (Aq)
+  distance_km: 3.3
+  lat: 42.3689359
+  lng: 13.3871883
+  url: https://www.calendariopodismo.it/gara/80828/trail-della-crocetta/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: 17° Trail della Roscetta
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Civitella Roveto (Aq)
+  distance_km: 9.0
+  lat: 41.913514
+  lng: 13.422293
+  url: https://www.calendariopodismo.it/gara/80834/17-trail-della-roscetta/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: SkyRace del Maglio
+  date: '2026-10-18'
+  category: road
+  country: Italia
+  region: Magliano de Marsi (Aq)
+  distance_km: 30.0
+  lat: 42.0869752
+  lng: 13.3580646
+  url: https://www.calendariopodismo.it/gara/80697/skyrace-del-maglio-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: 4° Costa dei Trabocchi – BCC Half Marathon
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  region: Ortona (Ch)
+  distance_km: 21.0975
+  lat: 42.345314
+  lng: 14.411068
+  url: https://www.calendariopodismo.it/gara/80814/4-costa-dei-trabocchi-bcc-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: Campionato  Italiano  Individuale  e di Societa’ Master di Maratonina
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  region: Ortona (Ch)
+  distance_km: 21.0975
+  lat: 42.349643
+  lng: 14.403913
+  url: https://www.calendariopodismo.it/gara/80817/campionato-italiano-individuale-e-di-societa-master-di-maratonina-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: Urban Trail
+  date: '2026-10-31'
+  category: trail
+  country: Italia
+  region: Barisciano (Aq)
+  distance_km: 6.0
+  lat: 42.3524491
+  lng: 13.5732906
+  url: https://www.calendariopodismo.it/gara/80838/urban-trail-2-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/abruzzo/
+  last_synced: '2026-09-24'
+
+- name: I Sassi di Matera
+  date: '2026-10-23'
+  category: road
+  country: Italia
+  region: Matera (Mt)
+  distance_km: 145.0
+  lat: 40.4476419
+  lng: 16.4735738
+  url: https://www.calendariopodismo.it/gara/80983/i-sassi-di-matera/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/basilicata/
+  last_synced: '2026-09-24'
+
+- name: 7° 50Km di Calabria – 4° 8h di Calabria
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Curinga (Cz)
+  distance_km: 50.0
+  lat: 38.8259511095
+  lng: 16.31357342
+  url: https://www.calendariopodismo.it/gara/80669/7-50km-di-calabria-4-8h-di-calabria/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/calabria/
+  last_synced: '2026-09-24'
+
+- name: 1°  Urban Trail Citta’ di  Capua
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Capua (Ce)
+  distance_km: 10.0
+  lat: 41.1079984
+  lng: 14.2097176
+  url: https://www.calendariopodismo.it/gara/80440/1-urban-trail-citta-di-capua/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: Il Bosco in Rosa
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: Capodimonte (Na)
+  distance_km: 4.0
+  lat: 40.8668415
+  lng: 14.2442895
+  url: https://www.calendariopodismo.it/gara/80869/il-bosco-in-rosa/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: Trail delle Chiancolelle
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Nocera Inferiore (Sa)
+  distance_km: 18.0
+  lat: 40.738252
+  lng: 14.651719
+  url: https://www.calendariopodismo.it/gara/80870/trail-delle-chiancolelle-4/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: 7° Maratonina  Citta’ di Boscoreale
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Boscoreale (Na)
+  distance_km: 10.0
+  lat: 40.7740398
+  lng: 14.4774318
+  url: https://www.calendariopodismo.it/gara/80901/7-maratonina-citta-di-boscoreale/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: Neapolis Marathon – Half Marathon
+  date: '2026-10-18'
+  category: road
+  country: Italia
+  region: Napoli (NA)
+  distance_km: 21.0975
+  lat: 40.8358846
+  lng: 14.2487679
+  url: https://www.calendariopodismo.it/gara/80750/neapolis-marathon-half-marathon-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: Napoli City Half Marathon
+  date: '2027-02-21'
+  category: road
+  country: Italia
+  region: Napoli
+  distance_km: 21.097
+  lat: 40.835885
+  lng: 14.248768
+  url: https://www.calendariopodismo.it/gara/78892/napoli-city-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/campania/
+  last_synced: '2026-09-24'
+
+- name: Gessi Beer Trail
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Borgo Tossignano (Bo)
+  distance_km: 19.0
+  lat: 44.2756903
+  lng: 11.5898435
+  url: https://www.calendariopodismo.it/gara/80476/gessi-beer-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: Tre Croci Trail – MaRun – CorriMarano
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Marano sul Panaro (Mo)
+  distance_km: 5.0
+  lat: 44.4570456015
+  lng: 10.9677967429
+  url: https://www.calendariopodismo.it/gara/80165/tre-croci-trail-marun-corrimarano-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: Abbazia di Pomposa Half Marathon
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Pomposa (Fe)
+  distance_km: 21.0975
+  lat: 44.8406057
+  lng: 12.1764477
+  url: https://www.calendariopodismo.it/gara/79774/abbazia-di-pomposa-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: 4° Alta Val Recchio Trail 2026
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Varano Marchesi (Pr)
+  distance_km: 25.0
+  lat: 44.749806
+  lng: 10.037267
+  url: https://www.calendariopodismo.it/gara/77192/4-alta-val-recchio-trail-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: Tin Bota Romagna Half Marathon
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Forli (Fc)
+  distance_km: 21.0975
+  lat: 44.2225198692
+  lng: 12.0406374335
+  url: https://www.calendariopodismo.it/gara/80670/tin-bota-romagna-half-marathon-4/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: Trail della Rocca
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Montefiorino (Mo)
+  distance_km: 15.0
+  lat: 44.353546
+  lng: 10.6255831
+  url: https://www.calendariopodismo.it/gara/80825/trail-della-rocca-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: 10° Riverun
+  date: '2026-10-10'
+  category: road
+  country: Italia
+  region: Rimini (RN)
+  distance_km: 15.0
+  lat: 43.995563
+  lng: 12.668719
+  url: https://www.calendariopodismo.it/gara/80674/10-riverun/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/
+  last_synced: '2026-09-24'
+
+- name: 5° Lago Santo SkyRace
+  date: '2026-10-10'
+  category: road
+  country: Italia
+  region: Sant'Annapelago - Pievepelago (Mo)
+  distance_km: 29.0
+  lat: 44.204338
+  lng: 10.620493
+  url: https://www.calendariopodismo.it/gara/80713/5-lago-santo-skyrace/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 42° Camminata di San Luca
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Correggio (Re)
+  distance_km: 21.097
+  lat: 44.766294
+  lng: 10.773213
+  url: https://www.calendariopodismo.it/gara/80716/42-camminata-di-san-luca/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 50° Trofeo dell’Uva San Pancrazio – Russi (RA)
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: San Pancrazio
+  distance_km: 21.097
+  lat: 46.586514
+  lng: 11.086361
+  url: https://www.calendariopodismo.it/gara/80972/50-trofeo-delluva-san-pancrazio-russi-ra/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 6° Trail del Marrone
+  date: '2026-10-17'
+  category: trail
+  country: Italia
+  region: Castel del Rio (Bo)
+  distance_km: 12.0
+  lat: 44.211698
+  lng: 11.502736
+  url: https://www.calendariopodismo.it/gara/80982/6-trail-del-marrone/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Canossa Trail Marathon (42-24-12,5Km)
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Vezzano sul Crostolo (RE)
+  distance_km: 12.5
+  lat: 44.6012133
+  lng: 10.5450964
+  url: https://www.calendariopodismo.it/gara/77843/canossa-trail-marathon-42-24-125km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 5° C.W.C.
+  date: '2026-11-01'
+  category: road
+  country: Italia
+  region: Collagna di Ventasso (Re)
+  distance_km: 15.0
+  lat: 44.3474097
+  lng: 10.2763627
+  url: https://www.calendariopodismo.it/gara/79484/5-c-w-c/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Maratona di Ravenna Citta’ d’Arte 2026
+  date: '2026-11-08'
+  category: road
+  country: Italia
+  region: Ravenna
+  distance_km: 42.195
+  lat: 44.4017951
+  lng: 12.21651
+  url: https://www.calendariopodismo.it/gara/78143/maratona-di-ravenna-citta-darte-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 10° Winter Tarsogno Trail 2026
+  date: '2026-11-08'
+  category: trail
+  country: Italia
+  region: Tarsogno
+  distance_km: 25.0
+  lat: 44.449743
+  lng: 9.624414
+  url: https://www.calendariopodismo.it/gara/77195/10-winter-tarsogno-trail-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Cross Uisp Cotignola 5° Prova
+  date: '2026-11-14'
+  category: trail
+  country: Italia
+  region: Cotignola (Ra)
+  distance_km: 5.0
+  lat: 44.3840692598
+  lng: 11.9265925884
+  url: https://www.calendariopodismo.it/gara/76250/cross-uisp-cotignola-5-prova/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/2/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: 1° Staffetta del Cuore  In  Friuli  Venezia  Giulia
+  date: '2026-09-25'
+  category: road
+  country: Italia
+  region: Aviano (Pn)
+  distance_km: 27.0
+  lat: 46.0685438
+  lng: 12.5891138
+  url: https://www.calendariopodismo.it/gara/80878/1-staffetta-del-cuore-in-friuli-venezia-giulia/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/friuli-venezia-giulia/
+  last_synced: '2026-09-24'
+
+- name: 3° Over Borders
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Lignano Sabbiadoro (Ud)
+  distance_km: 21.0975
+  lat: 45.6895065911
+  lng: 13.14651508
+  url: https://www.calendariopodismo.it/gara/80452/3-over-borders/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/friuli-venezia-giulia/
+  last_synced: '2026-09-24'
+
+- name: ClauTrail
+  date: '2026-10-10'
+  category: trail
+  country: Italia
+  region: Claut (Pn)
+  distance_km: 20.0
+  lat: 46.2666966401
+  lng: 12.5156516443
+  url: https://www.calendariopodismo.it/gara/79976/clautrail-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/friuli-venezia-giulia/
+  last_synced: '2026-09-24'
+
+- name: Trail delle Malghe
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Forni di Sopra (Ud)
+  distance_km: 16.0
+  lat: 46.424164
+  lng: 12.579426
+  url: https://www.calendariopodismo.it/gara/80619/trail-delle-malghe-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/friuli-venezia-giulia/
+  last_synced: '2026-09-24'
+
+- name: Trail della Grotta Gigante
+  date: '2026-11-08'
+  category: trail
+  country: Italia
+  region: Sgonico (Ts)
+  distance_km: 18.0
+  lat: 45.71027192958853
+  lng: 13.766198009586105
+  url: https://www.calendariopodismo.it/gara/80039/trail-della-grotta-gigante-2-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/friuli-venezia-giulia/
+  last_synced: '2026-09-24'
+
+- name: Trail dei Monti Ruffi
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Rocca Canterano (RM)
+  distance_km: 15.0
+  lat: 41.956523
+  lng: 13.021788
+  url: https://www.calendariopodismo.it/gara/79828/trail-dei-monti-ruffi/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Viterbo Half Marathon
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Viterbo (Vt)
+  distance_km: 21.097
+  lat: 42.418792074954005
+  lng: 12.104667566158403
+  url: https://www.calendariopodismo.it/gara/80342/viterbo-half-marathon-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: 2°  Trail  della Torraccia
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Orte (Vt)
+  distance_km: 11.0
+  lat: 42.4605984
+  lng: 12.3856056
+  url: https://www.calendariopodismo.it/gara/80973/2-trail-della-torraccia/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Trail della Fossa
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Pescosolido (Fr)
+  distance_km: 11.5
+  lat: 41.770335
+  lng: 13.656587
+  url: https://www.calendariopodismo.it/gara/79753/trail-della-fossa-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Trail l’Anello del Brigante
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Roccasecca (Fr)
+  distance_km: 13.0
+  lat: 41.5528174276
+  lng: 13.6671209335
+  url: https://www.calendariopodismo.it/gara/80974/trail-lanello-del-brigante/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: 27° Mezza Maratona dei Castelli Romani
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Roma (Rm)
+  distance_km: 21.0975
+  lat: 41.7323546
+  lng: 12.6743483
+  url: https://www.calendariopodismo.it/gara/80770/27-mezza-maratona-dei-castelli-romani/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: 3° Gaeta Urban Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Gaeta (Lt)
+  distance_km: 12.5
+  lat: 41.212854546
+  lng: 13.5797750591
+  url: https://www.calendariopodismo.it/gara/80977/3-gaeta-urban-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Maratona degli Ernici
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Sora (Fr)
+  distance_km: 44.0
+  lat: 41.721987
+  lng: 13.609525
+  url: https://www.calendariopodismo.it/gara/80832/maratona-degli-ernici-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Trail della Linea Gustav
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Coreno Ausonio (Fr)
+  distance_km: 4.0
+  lat: 41.33997
+  lng: 13.775634
+  url: https://www.calendariopodismo.it/gara/80978/trail-della-linea-gustav/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Wizz Air Rome  Half Marathon By Brooks 2026
+  date: '2026-10-18'
+  category: road
+  country: Italia
+  region: Roma (Rm)
+  distance_km: 21.0975
+  lat: 41.8732434
+  lng: 12.4971045
+  url: https://www.calendariopodismo.it/gara/80733/wizz-air-rome-half-marathon-by-brooks-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: Trail del Monte Pellecchia
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Roma (Rm)
+  distance_km: 16.5
+  lat: 41.9989194
+  lng: 12.6321121
+  url: https://www.calendariopodismo.it/gara/80835/trail-del-monte-pellecchia/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: 9° Eco Trail Correndo nella Storia
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Cassino (Fr)
+  distance_km: 16.0
+  lat: 41.514518541255974
+  lng: 13.828558521459003
+  url: https://www.calendariopodismo.it/gara/80837/9-eco-trail-correndo-nella-storia/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/
+  last_synced: '2026-09-24'
+
+- name: 1° Trail dei Fontanili
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Fonte Nuova (Rm)
+  distance_km: 13.2
+  lat: 41.9900241
+  lng: 12.6603271
+  url: https://www.calendariopodismo.it/gara/80998/1-trail-dei-fontanili-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/page/2/?localita=lazio
+  last_synced: '2026-09-24'
+
+- name: 3° Urban Trail delle Castagne Sorianesi
+  date: '2026-11-01'
+  category: trail
+  country: Italia
+  region: Soriano Nel Cimino (Vt)
+  distance_km: 15.0
+  lat: 42.418249
+  lng: 12.234229
+  url: https://www.calendariopodismo.it/gara/80758/3-urban-trail-delle-castagne-sorianesi/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lazio/page/2/?localita=lazio
+  last_synced: '2026-09-24'
+
+- name: Trail di Camogli e Monte di Portofino
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Camogli (Ge)
+  distance_km: 12.28
+  lat: 44.34943513274735
+  lng: 9.154034663248568
+  url: https://www.calendariopodismo.it/gara/80475/trail-di-camogli-e-monte-di-portofino-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: 12° La Mezza tra le Baie 2026
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Sestri Levante (Ge)
+  distance_km: 21.097
+  lat: 44.2711309
+  lng: 9.4070755
+  url: https://www.calendariopodismo.it/gara/79546/12-la-mezza-tra-le-baie-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: 56° Corsa al Monte Faudo
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Imperia (IM)
+  distance_km: 24.9
+  lat: 43.9583753
+  lng: 7.8667427
+  url: https://www.calendariopodismo.it/gara/80684/56-corsa-al-monte-faudo/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: Trail del Diamante
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Genova
+  distance_km: 24.0
+  lat: 44.4387365
+  lng: 8.9298866
+  url: https://www.calendariopodismo.it/gara/80593/trail-del-diamante-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: 18° Trail di Portofino
+  date: '2026-11-08'
+  category: trail
+  country: Italia
+  region: Santa Margherita Ligure (Ge)
+  distance_km: 12.0
+  lat: 44.33183
+  lng: 9.210683
+  url: https://www.calendariopodismo.it/gara/80578/18-trail-di-portofino/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: Sanremo Marathon 2026
+  date: '2026-12-06'
+  category: road
+  country: Italia
+  region: Sanremo (Im)
+  distance_km: 42.195
+  lat: 43.816652
+  lng: 7.775316
+  url: https://www.calendariopodismo.it/gara/80762/sanremo-marathon-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/liguria/
+  last_synced: '2026-09-24'
+
+- name: Adamello Ultra Trail
+  date: '2026-09-25'
+  category: trail
+  country: Italia
+  region: Brescia (BS)
+  distance_km: 36.57
+  lat: 46.2402134
+  lng: 10.3997325
+  url: https://www.calendariopodismo.it/gara/80469/adamello-ultra-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: Trail Grigne Sud
+  date: '2026-09-26'
+  category: trail
+  country: Italia
+  region: Mandello del  Lario (Lc)
+  lat: 45.912479
+  lng: 9.3234035
+  url: https://www.calendariopodismo.it/gara/80473/trail-grigne-sud-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: 31° Mantova Half Marathon 2026
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Mantova
+  distance_km: 21.097
+  lat: 45.161306
+  lng: 10.8034849
+  url: https://www.calendariopodismo.it/gara/79544/31-mantova-half-marathon-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: Persech trail
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Grevo di Cedegolo (Bs)
+  distance_km: 5.5
+  lat: 46.0649852
+  lng: 10.3541027
+  url: https://www.calendariopodismo.it/gara/80651/persech-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: Monza21
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Monza (Mb)
+  distance_km: 21.0975
+  lat: 45.617196799
+  lng: 9.2810118198
+  url: https://www.calendariopodismo.it/gara/80640/monza21-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: 11° Orsa Pravello Trail (30-16-10Km)
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Saltrio (Va)
+  distance_km: 10.0
+  lat: 45.8739084
+  lng: 8.921668
+  url: https://www.calendariopodismo.it/gara/77525/11-orsa-pravello-trail-30-16-10km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: 8° Ecomaratona del Lodigiano
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Senna Lodigiana (Lo)
+  distance_km: 42.0
+  lat: 45.1483879368
+  lng: 9.5929004252
+  url: https://www.calendariopodismo.it/gara/80819/8-ecomaratona-del-lodigiano/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: Trail dei Presidenti
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Albavilla (Co)
+  distance_km: 19.0
+  lat: 45.8250589
+  lng: 9.188718
+  url: https://www.calendariopodismo.it/gara/80743/trail-dei-presidenti-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/
+  last_synced: '2026-09-24'
+
+- name: 11° Dosso di Cè Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Bione (Bs)
+  distance_km: 16.0
+  lat: 45.6725917853
+  lng: 10.326108294
+  url: https://www.calendariopodismo.it/gara/80681/11-dosso-di-ce-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 13° Io21Zero97 – La Bella Corsa di Walter
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Darfo Boario Terme (BS)
+  distance_km: 21.0975
+  lat: 45.8919907
+  lng: 10.1878349
+  url: https://www.calendariopodismo.it/gara/80688/13-io21zero97-la-bella-corsa-di-walter/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 22° Corripavia Half Marathon
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Pavia (Pv)
+  distance_km: 21.0975
+  lat: 45.1897574129
+  lng: 9.1565787792
+  url: https://www.calendariopodismo.it/gara/80693/22-corripavia-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Porto Brusino Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Porto Ceresio (Va)
+  distance_km: 12.0
+  lat: 45.90857136698643
+  lng: 8.908749005315146
+  url: https://www.calendariopodismo.it/gara/80696/porto-brusino-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: All In Trail Run ( 23- 13 Km)
+  date: '2026-10-17'
+  category: trail
+  country: Italia
+  region: Casale Litta (Va)
+  distance_km: 13.0
+  lat: 45.7673316
+  lng: 8.7400873
+  url: https://www.calendariopodismo.it/gara/77323/all-in-trail-run-23-13-km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 5 Castelli WineTrail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Bedizzole (Bs)
+  distance_km: 10.0
+  lat: 45.5109577113
+  lng: 10.4205001506
+  url: https://www.calendariopodismo.it/gara/80892/5-castelli-winetrail-4/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Campionati italiani, Juniores e Master di Staffette  di Corsa in Montagna
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Chiavenna (So)
+  lat: 46.3200662
+  lng: 9.4007426
+  url: https://www.calendariopodismo.it/gara/80710/campionati-italiani-juniores-e-master-di-staffette-di-corsa-in-montagna/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Val del Riso Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Gorno (Bg)
+  distance_km: 21.0
+  lat: 45.8628946
+  lng: 9.8434163
+  url: https://www.calendariopodismo.it/gara/80626/val-del-riso-trail-2-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 9° Val Bregaglia Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Sondrio (SO)
+  distance_km: 25.0
+  lat: 46.362883
+  lng: 9.869567
+  url: https://www.calendariopodismo.it/gara/80795/9-val-bregaglia-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Valle dei Segni Wine Trail
+  date: '2026-10-23'
+  category: trail
+  tags:
+  - wine
+  country: Italia
+  region: Capo di Ponte (Bs)
+  distance_km: 10.0
+  lat: 46.030996
+  lng: 10.345862
+  url: https://www.calendariopodismo.it/gara/80963/valle-dei-segni-wine-trail-4/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 11° Laus Half Marathon
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  region: Lodi (Lo)
+  distance_km: 21.0975
+  lat: 45.312482
+  lng: 9.49971
+  url: https://www.calendariopodismo.it/gara/80812/11-laus-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 69° Trofeo Vanoni – Gara Int.le di Corsa in Montagna a Staffetta
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Morbegno (So)
+  distance_km: 7.25
+  lat: 46.1333968234
+  lng: 9.5702263713
+  url: https://www.calendariopodismo.it/gara/80815/69-trofeo-vanoni-gara-int-le-di-corsa-in-montagna-a-staffetta/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 4º  Cross della Poiana
+  date: '2026-11-08'
+  category: trail
+  country: Italia
+  region: Sangiano (Va)
+  distance_km: 0.4
+  lat: 45.876821
+  lng: 8.631686
+  url: https://www.calendariopodismo.it/gara/80627/4o-cross-della-poiana/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/2/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Valdeiprati Trail
+  date: '2026-11-15'
+  category: trail
+  country: Italia
+  region: Cassano Magnago (Va)
+  distance_km: 8.0
+  lat: 45.672912
+  lng: 8.821654
+  url: https://www.calendariopodismo.it/gara/80124/valdeiprati-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/3/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 2° Trail Città di Malnate
+  date: '2026-11-29'
+  category: trail
+  country: Italia
+  region: Malnate (Va)
+  distance_km: 10.0
+  lat: 45.790109
+  lng: 8.872663
+  url: https://www.calendariopodismo.it/gara/80914/2-trail-citta-di-malnate/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/3/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 3º Cross del Gurèe
+  date: '2026-11-29'
+  category: trail
+  country: Italia
+  region: Monvalle (Va)
+  distance_km: 0.4
+  lat: 45.856932
+  lng: 8.63373
+  url: https://www.calendariopodismo.it/gara/80628/3o-cross-del-guree/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/3/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Brescia Art Marathon
+  date: '2027-03-14'
+  category: road
+  country: Italia
+  region: Brescia
+  distance_km: 42.195
+  lat: 45.779581
+  lng: 10.425873
+  url: https://www.calendariopodismo.it/gara/78891/brescia-art-marathon-9/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/3/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: 5° Lake Garda 42
+  date: '2027-04-11'
+  category: road
+  country: Italia
+  region: Limone sul Garda (Bs)
+  distance_km: 21.097
+  lat: 45.814108
+  lng: 10.791534
+  url: https://www.calendariopodismo.it/gara/80350/5-lake-garda-42/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/lombardia/page/3/?localita=lombardia
+  last_synced: '2026-09-24'
+
+- name: Salaria Run
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Ascoli Piceno
+  distance_km: 21.1
+  lat: 42.853583
+  lng: 13.577363
+  url: https://www.calendariopodismo.it/gara/80776/salaria-run-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/marche/
+  last_synced: '2026-09-24'
+
+- name: 15° Conero Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Sirolo (An)
+  distance_km: 13.0
+  lat: 43.5256099015
+  lng: 13.6165478826
+  url: https://www.calendariopodismo.it/gara/80981/15-conero-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/marche/
+  last_synced: '2026-09-24'
+
+- name: Ultra Trail del Moscato d’Asti – Magistra Langarum
+  date: '2026-09-25'
+  category: trail
+  country: Italia
+  region: Santo Stefano Belbo (Cn)
+  distance_km: 106.0
+  lat: 44.7026391
+  lng: 8.2180296
+  url: https://www.calendariopodismo.it/gara/80470/ultra-trail-del-moscato-dasti-magistra-langarum/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Ultra Trail Lago Maggiore
+  date: '2026-09-26'
+  category: trail
+  country: Italia
+  region: Verbano-Cusio-Ossola (VB)
+  distance_km: 13.0
+  lat: 45.9344082
+  lng: 8.5580062
+  url: https://www.calendariopodismo.it/gara/80471/ultra-trail-lago-maggiore-2-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Fontaneto Agnolotto Half Marathon
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Novara (No)
+  distance_km: 21.0975
+  lat: 45.43740109663284
+  lng: 8.599095728655968
+  url: https://www.calendariopodismo.it/gara/80405/fontaneto-agnolotto-half-marathon-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Maira Occitan Trail
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: Marmora (Cn)
+  distance_km: 6.0
+  lat: 44.4568340338
+  lng: 7.0900716817
+  url: https://www.calendariopodismo.it/gara/80839/maira-occitan-trail-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Trail della Barbera
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: Mongardino (At)
+  distance_km: 10.0
+  lat: 44.849233
+  lng: 8.218475
+  url: https://www.calendariopodismo.it/gara/80841/trail-della-barbera-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: La due Santuari – 2° Trail di Belmonte
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: Pertusio (To)
+  lat: 45.3549275
+  lng: 7.6416464
+  url: https://www.calendariopodismo.it/gara/80843/la-due-santuari-2-trail-di-belmonte/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 3° Crono Trail Burcina
+  date: '2026-10-03'
+  category: trail
+  country: Italia
+  region: Pollone (Bi)
+  distance_km: 3.88
+  lat: 45.579763
+  lng: 8.005919
+  url: https://www.calendariopodismo.it/gara/80921/3-crono-trail-burcina/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 1° Trail del Lago Nero -10° Giro del Lago Nero CPC
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Borgofranco d'Ivrea (To)
+  distance_km: 9.95
+  lat: 45.5162562
+  lng: 7.8623579
+  url: https://www.calendariopodismo.it/gara/80911/1-trail-del-lago-nero/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 8° Trail delle Colline
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Chivasso (To)
+  distance_km: 13.0
+  lat: 45.190133
+  lng: 7.889405
+  url: https://www.calendariopodismo.it/gara/80845/8-trail-delle-colline/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Toma Trail
+  date: '2026-10-10'
+  category: trail
+  country: Italia
+  region: Condove (To)
+  distance_km: 16.0
+  lat: 45.113213
+  lng: 7.315565
+  url: https://www.calendariopodismo.it/gara/80756/toma-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 100 km e 50 km delle Alpi
+  date: '2026-10-10'
+  category: road
+  country: Italia
+  region: Torino (TO)
+  distance_km: 50.0
+  lat: 45.049301
+  lng: 7.650282
+  url: https://www.calendariopodismo.it/gara/80673/100-km-e-50-km-delle-alpi-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: EcoTrail del Lessona DOC
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Lessona (Bi)
+  distance_km: 16.0
+  lat: 45.5872701
+  lng: 8.1943371
+  url: https://www.calendariopodismo.it/gara/80865/ecotrail-del-lessona-doc/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Trail delle Borgate
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Pomaretto (To)
+  distance_km: 9.5
+  lat: 44.953807
+  lng: 7.179936
+  url: https://www.calendariopodismo.it/gara/80874/trail-delle-borgate-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 2° Extreme Trail dei Castelli Bruciati
+  date: '2026-10-16'
+  category: trail
+  country: Italia
+  region: Gabiano (Al)
+  distance_km: 160.0
+  lat: 45.156503114427856
+  lng: 8.192004362715588
+  url: https://www.calendariopodismo.it/gara/80925/2-extreme-trail-dei-castelli-bruciati/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Minerva Energia Ultra Trail Lago d’Orta – UTLO
+  date: '2026-10-17'
+  category: trail
+  country: Italia
+  region: Omegna (Vb)
+  distance_km: 12.0
+  lat: 45.879774
+  lng: 8.408022
+  url: https://www.calendariopodismo.it/gara/80876/minerva-energia-ultra-trail-lago-dorta-utlo/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Ultra Trail Lago d’Orta
+  date: '2026-10-17'
+  category: trail
+  country: Italia
+  region: Omegna (Vb)
+  distance_km: 100.0
+  lat: 45.870601
+  lng: 8.403727
+  url: https://www.calendariopodismo.it/gara/74652/ultra-trail-lago-dorta/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: 4° T’Amo Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Bairo (To)
+  distance_km: 6.0
+  lat: 45.382124
+  lng: 7.760117
+  url: https://www.calendariopodismo.it/gara/80918/4-tamo-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Trail della Ruscalla
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Camino (Al)
+  distance_km: 1.61
+  lat: 45.16224081261449
+  lng: 8.2871338367576
+  url: https://www.calendariopodismo.it/gara/80893/trail-della-ruscalla-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/
+  last_synced: '2026-09-24'
+
+- name: Trail Monte Casto
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Andorno  Micca (Bi)
+  distance_km: 8.0
+  lat: 45.609264
+  lng: 8.05272
+  url: https://www.calendariopodismo.it/gara/80896/trail-monte-casto-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: 1° Cross di  Sant’ Antonio
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Cascinette d'Ivrea (To)
+  distance_km: 4.0
+  lat: 45.480159
+  lng: 7.905619
+  url: https://www.calendariopodismo.it/gara/80919/1-cross-di-sant-antonio/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: Madonna del Sasso Trail
+  date: '2026-11-01'
+  category: trail
+  country: Italia
+  region: Boleto di Madonna del Sasso (VB)
+  distance_km: 7.0
+  lat: 45.792121
+  lng: 8.368864
+  url: https://www.calendariopodismo.it/gara/80949/madonna-del-sasso-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: Invernal Trail
+  date: '2026-12-20'
+  category: trail
+  country: Italia
+  region: Ghemme (No)
+  distance_km: 8.0
+  lat: 45.581534
+  lng: 8.434009
+  url: https://www.calendariopodismo.it/gara/80873/invernal-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: Brutal Trail Ghemme
+  date: '2027-01-31'
+  category: trail
+  country: Italia
+  region: Ghemme (No)
+  lat: 45.581534
+  lng: 8.434009
+  url: https://www.calendariopodismo.it/gara/80872/brutal-trail-ghemme-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: 5° Novara Half Marathon
+  date: '2027-01-31'
+  category: road
+  country: Italia
+  region: Novara (No)
+  distance_km: 21.0975
+  lat: 45.4464036
+  lng: 8.619655
+  url: https://www.calendariopodismo.it/gara/80950/v-novara-half-marathon-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: Vercelli Half Marathon
+  date: '2027-02-28'
+  category: road
+  country: Italia
+  region: Vercelli (Vc)
+  distance_km: 21.0975
+  lat: 45.3254630564
+  lng: 8.4229627539
+  url: https://www.calendariopodismo.it/gara/80951/vercelli-half-marathon-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: Brutal Maggiora Park Wild crosstrail
+  date: '2027-03-14'
+  category: trail
+  country: Italia
+  region: Maggiora (No)
+  distance_km: 6.0
+  lat: 45.687642
+  lng: 8.423284
+  url: https://www.calendariopodismo.it/gara/80871/brutal-maggiora-park-wild-crosstrail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/piemonte/page/2/?localita=piemonte
+  last_synced: '2026-09-24'
+
+- name: 4°Trail delle Murge
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Cassano delle Murge (Ba)
+  distance_km: 10.0
+  lat: 40.851683
+  lng: 16.777203
+  url: https://www.calendariopodismo.it/gara/80909/4trail-delle-murge/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: 2° Spinapulci Trail
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: San Nicandro Garganico (Fg)
+  distance_km: 12.0
+  lat: 41.838446
+  lng: 15.565338
+  url: https://www.calendariopodismo.it/gara/80635/2-spinapulci-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: TranInCorsa Half Marathon
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Trani (Bt)
+  distance_km: 21.097
+  lat: 41.2683303338
+  lng: 16.4404213385
+  url: https://www.calendariopodismo.it/gara/80686/tranincorsa-half-marathon-5/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: 11° Amastuola Wave Trail
+  date: '2026-10-25'
+  category: trail
+  tags:
+  - wine
+  country: Italia
+  region: Masseria Amastuola Wine Resort - Massafra (Ta)
+  distance_km: 16.0
+  url: https://www.calendariopodismo.it/gara/80806/11-amastuola-wave-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: Ginosa Rivolta Trail
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Ginosa (Ta)
+  distance_km: 35.0
+  lat: 40.5797514
+  lng: 16.7562077
+  url: https://www.calendariopodismo.it/gara/81009/ginosa-rivolta-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: Castellaneta Underground Trail
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Taranto (Ta)
+  distance_km: 50.0
+  lat: 40.630424
+  lng: 16.9346775
+  url: https://www.calendariopodismo.it/gara/80984/castellaneta-underground-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/puglia/
+  last_synced: '2026-09-24'
+
+- name: 2′ Trail de “Is Cuccureddus”
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Decimoputzu  (SU)
+  distance_km: 1.0
+  lat: 39.335238
+  lng: 8.91524
+  url: https://www.calendariopodismo.it/gara/80848/2-trail-de-is-cuccureddus/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sardegna/
+  last_synced: '2026-09-24'
+
+- name: 4° Trail dell’Amicizia
+  date: '2026-10-24'
+  category: trail
+  country: Italia
+  region: Castelsardo (Ss)
+  distance_km: 8.0
+  lat: 40.9134464141
+  lng: 8.7131836863
+  url: https://www.calendariopodismo.it/gara/80895/4-trail-dellamicizia/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sardegna/
+  last_synced: '2026-09-24'
+
+- name: 17° Mezza Maratona Città di Cagliari – Cagliari Respira
+  date: '2026-12-06'
+  category: road
+  country: Italia
+  region: Cagliari
+  distance_km: 21.097
+  lat: 39.2063537
+  lng: 9.1259537
+  url: https://www.calendariopodismo.it/gara/76270/17-mezza-maratona-citta-di-cagliari-cagliari-respira-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sardegna/
+  last_synced: '2026-09-24'
+
+- name: Urban Trail Città di Enna
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Enna (En)
+  distance_km: 12.0
+  lat: 37.5667573
+  lng: 14.2807473
+  url: https://www.calendariopodismo.it/gara/80590/urban-trail-citta-di-enna/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sicilia/
+  last_synced: '2026-09-24'
+
+- name: Half Marathon Perla del Tirreno
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Cefalù (Pa)
+  distance_km: 21.0975
+  lat: 38.031205
+  lng: 14.026889
+  url: https://www.calendariopodismo.it/gara/80672/half-marathon-perla-del-tirreno-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sicilia/
+  last_synced: '2026-09-24'
+
+- name: 1° La Mezza dello Stretto
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Messina (Me)
+  distance_km: 21.0975
+  lat: 38.1937571
+  lng: 15.5542082
+  url: https://www.calendariopodismo.it/gara/80691/1-la-mezza-dello-stretto/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sicilia/
+  last_synced: '2026-09-24'
+
+- name: Maratonina Blu Jonio
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  region: Riposto (Ct)
+  distance_km: 21.0975
+  lat: 37.732541
+  lng: 15.205213
+  url: https://www.calendariopodismo.it/gara/80811/maratonina-blu-jonio-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sicilia/
+  last_synced: '2026-09-24'
+
+- name: 31° Maratona Citta’ di Palermo
+  date: '2026-11-15'
+  category: road
+  country: Italia
+  region: Palermo (Pa)
+  distance_km: 21.975
+  lat: 38.1243582
+  lng: 13.3549349
+  url: https://www.calendariopodismo.it/gara/79769/31-maratona-citta-di-palermo/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/sicilia/
+  last_synced: '2026-09-24'
+
+- name: Capraia Wild Trail
+  date: '2026-09-25'
+  category: trail
+  country: Italia
+  region: Isola di Capraia
+  distance_km: 13.0
+  lat: 43.037437
+  lng: 9.822556
+  url: https://www.calendariopodismo.it/gara/79051/capraia-wild-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Lunigiana Skyrace
+  date: '2026-09-26'
+  category: road
+  country: Italia
+  region: Fivizzano (Ms)
+  distance_km: 44.0
+  lat: 44.2379560245
+  lng: 10.1232315423
+  url: https://www.calendariopodismo.it/gara/75933/lunigiana-skyrace-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: 52° Maratona del Mugello
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Borgo San Lorenzo (Fi)
+  distance_km: 21.097
+  lat: 43.9549966904
+  lng: 11.3877904415
+  url: https://www.calendariopodismo.it/gara/76523/52-maratona-del-mugello/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: 42° Montagnata
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Montagnano (Ar)
+  distance_km: 8.5
+  lat: 43.345224
+  lng: 11.810816
+  url: https://www.calendariopodismo.it/gara/80093/42-montagnata/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: 9° Montepulciano Run – Urban Trail
+  date: '2026-10-02'
+  category: trail
+  country: Italia
+  region: Montepulciano (Si)
+  distance_km: 7.0
+  lat: 43.092714
+  lng: 11.780995
+  url: https://www.calendariopodismo.it/gara/80934/9-montepulciano-run-urban-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: 7° Piglione Trail
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: San Rocco in Turrite - Pescaglia (Lu)
+  distance_km: 6.5
+  lat: 43.98266
+  lng: 10.464689
+  url: https://www.calendariopodismo.it/gara/80958/7-piglione-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Erta terra Berignone Crossing (52-32-20-15Km)
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Volterra
+  distance_km: 15.0
+  lat: 43.400337
+  lng: 10.860019
+  url: https://www.calendariopodismo.it/gara/78693/erta-terra-berignone-crossing-52-32-20-15km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Valdambra Goro Trail
+  date: '2026-10-09'
+  category: trail
+  country: Italia
+  region: Badia Agnano (Ar)
+  distance_km: 110.0
+  lat: 43.4363251
+  lng: 11.6476077
+  url: https://www.calendariopodismo.it/gara/76906/valdambra-goro-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Valdambra Disertore Trail
+  date: '2026-10-10'
+  category: trail
+  country: Italia
+  region: Badia Agnano (Arezzo)
+  distance_km: 64.0
+  lat: 43.4363251
+  lng: 11.6476077
+  url: https://www.calendariopodismo.it/gara/76907/valdambra-disertore-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Valdambra Fattoressa Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Badia Agnano (Ar)
+  distance_km: 45.0
+  lat: 43.436325
+  lng: 11.647608
+  url: https://www.calendariopodismo.it/gara/77011/valdambra-fattoressa-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/
+  last_synced: '2026-09-24'
+
+- name: Corsa Panoramica del Salto
+  date: '2026-09-27'
+  category: road
+  country: Italia
+  region: Altopiano del Salto (Bz)
+  distance_km: 15.0
+  lat: 46.5901867
+  lng: 11.2820216
+  url: https://www.calendariopodismo.it/gara/79852/corsa-panoramica-del-salto/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Fiemme Ultra Sky
+  date: '2026-10-03'
+  category: road
+  country: Italia
+  region: Trento (TN)
+  distance_km: 33.0
+  lat: 46.2898845
+  lng: 11.4648775
+  url: https://www.calendariopodismo.it/gara/80960/fiemme-ultra-sky-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Enrosadiratrail 2026
+  date: '2026-10-10'
+  category: trail
+  country: Italia
+  region: Alta Badia (Bz)
+  distance_km: 20.0
+  lat: 46.5646703
+  lng: 11.9102193
+  url: https://www.calendariopodismo.it/gara/80962/enrosadiratrail-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Corsa Sentiero del Sole
+  date: '2026-10-10'
+  category: trail
+  country: Italia
+  region: Lutago (Bz)
+  distance_km: 22.0
+  lat: 46.9510586
+  lng: 11.9212229
+  url: https://www.calendariopodismo.it/gara/80803/corsa-sentiero-del-sole/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Roccapiana Trail
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Mezzocorona (Tn)
+  distance_km: 21.8
+  lat: 46.2154357
+  lng: 11.1207858
+  url: https://www.calendariopodismo.it/gara/80856/roccapiana-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: 3° Drago Vaia Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Lavarone (Tn)
+  distance_km: 12.0
+  lat: 45.940475
+  lng: 11.262991
+  url: https://www.calendariopodismo.it/gara/80967/3-drago-vaia-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Night Trail Rovereto
+  date: '2026-11-07'
+  category: trail
+  country: Italia
+  region: Rovereto (Tn)
+  distance_km: 11.0
+  lat: 45.8887069006
+  lng: 11.0453340411
+  url: https://www.calendariopodismo.it/gara/80650/night-trail-rovereto/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Jurassic Miles Endurance Run
+  date: '2027-09-17'
+  category: road
+  country: Italia
+  region: Rovereto (Tn)
+  distance_km: 23.0
+  lat: 45.888579
+  lng: 11.044584
+  url: https://www.calendariopodismo.it/gara/80940/jurassic-miles-endurance-run/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/trentino-alto-adige/
+  last_synced: '2026-09-24'
+
+- name: Torgnon Pink Trail
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Torgnon (Ao)
+  distance_km: 7.0
+  lat: 45.804278
+  lng: 7.567978
+  url: https://www.calendariopodismo.it/gara/80854/torgnon-pink-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/valle-daosta/
+  last_synced: '2026-09-24'
+
+- name: 4° Treviso Urban Trail
+  date: '2026-09-25'
+  category: trail
+  country: Italia
+  region: Treviso (Tv)
+  distance_km: 10.0
+  lat: 45.668468
+  lng: 12.235304
+  url: https://www.calendariopodismo.it/gara/80314/4-treviso-urban-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: 12° Giro sul Monte Moscal – Trail del Moscal
+  date: '2026-09-26'
+  category: trail
+  country: Italia
+  region: Affi (Vr)
+  distance_km: 8.0
+  lat: 45.5563116366
+  lng: 10.7762038708
+  url: https://www.calendariopodismo.it/gara/80148/12-giro-sul-monte-moscal/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: Delicious  Trail – Dolomiti
+  date: '2026-09-26'
+  category: trail
+  country: Italia
+  region: Cortina d'Ampezzo (Bl)
+  distance_km: 23.0
+  lat: 46.5685125
+  lng: 12.1323186
+  url: https://www.calendariopodismo.it/gara/80474/delicious-trail-dolomiti/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: 6° Valvaccara Trail Colline delle Bregonze
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Chiuppano (Vi)
+  distance_km: 8.0
+  lat: 45.7605528
+  lng: 11.473198
+  url: https://www.calendariopodismo.it/gara/79328/6-valvaccara-trail-colline-delle-bregonze/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: Valvaccara Trail
+  date: '2026-09-27'
+  category: trail
+  country: Italia
+  region: Chiuppano (Vi)
+  distance_km: 8.0
+  lat: 45.76388
+  lng: 11.461995
+  url: https://www.calendariopodismo.it/gara/80321/valvaccara-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: 27° Camminando con Bakhita
+  date: '2026-10-03'
+  category: road
+  country: Italia
+  region: Vicenza (Vi)
+  distance_km: 29.0
+  lat: 45.546149
+  lng: 11.543392
+  url: https://www.calendariopodismo.it/gara/80656/27-camminando-con-bakhita/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: 2° Adria Half Marathon
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Adria (Ro)
+  distance_km: 21.098
+  lat: 45.057365
+  lng: 12.049124
+  url: https://www.calendariopodismo.it/gara/77790/2-adria-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/
+  last_synced: '2026-09-24'
+
+- name: Trail dei Folendari
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Cerro Veronese (Vr)
+  distance_km: 10.0
+  lat: 45.574218
+  lng: 11.041341
+  url: https://www.calendariopodismo.it/gara/80961/trail-dei-folendari-5/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Commonwealth War Cemeteries
+  date: '2026-10-04'
+  category: road
+  country: Italia
+  region: Cesuna - Roana (Vi)
+  distance_km: 42.0
+  lat: 45.83717752682791
+  lng: 11.45516038393882
+  url: https://www.calendariopodismo.it/gara/80910/commonwealth-war-cemeteries-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: 8° Minitrail Villa San Francesco
+  date: '2026-10-04'
+  category: trail
+  country: Italia
+  region: Facen - Pedavena (Bl)
+  distance_km: 10.0
+  lat: 46.031052
+  lng: 11.864476
+  url: https://www.calendariopodismo.it/gara/80417/8-minitrail-villa-san-francesco/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: 15° Trail del Prosecco Superiore
+  date: '2026-10-04'
+  category: trail
+  tags:
+  - wine
+  country: Italia
+  region: Pieve di Soligo (Tv)
+  distance_km: 13.0
+  lat: 45.9047382182
+  lng: 12.1645617053
+  url: https://www.calendariopodismo.it/gara/80704/15-trail-del-prosecco-superiore/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: 12° La Mezza di Treviso – International Half Marathon
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Treviso (Tv)
+  distance_km: 21.0975
+  lat: 45.66885
+  lng: 12.238686
+  url: https://www.calendariopodismo.it/gara/80692/12-la-mezza-di-treviso-international-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Epica dell’Acqua
+  date: '2026-10-16'
+  category: road
+  country: Italia
+  region: Porto Tolle (Ro)
+  distance_km: 100.0
+  lat: 44.838555
+  lng: 12.3765338
+  url: https://www.calendariopodismo.it/gara/78210/epica-dellacqua-4/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Malcesine Panoramic Trail (46-30-17-10Km)
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Malcesine (Vr)
+  distance_km: 10.0
+  lat: 45.7631123
+  lng: 10.8080612
+  url: https://www.calendariopodismo.it/gara/77717/malcesine-panoramic-trail-46-30-17-10km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Val Scura Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Santa Giustina (Bl)
+  distance_km: 6.0
+  lat: 46.074233
+  lng: 12.018908
+  url: https://www.calendariopodismo.it/gara/80885/val-scura-trail-5/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Schio Wool Trail
+  date: '2026-10-18'
+  category: trail
+  country: Italia
+  region: Schio (Vi)
+  distance_km: 19.0
+  lat: 45.7143939
+  lng: 11.3590481
+  url: https://www.calendariopodismo.it/gara/79596/schio-wool-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/2/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: 8° Goser Trail
+  date: '2026-10-25'
+  category: trail
+  country: Italia
+  region: Tisoi - Belluno (Bl)
+  distance_km: 5.0
+  lat: 46.163071
+  lng: 12.169956
+  url: https://www.calendariopodismo.it/gara/80969/8-goser-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/3/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: 40° Venice Marathon
+  date: '2026-10-25'
+  category: road
+  country: Italia
+  region: Venezia (Ve)
+  distance_km: 21.0975
+  lat: 45.4077493064
+  lng: 12.0128685236
+  url: https://www.calendariopodismo.it/gara/75326/40-venice-marathon-12-vm10km/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/3/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Piccolo Trail delle Bregonze
+  date: '2026-11-15'
+  category: trail
+  country: Italia
+  region: Carrè (Vi)
+  distance_km: 15.0
+  lat: 45.7533087
+  lng: 11.4587058
+  url: https://www.calendariopodismo.it/gara/80434/piccolo-trail-delle-bregonze/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/3/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Restena Trail
+  date: '2026-11-22'
+  category: trail
+  country: Italia
+  region: Restena - Arzignano (Vi)
+  distance_km: 11.0
+  lat: 45.546092
+  lng: 11.346228
+  url: https://www.calendariopodismo.it/gara/76559/restena-trail-3/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/3/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: LitTLe RuN
+  date: '2026-12-26'
+  category: road
+  country: Italia
+  region: Vittorio Veneto (Tv)
+  distance_km: 616.0
+  lat: 45.9818909
+  lng: 12.3145215
+  url: https://www.calendariopodismo.it/gara/80916/little-run/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/veneto/page/3/?localita=veneto
+  last_synced: '2026-09-24'
+
+- name: Chihuahua by UTMB®
+  date: '2026-10-01'
+  category: trail
+  country: Messico
+  region: Chihuahua
+  lat: 27.5173
+  lng: -107.827
+  url: https://chihuahua.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: HOKA Kodiak Ultra Marathons by UTMB
+  date: '2026-10-08'
+  category: trail
+  country: Stati Uniti
+  region: Big Bear Lake, California
+  lat: 34.2439
+  lng: -116.544
+  url: https://kodiak.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Kullamannen by UTMB
+  date: '2026-10-30'
+  category: trail
+  country: Svezia
+  region: Mölle
+  lat: 56.2829
+  lng: 12.4946
+  url: https://kullamannen.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: HOKA Pacific Trails California by UTMB
+  date: '2026-11-13'
+  category: trail
+  country: Stati Uniti
+  region: Rancho San Fernado Rey
+  lat: 34.5438
+  lng: -119.805
+  url: https://pacifictrails.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Patagonia BARILOCHE by UTMB
+  date: '2026-11-18'
+  category: trail
+  country: Argentina
+  region: BARILOCHE, Patagonia Argentina
+  lat: -41.1336
+  lng: -71.3102
+  url: https://bariloche.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Arc of Attrition by UTMB®
+  date: '2027-01-22'
+  category: trail
+  country: Regno Unito
+  region: Perranporth, Cornwall, UK
+  lat: 50.3278
+  lng: -5.18369
+  url: https://arcofattrition.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Puerto Vallarta by UTMB®
+  date: '2027-03-04'
+  category: trail
+  country: Messico
+  region: Puerto Vallarta
+  lat: 20.6225
+  lng: -105.226
+  url: https://puerto-vallarta.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Jujuy Fuerza Sagrada by UTMB
+  date: '2027-04-01'
+  category: trail
+  country: Argentina
+  region: Jujuy, Argentina
+  lat: -23.7461
+  lng: -65.4981
+  url: https://jujuy.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Desert RATS Trail Running Festival by UTMB
+  date: '2027-04-08'
+  category: trail
+  country: Stati Uniti
+  region: Fruita, Colorado
+  lat: 39.2113
+  lng: -108.871
+  url: https://desertrats.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Hiroshima Ultra-Trail by UTMB®
+  date: '2027-04-09'
+  category: trail
+  country: Giappone
+  region: Hiroshima
+  lat: 34.4011
+  lng: 132.456
+  url: https://hiroshima.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: The Canyons Endurance Runs™ by UTMB®
+  date: '2027-04-22'
+  category: trail
+  country: Stati Uniti
+  region: Auburn, California
+  lat: 38.9
+  lng: -121.069
+  url: https://canyons.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Oh Meu Deus by UTMB
+  date: '2027-04-30'
+  category: trail
+  country: Portogallo
+  region: Seia
+  lat: 40.421
+  lng: -7.7045
+  url: https://ohmeudeus.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Rothrock by UTMB
+  date: '2027-05-14'
+  category: trail
+  country: Stati Uniti
+  region: State College, PA
+  lat: 40.7934
+  lng: -77.86
+  url: https://rothrock.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Ultra Trail Chattanooga by UTMB
+  date: '2027-06-04'
+  category: trail
+  country: Stati Uniti
+  region: 'Chattanooga Tennessee '
+  lat: 35.0471
+  lng: -85.2628
+  url: https://chattanooga.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Torrencial Chile by UTMB
+  date: '2027-06-24'
+  category: trail
+  country: Cile
+  region: Valdivia, Chile
+  lat: -39.8053
+  lng: -73.2578
+  url: https://torrencial.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Ultra Trail Whistler by UTMB
+  date: '2027-06-25'
+  category: trail
+  country: Canada
+  region: Creekside Plaza
+  lat: 50.0941
+  lng: -122.989
+  url: https://whistler.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Speedgoat Mountain Races by UTMB
+  date: '2027-07-22'
+  category: trail
+  country: Stati Uniti
+  region: Sandy, Utah
+  lat: 40.578
+  lng: -111.666
+  url: https://speedgoat.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Quito Trail Ecuador by UTMB®
+  date: '2027-07-30'
+  category: trail
+  country: Ecuador
+  region: Quito
+  lat: -0.220745
+  lng: -78.5148
+  url: https://quito.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Snowbasin by UTMB
+  date: '2027-09-16'
+  category: trail
+  country: Stati Uniti
+  region: Ogden, UT
+  lat: 41.2122
+  lng: -111.853
+  url: https://snowbasin.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Paraty Brazil by UTMB
+  date: '2026-09-17'
+  category: trail
+  country: Brasile
+  region: 'Paraty '
+  lat: -23.2176
+  lng: -44.7134
+  url: https://paraty.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: Grindstone Trail Running Festival
+  date: '2026-09-17'
+  category: trail
+  country: Stati Uniti
+  region: Natural Chimneys Park, VA
+  lat: 38.3586
+  lng: -79.0828
+  url: https://grindstone.utmb.world
+  series: UTMB World Series
+  source: utmb
+  source_url: https://utmb.world/utmb-world-series-events
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 New York
+  date: '2026-09-26'
+  category: triathlon
+  country: Stati Uniti
+  region: Jones Beach, NY, United States
+  url: https://ironman.com/race/83711
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Augusta
+  date: '2026-09-27'
+  category: triathlon
+  country: Stati Uniti
+  region: Augusta, GA, United States
+  lat: 17.751989
+  lng: -64.694495
+  url: https://ironman.com/race/84001
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Chattanooga
+  date: '2026-09-27'
+  category: triathlon
+  country: Stati Uniti
+  region: Chattanooga, TN, United States
+  url: https://ironman.com/race/84146
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Waco
+  date: '2026-10-04'
+  category: triathlon
+  country: Stati Uniti
+  region: Waco, TX, United States
+  url: https://ironman.com/race/95466
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Buenos Aires Palermo
+  date: '2026-10-04'
+  category: triathlon
+  country: Argentina
+  region: Buenos Aires, Argentina
+  lat: -32.712666
+  lng: -60.731563
+  url: https://ironman.com/race/97351
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: 5150 Coquimbo
+  date: '2026-10-04'
+  category: triathlon
+  country: Cile
+  region: Coquimbo, CO, Chile
+  lat: -33.456392
+  lng: -70.646758
+  url: https://ironman.com/race/130951
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN World Championship
+  date: '2026-10-10'
+  category: triathlon
+  country: Stati Uniti
+  region: Kona, HI, United States
+  url: https://ironman.com/race/96336
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Encarnacion
+  date: '2026-10-11'
+  category: triathlon
+  country: Paraguay
+  region: Encarnacion, Paraguay
+  lat: -25.320696
+  lng: -57.592987
+  url: https://ironman.com/race/121516
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 North Carolina
+  date: '2026-10-17'
+  category: triathlon
+  country: Stati Uniti
+  region: Wilmington, NC, United States
+  url: https://ironman.com/race/84581
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Portugal-Cascais
+  date: '2026-10-17'
+  category: triathlon
+  country: Portogallo
+  region: Cascais, Portugal
+  url: https://ironman.com/race/84726
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Portugal-Cascais
+  date: '2026-10-17'
+  category: triathlon
+  country: Portogallo
+  region: Cascais, Portugal
+  url: https://ironman.com/race/96191
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN California
+  date: '2026-10-18'
+  category: triathlon
+  country: Stati Uniti
+  region: Sacramento, CA, United States
+  url: https://ironman.com/race/85016
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Florianopolis
+  date: '2026-10-18'
+  category: triathlon
+  country: Brasile
+  region: Florianopolis, SC, Brazil
+  url: https://ironman.com/race/108081
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Málaga
+  date: '2026-10-18'
+  category: triathlon
+  country: Spagna
+  region: Málaga, Spain
+  url: https://ironman.com/race/134956
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Costa Navarino, Peloponnese, Greece
+  date: '2026-10-25'
+  category: triathlon
+  country: Grecia
+  region: Peloponnese, Greece
+  lat: 37.352206
+  lng: 22.330047
+  url: https://ironman.com/race/96046
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: 5150 San Juan
+  date: '2026-10-30'
+  category: triathlon
+  country: Argentina
+  region: San Juan, Argentina
+  lat: -31.498566
+  lng: -68.523159
+  url: https://ironman.com/race/129261
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN San Juan
+  date: '2026-11-01'
+  category: triathlon
+  country: Argentina
+  region: San Juan, Argentina
+  lat: -31.498566
+  lng: -68.523159
+  url: https://ironman.com/race/128646
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Florida
+  date: '2026-11-07'
+  category: triathlon
+  country: Stati Uniti
+  region: Panama City Beach, FL, United States
+  url: https://ironman.com/race/85596
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Campeche
+  date: '2026-11-08'
+  category: triathlon
+  country: Messico
+  region: Campeche, CAM, Mexico
+  lat: 19.860688
+  lng: -90.489416
+  url: https://ironman.com/race/87916
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Cozumel
+  date: '2026-11-22'
+  category: triathlon
+  country: Messico
+  region: Cozumel, ROO, Mexico
+  lat: 20.443087
+  lng: -86.989661
+  url: https://ironman.com/race/86176
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Cartagena
+  date: '2026-11-29'
+  category: triathlon
+  country: Colombia
+  region: Cartagena, Colombia
+  lat: 2.505
+  lng: -68.211944
+  url: https://ironman.com/race/86321
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Valdivia
+  date: '2026-11-29'
+  category: triathlon
+  country: Cile
+  region: Valdivia, LR, Chile
+  url: https://ironman.com/race/97786
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Aracaju-Sergipe
+  date: '2026-11-29'
+  category: triathlon
+  country: Brasile
+  region: Aracaju, SE, Brazil
+  url: https://ironman.com/race/98076
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Valdivia
+  date: '2026-11-29'
+  category: triathlon
+  country: Cile
+  region: Valdivia, LR, Chile
+  url: https://ironman.com/race/123076
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 La Quinta
+  date: '2026-12-06'
+  category: triathlon
+  country: Stati Uniti
+  region: La Quinta, CA, United States
+  url: https://ironman.com/race/86756
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Veracruz
+  date: '2026-12-06'
+  category: triathlon
+  country: Messico
+  region: Veracruz, Mexico
+  lat: 19.358504
+  lng: -99.304217
+  url: https://ironman.com/race/148551
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Florida
+  date: '2026-12-13'
+  category: triathlon
+  country: Stati Uniti
+  region: Haines City, FL, United States
+  url: https://ironman.com/race/98656
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Pucon
+  date: '2027-01-10'
+  category: triathlon
+  country: Cile
+  region: Pucon, Chile
+  lat: -33.3891
+  lng: -70.564252
+  url: https://ironman.com/race/87046
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: 5150 Jujuy
+  date: '2027-02-21'
+  category: triathlon
+  country: Argentina
+  region: San Salvador de Jujuy, Argentina
+  url: https://ironman.com/race/148691
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Panama
+  date: '2027-02-28'
+  category: triathlon
+  country: Panama
+  region: Panama City, Panama
+  lat: 8.971449
+  lng: -79.53418
+  url: https://ironman.com/race/88206
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Punta del Este
+  date: '2027-03-07'
+  category: triathlon
+  country: Uruguay
+  region: Punta del Este, Uruguay
+  url: https://ironman.com/race/87626
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Dallas-Little Elm
+  date: '2027-03-14'
+  category: triathlon
+  country: Stati Uniti
+  region: Dallas, TX, United States
+  url: https://ironman.com/race/127186
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Curitiba
+  date: '2027-03-21'
+  category: triathlon
+  country: Brasile
+  region: Curitiba, PR, Brazil
+  url: https://ironman.com/race/131886
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Oceanside
+  date: '2027-04-03'
+  category: triathlon
+  country: Stati Uniti
+  region: Oceanside, CA, United States
+  lat: 18.367952
+  lng: -64.917004
+  url: https://ironman.com/race/88351
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Vilamoura-Algarve
+  date: '2027-04-03'
+  category: triathlon
+  country: Portogallo
+  region: Vilamoura, Portugal
+  url: https://ironman.com/race/149916
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Texas
+  date: '2027-04-04'
+  category: triathlon
+  country: Stati Uniti
+  region: Galveston Island, TX, United States
+  url: https://ironman.com/race/99381
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Puerto Varas
+  date: '2027-04-04'
+  category: triathlon
+  country: Cile
+  region: Puerto Varas, LL, Chile
+  lat: -53.155611
+  lng: -70.938332
+  url: https://ironman.com/race/121376
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Barranquilla
+  date: '2027-04-04'
+  category: triathlon
+  country: Colombia
+  region: Barranquilla, Colombia
+  lat: 11.016815
+  lng: -74.862174
+  url: https://ironman.com/race/135411
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 San Juan
+  date: '2027-04-11'
+  category: triathlon
+  country: Argentina
+  region: San Juan, Argentina
+  lat: -31.498566
+  lng: -68.523159
+  url: https://ironman.com/race/88496
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Los Cabos
+  date: '2027-04-11'
+  category: triathlon
+  country: Messico
+  region: Los Cabos, BCS, Mexico
+  url: https://ironman.com/race/96626
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Valencia
+  date: '2027-04-18'
+  category: triathlon
+  country: Spagna
+  region: Valencia, Spain
+  url: https://ironman.com/race/99816
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Brasilia
+  date: '2027-04-18'
+  category: triathlon
+  country: Brasile
+  region: DF, Brazil
+  url: https://ironman.com/race/117421
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Venice-Jesolo
+  date: '2027-04-24'
+  category: triathlon
+  country: Italia
+  region: Jesolo, Italy
+  url: https://ironman.com/race/88931
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Texas
+  date: '2027-04-24'
+  category: triathlon
+  country: Stati Uniti
+  region: The Woodlands, TX, United States
+  url: https://ironman.com/race/99671
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Peru
+  date: '2027-04-25'
+  category: triathlon
+  country: Peru
+  region: Lima, Peru
+  lat: -12.030899
+  lng: -77.090799
+  url: https://ironman.com/race/99961
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Gulf Coast
+  date: '2027-05-08'
+  category: triathlon
+  country: Stati Uniti
+  region: Panama City Beach, FL, United States
+  url: https://ironman.com/race/89076
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Alcúdia-Mallorca
+  date: '2027-05-08'
+  category: triathlon
+  country: Spagna
+  region: Alcúdia, Spain
+  url: https://ironman.com/race/89221
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Lanzarote
+  date: '2027-05-15'
+  category: triathlon
+  country: Spagna
+  region: Lanzarote, Spain
+  url: https://ironman.com/race/100396
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Chattanooga
+  date: '2027-05-16'
+  category: triathlon
+  country: Stati Uniti
+  region: Chattanooga, TN, United States
+  url: https://ironman.com/race/89656
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Jacksonville
+  date: '2027-05-16'
+  category: triathlon
+  country: Stati Uniti
+  region: Jacksonville, FL, United States
+  url: https://ironman.com/race/128901
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Aix-en-Provence
+  date: '2027-05-23'
+  category: triathlon
+  country: Francia
+  region: Aix en Provence, France
+  lat: 43.529842
+  lng: 5.447474
+  url: https://ironman.com/race/89511
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Pennsylvania Happy Valley
+  date: '2027-05-23'
+  category: triathlon
+  country: Stati Uniti
+  region: State College, PA, United States
+  url: https://ironman.com/race/91541
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Northern California
+  date: '2027-05-23'
+  category: triathlon
+  country: Stati Uniti
+  region: Redding, CA, United States
+  url: https://ironman.com/race/132766
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 St. Pölten
+  date: '2027-05-23'
+  category: triathlon
+  country: Austria
+  region: St. Polten, Austria
+  lat: 48.204399
+  lng: 15.622912
+  url: https://ironman.com/race/147031
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Victoria
+  date: '2027-05-30'
+  category: triathlon
+  country: Canada
+  region: Victoria, BC, Canada
+  lat: 21.949439
+  lng: -102.345715
+  url: https://ironman.com/race/89801
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Alghero
+  date: '2027-05-30'
+  category: triathlon
+  country: Italia
+  region: Alghero, Italy
+  url: https://ironman.com/race/130551
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Hawai`i
+  date: '2027-06-05'
+  category: triathlon
+  country: Stati Uniti
+  region: Kohala Coast, HI, United States
+  url: https://ironman.com/race/90236
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Tours Metropole - Loire Valley
+  date: '2027-06-06'
+  category: triathlon
+  country: Francia
+  region: Tours, France
+  lat: 47.390047
+  lng: 0.688927
+  url: https://ironman.com/race/101266
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Switzerland
+  date: '2027-06-06'
+  category: triathlon
+  country: Svizzera
+  region: Rapperswil-Jona, Switzerland
+  url: https://ironman.com/race/101556
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Bolton
+  date: '2027-06-06'
+  category: triathlon
+  country: Regno Unito
+  region: Bolton, United Kingdom
+  url: https://ironman.com/race/101701
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Omaha
+  date: '2027-06-06'
+  category: triathlon
+  country: Stati Uniti
+  region: Omaha, NE, United States
+  url: https://ironman.com/race/127756
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Boulder
+  date: '2027-06-12'
+  category: triathlon
+  country: Stati Uniti
+  region: Boulder, CO, United States
+  lat: 40.387489
+  lng: -105.557354
+  url: https://ironman.com/race/91251
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Brazil
+  date: '2027-06-13'
+  category: triathlon
+  country: Brasile
+  region: SC, Brazil
+  lat: -22.9053
+  lng: -43.0957
+  url: https://ironman.com/race/90381
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Eagleman
+  date: '2027-06-13'
+  category: triathlon
+  country: Stati Uniti
+  region: Cambridge, MD, United States
+  url: https://ironman.com/race/91106
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Kaernten-Klagenfurt, Austria
+  date: '2027-06-13'
+  category: triathlon
+  country: Austria
+  region: Klagenfurt, Austria
+  url: https://ironman.com/race/102136
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Rockford - Illinois
+  date: '2027-06-13'
+  category: triathlon
+  country: Stati Uniti
+  region: Rockford, IL, United States
+  url: https://ironman.com/race/102716
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: 5150 Mont-Tremblant
+  date: '2027-06-19'
+  category: triathlon
+  country: Canada
+  region: Mont-Tremblant, QC, Canada
+  url: https://ironman.com/race/102426
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Westfriesland
+  date: '2027-06-20'
+  category: triathlon
+  country: Paesi Bassi
+  region: Hoorn, Netherlands
+  lat: 52.653272
+  lng: 5.07358
+  url: https://ironman.com/race/91976
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Mont-Tremblant
+  date: '2027-06-20'
+  category: triathlon
+  country: Canada
+  region: Mont-Tremblant, QC, Canada
+  url: https://ironman.com/race/102571
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Coeur d'Alene
+  date: '2027-06-27'
+  category: triathlon
+  country: Stati Uniti
+  region: Coeur d'Alene, ID, United States
+  url: https://ironman.com/race/91831
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Les Sables d'Olonne-Vendee
+  date: '2027-06-27'
+  category: triathlon
+  country: Francia
+  region: Les Sables d'Olonne, France
+  lat: 46.526329
+  lng: -1.767849
+  url: https://ironman.com/race/102861
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Elsinore
+  date: '2027-06-27'
+  category: triathlon
+  country: Danimarca
+  region: Elsinore, Denmark
+  lat: 56.034874
+  lng: 12.613007
+  url: https://ironman.com/race/103006
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Switzerland Thun
+  date: '2027-07-04'
+  category: triathlon
+  country: Svizzera
+  region: Thun, Switzerland
+  url: https://ironman.com/race/106631
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Muncie
+  date: '2027-07-10'
+  category: triathlon
+  country: Stati Uniti
+  region: Muncie, IN, United States
+  url: https://ironman.com/race/92556
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Swansea
+  date: '2027-07-11'
+  category: triathlon
+  country: Regno Unito
+  region: Swansea Bay, United Kingdom
+  url: https://ironman.com/race/92701
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Jonkoping
+  date: '2027-07-11'
+  category: triathlon
+  country: Svezia
+  region: Jonkoping, Sweden
+  url: https://ironman.com/race/103441
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Musselman
+  date: '2027-07-11'
+  category: triathlon
+  country: Stati Uniti
+  region: Geneva, NY, United States
+  url: https://ironman.com/race/103731
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Vitoria-Gasteiz
+  date: '2027-07-11'
+  category: triathlon
+  country: Spagna
+  region: Vitoria-Gasteiz, Spain
+  url: https://ironman.com/race/104021
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Ruidoso New Mexico
+  date: '2027-07-11'
+  category: triathlon
+  country: Stati Uniti
+  region: Ruidoso, NM, United States
+  url: https://ironman.com/race/118261
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Vitoria-Gasteiz
+  date: '2027-07-11'
+  category: triathlon
+  country: Spagna
+  region: Vitoria-Gasteiz, Spain
+  url: https://ironman.com/race/127936
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Muskoka
+  date: '2027-07-18'
+  category: triathlon
+  country: Canada
+  region: Huntsville, ON, Canada
+  url: https://ironman.com/race/92411
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Oregon
+  date: '2027-07-18'
+  category: triathlon
+  country: Stati Uniti
+  region: Salem, OR, United States
+  url: https://ironman.com/race/104166
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Ohio
+  date: '2027-07-18'
+  category: triathlon
+  country: Stati Uniti
+  region: Sandusky, OH, United States
+  url: https://ironman.com/race/104456
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Boise
+  date: '2027-07-24'
+  category: triathlon
+  country: Stati Uniti
+  region: Boise, ID, United States
+  url: https://ironman.com/race/104601
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Lake Placid
+  date: '2027-07-25'
+  category: triathlon
+  country: Stati Uniti
+  region: Lake Placid, NY, United States
+  url: https://ironman.com/race/104311
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Maine
+  date: '2027-07-25'
+  category: triathlon
+  country: Stati Uniti
+  region: Augusta, ME, United States
+  url: https://ironman.com/race/104746
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Rio de Janeiro
+  date: '2027-08-08'
+  category: triathlon
+  country: Brasile
+  region: Rio de Janeiro, RJ, Brazil
+  url: https://ironman.com/race/93136
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Canada-Ottawa
+  date: '2027-08-08'
+  category: triathlon
+  country: Canada
+  region: Ottawa, ON, Canada
+  lat: 45.25813
+  lng: -75.920875
+  url: https://ironman.com/race/105616
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Leeds
+  date: '2027-08-15'
+  category: triathlon
+  country: Regno Unito
+  region: Leeds, United Kingdom
+  url: https://ironman.com/race/104891
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Kalmar-Sweden
+  date: '2027-08-21'
+  category: triathlon
+  country: Svezia
+  region: Kalmar, Sweden
+  url: https://ironman.com/race/106341
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Vichy
+  date: '2027-08-22'
+  category: triathlon
+  country: Francia
+  region: Vichy, France
+  lat: 46.124017
+  lng: 3.420366
+  url: https://ironman.com/race/93426
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Copenhagen
+  date: '2027-08-22'
+  category: triathlon
+  country: Danimarca
+  region: Copenhagen, Denmark
+  lat: 55.686724
+  lng: 12.570072
+  url: https://ironman.com/race/106196
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Vichy
+  date: '2027-08-22'
+  category: triathlon
+  country: Francia
+  region: Vichy, France
+  lat: 46.124017
+  lng: 3.420366
+  url: https://ironman.com/race/128296
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 World Championship
+  date: '2027-08-28'
+  category: triathlon
+  country: Stati Uniti
+  region: Chattanooga, TN, United States
+  url: https://ironman.com/race/148336
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Zell am See-Kaprun
+  date: '2027-08-29'
+  category: triathlon
+  country: Austria
+  region: Zell am See, Austria
+  url: https://ironman.com/race/93571
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: 5150 Cartagena
+  date: '2027-09-05'
+  category: triathlon
+  country: Colombia
+  region: Cartagena, Colombia
+  lat: 2.505
+  lng: -68.211944
+  url: https://ironman.com/race/107356
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN France
+  date: '2027-09-12'
+  category: triathlon
+  country: Francia
+  region: Nice, France
+  lat: 43.700936
+  lng: 7.268391
+  url: https://ironman.com/race/92121
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Nice
+  date: '2027-09-12'
+  category: triathlon
+  country: Francia
+  region: Nice, France
+  lat: 43.700936
+  lng: 7.268391
+  url: https://ironman.com/race/92266
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Weymouth
+  date: '2027-09-12'
+  category: triathlon
+  country: Regno Unito
+  region: Weymouth, United Kingdom
+  url: https://ironman.com/race/107646
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Italy Emilia Romagna
+  date: '2027-09-18'
+  category: triathlon
+  country: Italia
+  region: Cervia, Italy
+  url: https://ironman.com/race/82261
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Maryland
+  date: '2027-09-18'
+  category: triathlon
+  country: Stati Uniti
+  region: Cambridge, MD, United States
+  url: https://ironman.com/race/82406
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN Wales
+  date: '2027-09-19'
+  category: triathlon
+  country: Regno Unito
+  region: Pembrokeshire, United Kingdom
+  url: https://ironman.com/race/82841
+  series: IRONMAN
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 São Paulo
+  date: '2027-09-19'
+  category: triathlon
+  country: Brasile
+  region: SP, Brazil
+  url: https://ironman.com/race/83276
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Emilia Romagna
+  date: '2027-09-19'
+  category: triathlon
+  country: Italia
+  region: Cervia, Italy
+  url: https://ironman.com/race/83421
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: IRONMAN 70.3 Cozumel
+  date: '2027-09-26'
+  category: triathlon
+  country: Messico
+  region: Cozumel, ROO, Mexico
+  lat: 20.443087
+  lng: -86.989661
+  url: https://ironman.com/race/82986
+  series: IRONMAN 70.3
+  source: ironman
+  source_url: https://ironman.com/races
+  last_synced: '2026-09-24'
+
+- name: La Mezza di Fontanellato 2026
+  date: '2026-11-15'
+  category: road
+  country: Italia
+  region: Cannetolo - Fontanellato (Pr)
+  distance_km: 21.097
+  lat: 44.7543337
+  lng: 10.0728029
+  url: https://www.calendariopodismo.it/gara/77143/la-mezza-di-fontanellato-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/3/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Romagna Wild Trail 2026
+  date: '2026-11-22'
+  category: trail
+  country: Italia
+  region: Talamello (RN)
+  distance_km: 6.0
+  lat: 43.90499
+  lng: 12.285898
+  url: https://www.calendariopodismo.it/gara/80746/romagna-wild-trail-2026-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/3/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Cross Uisp – Ravenna 6° Prova
+  date: '2026-12-08'
+  category: trail
+  country: Italia
+  region: Ponte Nuovo - Ravenna (Ra)
+  distance_km: 6.0
+  lat: 44.40165
+  lng: 12.212146
+  url: https://www.calendariopodismo.it/gara/76251/cross-uisp-ravenna-6-prova/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/3/?localita=emilia-romagna
+  last_synced: '2026-09-24'
+
+- name: Castagna Trail 2026
+  date: '2026-10-11'
+  category: trail
+  country: Italia
+  region: Filetto di Villafranca in Lunigiana (Massa Carrara)
+  distance_km: 18.0
+  lat: 44.297864
+  lng: 9.95564
+  url: https://www.calendariopodismo.it/gara/80857/castagna-trail-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 3° Mezza Maratona del Giglio
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Isola Del Giglio (Gr)
+  distance_km: 30.0
+  lat: 42.353166
+  lng: 10.896429
+  url: https://www.calendariopodismo.it/gara/76051/3-mezza-maratona-del-giglio/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 20° Pisa Half Marathon 2026
+  date: '2026-10-11'
+  category: road
+  country: Italia
+  region: Pisa (Pi)
+  distance_km: 21.097
+  lat: 43.713057
+  lng: 10.400165
+  url: https://www.calendariopodismo.it/gara/78145/20-pisa-half-marathon-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Trail del Cinghiale
+  date: '2026-10-30'
+  category: trail
+  country: Italia
+  region: Palazzuolo sul Senio (Fi)
+  distance_km: 20.0
+  lat: 44.107093
+  lng: 11.525139
+  url: https://www.calendariopodismo.it/gara/78456/trail-del-cinghiale/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 30 ‘n Piana
+  date: '2026-11-08'
+  category: road
+  country: Italia
+  region: Campi Bisenzio (Fi)
+  distance_km: 30.0
+  lat: 43.839994
+  lng: 11.148956
+  url: https://www.calendariopodismo.it/gara/76603/30-n-piana-6/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Benetti Livorno Half Marathon
+  date: '2026-11-08'
+  category: road
+  country: Italia
+  region: Livorno (LI)
+  distance_km: 21.0975
+  lat: 43.527725
+  lng: 10.307961
+  url: https://www.calendariopodismo.it/gara/77119/benetti-livorno-half-marathon-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Strade Storiche  di Siena – Le Mura di Siena City Trail
+  date: '2026-11-15'
+  category: trail
+  country: Italia
+  region: Asciano, Siena
+  distance_km: 12.0
+  lat: 43.234775
+  lng: 11.559423
+  url: https://www.calendariopodismo.it/gara/80524/strade-storiche-di-siena-le-mura-di-siena-city-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Garfagnana EPIC Trail – Winter Edition
+  date: '2026-12-05'
+  category: trail
+  country: Italia
+  region: Casone di Profecchia (Lu)
+  distance_km: 25.0
+  lat: 44.212471
+  lng: 10.445315
+  url: https://www.calendariopodismo.it/gara/80518/garfagnana-epic-trail-winter-edition/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 51° Corsa dell’Olio – I Quattro Frantoi
+  date: '2026-12-08'
+  category: road
+  country: Italia
+  region: Reggello (Fi)
+  distance_km: 23.0
+  lat: 43.641541
+  lng: 11.507381
+  url: https://www.calendariopodismo.it/gara/76608/51-corsa-dellolio-i-quattro-frantoi/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 15° Mezza Maratona Giuseppe Cerone Città di San Miniato 2026
+  date: '2026-12-08'
+  category: road
+  country: Italia
+  region: San Miniato Basso (Pi)
+  distance_km: 21.097
+  lat: 43.692837
+  lng: 10.843004
+  url: https://www.calendariopodismo.it/gara/78148/15-mezza-maratona-giuseppe-cerone-citta-di-san-miniato-2026/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 12° Argentario Trail
+  date: '2026-12-13'
+  category: trail
+  country: Italia
+  region: Porto Santo Stefano (Gr)
+  distance_km: 24.0
+  lat: 42.433832
+  lng: 11.123713
+  url: https://www.calendariopodismo.it/gara/76097/12-argentario-trail/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Tabernulae Trail
+  date: '2026-12-13'
+  category: trail
+  country: Italia
+  region: Tavarnelle Val di Pesa (FI)
+  distance_km: 20.0
+  lat: 43.561167
+  lng: 11.173004
+  url: https://www.calendariopodismo.it/gara/76609/tabernulae-trail-2/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: 8° Montecatini Terme Half Marathon
+  date: '2027-01-24'
+  category: road
+  country: Italia
+  region: Montecatini Terme (Pt)
+  distance_km: 21.097
+  lat: 43.878485
+  lng: 10.774797
+  url: https://www.calendariopodismo.it/gara/79605/8-montecatini-terme-half-marathon/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
+  last_synced: '2026-09-24'
+
+- name: Trail degli Antichi Lavatoi
+  date: '2027-03-29'
+  category: trail
+  country: Italia
+  region: Sant'Ermo (Pi)
+  distance_km: 5.0
+  lat: 43.536914
+  lng: 10.579149
+  url: https://www.calendariopodismo.it/gara/79779/trail-degli-antichi-lavatoi/
+  source: calendariopodismo
+  source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
   last_synced: '2026-09-24'

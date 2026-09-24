@@ -5,6 +5,7 @@ require_relative "base"
 require_relative "../lib/http"
 require_relative "../lib/text"
 require_relative "../lib/countries"
+require_relative "../lib/distance_guess"
 
 module RaceSources
   # AIMS (Association of International Marathons and Distance Races) publishes an
@@ -88,7 +89,7 @@ module RaceSources
         "category" => "road",
         "country" => country,
         "region" => loc.split(",").first(loc.split(",").length - 1).join(",").strip,
-        "distance_km" => guess_distance_km(name),
+        "distance_km" => DistanceGuess.km(name),
         "organizer" => ev["ORGANIZER"],
         "url" => normalize_url(ev["URL"]),
         "source" => "aims",
@@ -111,13 +112,5 @@ module RaceSources
       u.match?(%r{\Ahttps?://}i) ? u : "https://#{u}"
     end
 
-    def guess_distance_km(text)
-      n = Text.norm(text)
-      return 21.1 if n.match?(/half.?marathon|halbmarathon|semi.?marathon|mezza ?maratona/)
-      return 42.195 if n.match?(/marathon|maratona/)
-
-      m = n.match(/\b(\d+(?:\.\d+)?) ?km\b/) || n.match(/\b(\d+) ?k\b/)
-      m && m[1].to_f
-    end
   end
 end

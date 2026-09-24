@@ -6,6 +6,7 @@ require "nokogiri"
 require_relative "base"
 require_relative "../lib/http"
 require_relative "../lib/text"
+require_relative "../lib/distance_guess"
 
 module RaceSources
   # FFA (Fédération Française d'Athlétisme) publishes its full competition calendar at
@@ -109,6 +110,7 @@ module RaceSources
         "category" => race_name.match?(TRAIL_HINTS) ? "trail" : "road",
         "country" => country,
         "region" => (location unless location.empty?),
+        "distance_km" => DistanceGuess.km(race_name),
         "source" => "ffa",
         "source_url" => BASE_URL
       }.compact

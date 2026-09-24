@@ -128,9 +128,10 @@ map: true
     <i class="fa-solid fa-person-running"></i><span class="no-tx">Correndo</span>
   </h2>
   <p class="section-desc">
-    Gare di corsa su strada, trail, skyrun, ultra e triathlon in Francia, Italia, Spagna,
-    Svizzera e Austria — la lista si aggiorna da sola ogni mese. Esplorale sulla mappa
-    o chiedimi di aiutarti a pianificare la tua stagione.
+    Gare di corsa su strada, trail, skyrun, ultra e triathlon in Europa, Nord e Sud
+    America e Giappone — la lista si aggiorna da sola ogni mese. Esplorale sulla mappa,
+    cerca quelle che si abbinano a una zona vinicola, o chiedimi di aiutarti a
+    pianificare la tua stagione.
   </p>
 
   {% include race_finder.liquid %}

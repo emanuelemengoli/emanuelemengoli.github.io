@@ -368,6 +368,7 @@
       <button type="button" class="rf-chip" data-category="triathlon">Triathlon</button>
     </div>
     <select id="rf-country" aria-label="Paese"><option value="">Paese</option></select>
+    <button type="button" id="rf-wine-toggle" class="rf-chip" aria-pressed="false" title="Gare che si abbinano a una zona o evento enologico">🍷 Vino</button>
     <button type="button" id="rf-more-toggle" class="rf-ghost" aria-expanded="false" aria-controls="rf-more">Altri filtri</button>
     <button type="button" id="rf-clear" class="rf-ghost">Pulisci</button>
   </div>
@@ -471,6 +472,7 @@
       // races don't need a food-pairing table, just type/terrain/effort/season concepts.
       var LEX = [
         { s: ["montagna", "mountain", "alpin", "dislivello", "d+", "salita", "impegnativ"], a: ["trail", "skyrun", "ultra", "dislivello alto"], label: "gare di montagna" },
+        { s: ["vino", "wine", "enoturismo", "vigne", "vigneto", "cantina", "degustazione"], a: ["vino"], label: "una gara tra i vigneti" },
         { s: ["skyrun", "skyrunning", "vertical", "verticale", "cima", "quota", "vetta"], a: ["skyrun"], label: "lo skyrunning" },
         { s: ["facile", "easy", "principiante", "beginner", "primo", "corta", "breve"], a: ["distanza corta", "strada"], label: "una gara accessibile" },
         { s: ["lunga", "lungo", "impegnativa", "estrema", "hard", "tosta"], a: ["ultra", "distanza lunga", "dislivello alto"], label: "una sfida lunga" },
@@ -509,6 +511,7 @@
       }
       function keywordsOf(r) {
         var t = [r.name, r.region, r.series, r.country, CATEGORY_LABEL[r.category], r.organizer, r.notes];
+        if (Array.isArray(r.tags) && r.tags.indexOf("wine") >= 0) t.push("vino");
         return uniq(tokens(t.filter(Boolean).join(" ")));
       }
 
@@ -520,6 +523,7 @@
           date: r.date || "",
           distance: primaryDistance(r),
           elevation: r.elevation_gain_m != null ? Number(r.elevation_gain_m) : null,
+          wine: Array.isArray(r.tags) && r.tags.indexOf("wine") >= 0,
           kw: keywordsOf(r)
         };
       });
@@ -530,12 +534,13 @@
 
       var NO_MIN = -Infinity, NO_MAX = Infinity;
       var sel = {
-        category: {}, country: "", q: "",
+        category: {}, country: "", q: "", wine: false,
         distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
         dateMin: "", dateMax: ""
       };
 
       var elCountry = document.getElementById("rf-country");
+      var elWineToggle = document.getElementById("rf-wine-toggle");
       var elQ = document.getElementById("rf-q");
       var elForm = document.getElementById("rf-form");
       var elMoreToggle = document.getElementById("rf-more-toggle");
@@ -572,6 +577,11 @@
         sel.country = elCountry.value;
         run();
       };
+      elWineToggle.onclick = function () {
+        sel.wine = !sel.wine;
+        elWineToggle.setAttribute("aria-pressed", sel.wine ? "true" : "false");
+        run();
+      };
       if (hasElevation) elElevWrap.hidden = false;
 
       function numInput(id, key) {
@@ -595,7 +605,7 @@
       };
       document.getElementById("rf-clear").onclick = function () {
         sel = {
-          category: {}, country: "", q: "",
+          category: {}, country: "", q: "", wine: false,
           distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
           dateMin: "", dateMax: ""
         };
@@ -632,6 +642,7 @@
         if (m.elevation != null && (m.elevation < sel.elevMin || m.elevation > sel.elevMax)) return false;
         if (sel.dateMin && m.date && m.date < sel.dateMin) return false;
         if (sel.dateMax && m.date && m.date > sel.dateMax) return false;
+        if (sel.wine && !m.wine) return false;
         return true;
       }
       function keywordScore(expanded, m) {
@@ -664,6 +675,12 @@
         return cat || "other";
       }
 
+      // A small, decorative marker only — the actual filter is the "🍷 Vino" toggle
+      // chip, driven by m.wine, not this span.
+      function wineBadge(m) {
+        return m.wine ? ' <span class="no-tx" title="Si abbina a una zona o evento enologico">🍷</span>' : "";
+      }
+
       function primaryCardHtml(m) {
         var r = m.r;
         var reason = reasonSentence(m);
@@ -674,7 +691,7 @@
         return (
           '<article class="rf-primary">' +
           '<span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span>" +
-          '<div class="rf-primary-name no-tx">' + esc(cap(r.name)) + "</div>" +
+          '<div class="rf-primary-name no-tx">' + esc(cap(r.name)) + "</div>" + wineBadge(m) +
           '<div class="rf-race-meta no-tx">' + esc(fmtDate(r.date)) + (meta ? " · " + meta : "") + "</div>" +
           (reason ? '<p class="rf-reason">' + esc(reason) + "</p>" : "") +
           '<div class="rf-actions">' +
@@ -690,7 +707,7 @@
         return (
           '<article class="rf-card">' +
           '<span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span>" +
-          '<div class="rf-race-name no-tx">' + esc(cap(r.name)) + "</div>" +
+          '<div class="rf-race-name no-tx">' + esc(cap(r.name)) + "</div>" + wineBadge(m) +
           '<div class="rf-race-meta no-tx">' + esc(fmtDate(r.date)) + (meta ? " · " + meta : "") + "</div>" +
           '<button type="button" class="rf-show" data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">Vedi sulla mappa →</button>' +
           "</article>"
@@ -715,7 +732,7 @@
               return (
                 "<tr>" +
                 '<td class="no-tx">' + esc(fmtDate(r.date)) + "</td>" +
-                '<td><span class="rf-race-name no-tx">' + esc(cap(r.name)) + "</span></td>" +
+                '<td><span class="rf-race-name no-tx">' + esc(cap(r.name)) + "</span>" + wineBadge(m) + "</td>" +
                 '<td class="rf-col-region no-tx">' + esc(cap(r.region || "")) + "</td>" +
                 '<td><span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span></td>" +
                 '<td class="no-tx">' + (m.distance != null ? m.distance : "") + "</td>" +
@@ -761,7 +778,7 @@
           !!sel.country ||
           isFinite(sel.distMin) || isFinite(sel.distMax) ||
           isFinite(sel.elevMin) || isFinite(sel.elevMax) ||
-          !!sel.dateMin || !!sel.dateMax
+          !!sel.dateMin || !!sel.dateMax || sel.wine
         );
       }
 

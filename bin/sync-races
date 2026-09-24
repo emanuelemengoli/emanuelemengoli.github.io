@@ -24,11 +24,15 @@ require "date"
 require_relative "lib/http"
 require_relative "lib/text"
 require_relative "lib/geocode"
+require_relative "lib/wine_tag"
 require_relative "race_sources/base"
 require_relative "race_sources/ffa"
+require_relative "race_sources/fftri"
 require_relative "race_sources/fitri"
 require_relative "race_sources/skyrunning_it"
+require_relative "race_sources/calendariopodismo"
 require_relative "race_sources/utmb"
+require_relative "race_sources/ironman"
 
 ROOT       = File.expand_path("..", __dir__)
 RACES_YML  = File.join(ROOT, "_data", "races.yml")
@@ -43,15 +47,14 @@ PRUNE_HORIZON_DAYS = 7 # a race more than this many days in the past is dropped,
 # and duv.rb are still on disk, just not required/listed below).
 SOURCES = [
   RaceSources::Ffa.new,
-  # fftri.com's national-championship-stages table turned out to be poor-quality for
-  # this purpose on inspection: much of its date content is stale (2018 in the mix
-  # alongside a little 2026), dates are given without a year per row, and a Google-
-  # Sheets-pasted table structure with merged header cells across "stages" of one
-  # championship — scraping it as-is risks silently attaching the wrong year to a race
-  # rather than just missing it. Left a stub rather than ship wrong dates.
-  RaceSources::Stub.new("fftri", note: "France triathlon — fftri.com's calendar page is a stale, " \
-                                        "undated Google-Sheets export (see bin/race_sources comment " \
-                                        "history) — not reliably scrapable as-is"),
+  # fftri.com's national-championship-stages page (the "calendrier des épreuves
+  # nationales") turned out to be poor-quality on inspection: much of its date content is
+  # stale (2018 in the mix alongside a little 2026), dates given without a year per row,
+  # in a Google-Sheets-pasted table with merged header cells across race "stages" — not
+  # used. Its *international* pages (Monde / Europe) are different: current (2026),
+  # plain prose rather than a table, one loosely-formatted line per race — parsed
+  # best-effort, skipping any line that doesn't match the expected shape.
+  RaceSources::Fftri.new,
   # fidal.it's calendar.php accepts a livello/regione/anno query like athle.fr's, but the
   # actual parameter values it expects aren't documented anywhere discoverable and guesses
   # (livello=NAZ etc.) return the empty search form, not results; the regional pages
@@ -62,22 +65,27 @@ SOURCES = [
                                         "pages are PDF-only"),
   RaceSources::Fitri.new,
   RaceSources::SkyrunningIt.new,
+  # calendariopodismo.it — a dedicated Italian road-race calendar, one page per region.
+  # Genuinely good data: ISO dates and (usually) lat/lng already on each card, no
+  # geocoding needed for most entries.
+  RaceSources::Calendariopodismo.new,
   RaceSources::Utmb.new,
-  # Checked directly: itra.run/Races/RaceCalendar loads its results via client-side JS
-  # (empty on initial load) and the site sits behind a bot-challenging AWS WAF that
-  # started returning empty 202 "challenge" responses after a few plain requests — not a
+  # Checked twice, including a real attempt at its POST-based search (itra.run/
+  # Races/RaceCalendar is an ASP.NET Razor Pages form — GET for a session + CSRF token,
+  # POST the filters incl. a real Input.Country field): the initial GET itself returned
+  # a Cloudflare/AWS-WAF "202 challenge" response with no page content, so there was no
+  # token to extract and the follow-up POST was challenged the same way. Not a
   # plain-HTTP-scrapable source. See bin/race_sources/utmb.rb's header comment for why
   # UTMB's own World Series list was used instead for trail coverage.
   RaceSources::Stub.new("itra", note: "itra.run's calendar loads via client-side JS and sits behind " \
-                                       "a bot-challenging WAF — not scrapable via plain HTTP"),
-  # www.ironman.com is behind a Cloudflare bot challenge (blocks plain requests outright);
-  # the bare ironman.com domain isn't challenged the same way and does serve a real
-  # /races page, but the actual listing renders via a Drupal AJAX call (same pattern as
-  # Spain's RFEA calendar, not cracked there either) rather than being present in the
-  # plain HTML response.
-  RaceSources::Stub.new("ironman", note: "ironman.com's race listing is Drupal-AJAX-gated " \
-                                          "(www.ironman.com is Cloudflare-blocked outright); " \
-                                          "neither path is a plain HTTP scrape"),
+                                       "a bot-challenging WAF (confirmed again, including a real " \
+                                       "POST-based search attempt) — not scrapable via plain HTTP"),
+  # www.ironman.com is behind a Cloudflare bot challenge (blocks plain requests outright).
+  # The bare ironman.com domain isn't challenged the same way and serves a real /races
+  # page, but the listing itself renders via Drupal's generic /views/ajax endpoint, not
+  # present in that page's plain HTML — cracked by replaying that AJAX call directly
+  # (see bin/race_sources/ironman.rb's header comment for the mechanics).
+  RaceSources::Ironman.new,
   # Spain (RFEA/RFETRI), Switzerland (Swiss Athletics/Swiss Triathlon) and Austria (ÖLV/
   # Austria Triathlon) are out of scope for now, per the owner — this file previously had
   # working scrapers for Switzerland and Austria; removed rather than left unused. If
@@ -94,7 +102,7 @@ SOURCES = [
                                           "into scope")
 ].freeze
 
-TOP_ORDER = %w[name date category country region distance_km distances_km elevation_gain_m
+TOP_ORDER = %w[name date category tags country region distance_km distances_km elevation_gain_m
                difficulty lat lng price organizer url notes series source source_url last_synced].freeze
 
 options = { sort: false, commit: false, dry_run: false, sources: nil }
@@ -151,6 +159,35 @@ def valid?(entry)
   REQUIRED.all? { |f| !Text.blank?(entry[f]) }
 end
 
+# Owner's call: a "road" entry is only worth surfacing at half-marathon distance or
+# longer, with a standing exception for 15km races specifically. Applies only to
+# category "road" — trail/skyrun/ultra/triathlon distances aren't standardized the same
+# way and aren't filtered here. An entry with no determinable distance can't be confirmed
+# to clear that bar, so (deliberately, unlike every other best-effort field in this
+# schema) it's dropped rather than kept — the whole point is cutting the flood of short
+# local races a source like FFA's "Running" bucket otherwise returns.
+ROAD_MIN_KM = 21.05 # a hair under 21.1 (half marathon) to tolerate rounding
+FIFTEEN_KM = (14.9..15.1).freeze
+
+def road_length_ok?(entry)
+  return true unless entry["category"] == "road"
+
+  km = entry["distance_km"]
+  return false if km.nil?
+
+  km >= ROAD_MIN_KM || FIFTEEN_KM.cover?(km)
+end
+
+# Owner's call: a "pairs with a wine event/region" theme, detected from the race's own
+# name/region text (WineTag.KEYWORDS) — not a separate category (a wine-region race is
+# still fundamentally a road/trail/ultra race), but a cross-cutting tag the finder can
+# filter on, applied the same way regardless of which adapter found the race.
+def tag_entry!(entry)
+  return unless WineTag.match?(entry["name"], entry["region"])
+
+  entry["tags"] = (entry["tags"] || []) | ["wine"]
+end
+
 # --------------------------------------------------------------------------- fetch
 
 today  = Date.today
@@ -164,6 +201,7 @@ end
 
 incoming = []
 skipped_invalid = 0
+skipped_short = 0
 per_source = {}
 
 active_sources.each do |source|
@@ -178,10 +216,17 @@ active_sources.each do |source|
       []
     end
   kept = fetched.select do |e|
-    ok = valid?(e)
-    skipped_invalid += 1 unless ok
-    ok
+    unless valid?(e)
+      skipped_invalid += 1
+      next false
+    end
+    unless road_length_ok?(e)
+      skipped_short += 1
+      next false
+    end
+    true
   end
+  kept.each { |e| tag_entry!(e) }
   per_source[source.name] = kept.size
   incoming.concat(kept)
 end
@@ -264,7 +309,8 @@ new_file = "#{header}\n\n#{new_body}"
 
 per_source_summary = per_source.map { |n, c| "#{n}=#{c}" }.join(" ")
 summary = "#{existing.size} races · #{added} added · #{updated} updated · #{pruned} pruned · " \
-          "#{geocoder.lookups} geocoded · #{skipped_invalid} skipped (invalid) · [#{per_source_summary}]"
+          "#{geocoder.lookups} geocoded · #{skipped_invalid} skipped (invalid) · " \
+          "#{skipped_short} skipped (road, too short) · [#{per_source_summary}]"
 
 if options[:dry_run]
   warn "[dry-run] #{summary}"
