@@ -144,8 +144,10 @@
       if (!el || !window.L) return;
       var races = Array.isArray(window.RACE_MAP_DATA) ? window.RACE_MAP_DATA : [];
 
-      var COLORS = { trail: "#7d5a36", ultra: "#8e3b46", triathlon: "#2a6f97", road: "#4a7c3f" };
-      var CATEGORY_LABEL = { trail: "Trail", ultra: "Ultra", triathlon: "Triathlon", road: "Strada" };
+      // One hue per activity, shared with race_finder.liquid's badge colors (.rf-badge-*)
+      // so a pin and its badge always read as the same category at a glance.
+      var COLORS = { road: "#3d6fb4", trail: "#4f8a3d", skyrun: "#8659c9", ultra: "#c0392b", triathlon: "#1f9e9e" };
+      var CATEGORY_LABEL = { road: "Strada", trail: "Trail", skyrun: "Skyrun", ultra: "Ultra", triathlon: "Triathlon" };
 
       // Language + IT->EN translation are shared with the finder via window.WineI18n
       // (wine_i18n.liquid, included once at the top of the page). Everything here is
@@ -313,7 +315,7 @@
       if (legend) {
         var present = [];
         races.forEach(function (r) { if (r.category && present.indexOf(r.category) < 0) present.push(r.category); });
-        ["trail", "ultra", "triathlon", "road"].forEach(function (c) {
+        ["road", "trail", "skyrun", "ultra", "triathlon"].forEach(function (c) {
           if (present.indexOf(c) < 0) return;
           var li = document.createElement("li");
           li.innerHTML =

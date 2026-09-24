@@ -1,15 +1,18 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Auto-compile races (trail running, triathlon, ultra, road) across France, Italy, Spain,
-# Switzerland and Austria into _data/races.yml (merge / upsert), from every adapter under
-# bin/race_sources/. No manual data entry — this is meant to run unattended on a schedule
-# (.github/workflows/sync-races.yml, monthly) which opens a pull request with the result;
-# merging that PR is the owner's only manual step. Setup / source list: bin/races-sync.md.
+# Auto-compile races (trail, ultra, triathlon, road, skyrun) into _data/races.yml (merge /
+# upsert), from every adapter under bin/race_sources/. Sources are deliberately narrow for
+# now (see the SOURCES list below) — France- and Italy-focused federations plus a couple
+# of international trail/triathlon brand calendars; other countries are documented stubs,
+# not silently missing. No manual data entry — this is meant to run unattended on a
+# schedule (.github/workflows/sync-races.yml, monthly) which opens a pull request with the
+# result; merging that PR is the owner's only manual step. Setup / source list:
+# bin/races-sync.md.
 #
 # Usage:
-#   ruby bin/sync-races                 fetch every source, merge into _data/races.yml
-#   ruby bin/sync-races --source=aims,duv   run only the named source(s) (debugging)
+#   ruby bin/sync-races                  fetch every source, merge into _data/races.yml
+#   ruby bin/sync-races --source=ffa,utmb    run only the named source(s) (debugging)
 #   ruby bin/sync-races --sort           also re-order soonest-first
 #   ruby bin/sync-races --commit         also `git commit` the result (local convenience;
 #                                        the scheduled workflow opens a PR instead)
@@ -22,14 +25,10 @@ require_relative "lib/http"
 require_relative "lib/text"
 require_relative "lib/geocode"
 require_relative "race_sources/base"
-require_relative "race_sources/aims"
-require_relative "race_sources/duv"
 require_relative "race_sources/ffa"
 require_relative "race_sources/fitri"
 require_relative "race_sources/skyrunning_it"
 require_relative "race_sources/utmb"
-require_relative "race_sources/switzerland"
-require_relative "race_sources/austria"
 
 ROOT       = File.expand_path("..", __dir__)
 RACES_YML  = File.join(ROOT, "_data", "races.yml")
@@ -37,25 +36,62 @@ CACHE_FILE = File.join(ROOT, "bin", ".races_geocache.json")
 
 PRUNE_HORIZON_DAYS = 7 # a race more than this many days in the past is dropped, not kept forever
 
-# Every source this feature is meant to cover, in the order the plan lays them out.
+# Deliberately narrow "for now," per the owner: only the named national federations, the
+# trail/skyrunning-specific sources, and the international brand calendars explicitly
+# asked for — not the broader AIMS/DUV/Spain/Switzerland/Austria breadth from the first
+# pass at this (that code still exists in git history if it's wanted back later; aims.rb
+# and duv.rb are still on disk, just not required/listed below).
 SOURCES = [
-  RaceSources::Aims.new,
-  RaceSources::Duv.new,
   RaceSources::Ffa.new,
-  RaceSources::Stub.new("fftri", note: "France triathlon — fftri.com scraper not built yet"),
-  RaceSources::Stub.new("fidal", note: "Italy athletics (road + trail) — fidal.it's calendar is " \
-                                        "PDF-only per region, not a simple HTML scrape"),
+  # fftri.com's national-championship-stages table turned out to be poor-quality for
+  # this purpose on inspection: much of its date content is stale (2018 in the mix
+  # alongside a little 2026), dates are given without a year per row, and a Google-
+  # Sheets-pasted table structure with merged header cells across "stages" of one
+  # championship — scraping it as-is risks silently attaching the wrong year to a race
+  # rather than just missing it. Left a stub rather than ship wrong dates.
+  RaceSources::Stub.new("fftri", note: "France triathlon — fftri.com's calendar page is a stale, " \
+                                        "undated Google-Sheets export (see bin/race_sources comment " \
+                                        "history) — not reliably scrapable as-is"),
+  # fidal.it's calendar.php accepts a livello/regione/anno query like athle.fr's, but the
+  # actual parameter values it expects aren't documented anywhere discoverable and guesses
+  # (livello=NAZ etc.) return the empty search form, not results; the regional pages
+  # elsewhere on the site are PDF-only. Left a stub rather than guess further.
+  RaceSources::Stub.new("fidal", note: "Italy athletics (road + trail) — fidal.it's calendar.php is " \
+                                        "a filtered search form whose real parameter values aren't " \
+                                        "documented (guesses return an empty form); its regional " \
+                                        "pages are PDF-only"),
   RaceSources::Fitri.new,
   RaceSources::SkyrunningIt.new,
   RaceSources::Utmb.new,
-  # ITRA's own calendar was checked and ruled out: it loads via client-side JS and the
-  # site sits behind a bot-challenging WAF — see bin/race_sources/utmb.rb's header comment.
-  RaceSources::Stub.new("spain", note: "RFEA's calendar is AJAX-gated (Drupal) and FETRI's is a " \
-                                        "Blazor SPA — neither is a plain HTTP scrape; RFEA does " \
-                                        "have a small server-rendered trail-championships list " \
-                                        "(atletismorfea.es/competicion/trail-running) not wired up yet"),
-  RaceSources::Switzerland.new,
-  RaceSources::Austria.new
+  # Checked directly: itra.run/Races/RaceCalendar loads its results via client-side JS
+  # (empty on initial load) and the site sits behind a bot-challenging AWS WAF that
+  # started returning empty 202 "challenge" responses after a few plain requests — not a
+  # plain-HTTP-scrapable source. See bin/race_sources/utmb.rb's header comment for why
+  # UTMB's own World Series list was used instead for trail coverage.
+  RaceSources::Stub.new("itra", note: "itra.run's calendar loads via client-side JS and sits behind " \
+                                       "a bot-challenging WAF — not scrapable via plain HTTP"),
+  # www.ironman.com is behind a Cloudflare bot challenge (blocks plain requests outright);
+  # the bare ironman.com domain isn't challenged the same way and does serve a real
+  # /races page, but the actual listing renders via a Drupal AJAX call (same pattern as
+  # Spain's RFEA calendar, not cracked there either) rather than being present in the
+  # plain HTML response.
+  RaceSources::Stub.new("ironman", note: "ironman.com's race listing is Drupal-AJAX-gated " \
+                                          "(www.ironman.com is Cloudflare-blocked outright); " \
+                                          "neither path is a plain HTTP scrape"),
+  # Spain (RFEA/RFETRI), Switzerland (Swiss Athletics/Swiss Triathlon) and Austria (ÖLV/
+  # Austria Triathlon) are out of scope for now, per the owner — this file previously had
+  # working scrapers for Switzerland and Austria; removed rather than left unused. If
+  # these come back into scope, RFEA/RFETRI's Drupal-AJAX / Blazor-SPA blockers apply the
+  # same way Spain's do below and would need solving first.
+  RaceSources::Stub.new("spain", note: "not in scope for now — RFEA's calendar is AJAX-gated " \
+                                        "(Drupal) and RFETRI's is a Blazor SPA; to be identified " \
+                                        "and added if/when this country comes back into scope"),
+  RaceSources::Stub.new("switzerland", note: "not in scope for now — federation sources to be " \
+                                              "identified and added if/when this country comes " \
+                                              "back into scope"),
+  RaceSources::Stub.new("austria", note: "not in scope for now — federation sources to be " \
+                                          "identified and added if/when this country comes back " \
+                                          "into scope")
 ].freeze
 
 TOP_ORDER = %w[name date category country region distance_km distances_km elevation_gain_m
@@ -199,15 +235,17 @@ end
 # --------------------------------------------------------------------------- prune
 
 before_prune = existing.size
+# Only a currently-*real* adapter counts as "known" — a Stub (whether it was never built
+# or was downgraded from a real adapter after a scope change) will never refresh an
+# entry again, so its old data is exactly as stale as one from a source removed outright.
+# Computed from the full SOURCES list, not --source=-filtered, so a one-off debug run of
+# a single adapter can never orphan every other real source's entries.
+known_sources = SOURCES.reject { |s| s.is_a?(RaceSources::Stub) }.map(&:name)
 existing.reject! do |e|
   d = e["date"]
-  next false if Text.blank?(d)
-
-  begin
-    Date.parse(d) < cutoff
-  rescue ArgumentError
-    false
-  end
+  expired = !Text.blank?(d) && (Date.parse(d) < cutoff rescue false)
+  orphaned = !known_sources.include?(e["source"])
+  expired || orphaned
 end
 pruned = before_prune - existing.size
 

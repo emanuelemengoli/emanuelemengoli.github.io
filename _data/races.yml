@@ -9,12 +9,14 @@
 #
 # Rolling feed, not an archive: on every run, any existing entry whose `date` is more
 # than 7 days in the past is dropped, so this file only ever holds upcoming races.
+# Entries from a source no longer configured in bin/sync-races' SOURCES list are dropped
+# too, rather than lingering forever with a stale last_synced.
 #
 # Fields (all optional except name/date/category/source/source_url):
 #   name          race name
 #   date          "YYYY-MM-DD", the race's (first) start date — together with name and
 #                 country, the key a re-sync uses to update rather than duplicate an entry
-#   category      trail | ultra | triathlon | road
+#   category      trail | ultra | triathlon | road | skyrun
 #   country       Italia | Francia | Spagna | Svizzera | Austria — kept in Italian, like
 #                 wines.yml, since both sections share one page-level IT->EN translator
 #   region        sub-country region/province/city, when the source states one
@@ -30,539 +32,6 @@
 #   source        which adapter in bin/race_sources/ produced this entry (traceability)
 #   source_url    the page/feed the adapter actually read
 #   last_synced   "YYYY-MM-DD" this entry was last confirmed present by a sync run
-
-- name: StraLugano
-  date: '2026-09-26'
-  category: road
-  country: Svizzera
-  region: Lugano, Piazza della Riforma
-  lat: 46.003516
-  lng: 8.951276
-  organizer: Luca Ferretti
-  url: https://www.stralugano.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Trento Half Marathon
-  date: '2026-09-27'
-  category: road
-  country: Italia
-  region: Trento
-  distance_km: 21.1
-  lat: 46.102954
-  lng: 11.129743
-  organizer: Gianni Valler
-  url: https://www.trentorunningfestival.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: 3 Country Sparkasse Marathon
-  date: '2026-10-11'
-  category: road
-  country: Austria
-  distance_km: 42.195
-  lat: 47.59397
-  lng: 14.12456
-  organizer: Günter Ernst
-  url: https://www.sparkasse-3-laender-marathon.at
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: TUI Palma Marathon Mallorca
-  date: '2026-10-18'
-  category: road
-  country: Spagna
-  region: Palma de Mallorca
-  distance_km: 42.195
-  lat: 39.569582
-  lng: 2.650075
-  organizer: David Thompson Foronda
-  url: https://www.palmademallorcamarathon.com/english
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Half Marathon Valencia Trinidad Alfonso Zurich
-  date: '2026-10-25'
-  category: road
-  country: Spagna
-  distance_km: 21.1
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Paco Borao
-  url: https://www.valenciaciudaddelrunning.com/medio-maraton
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Venicemarathon
-  date: '2026-10-25'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 45.480476
-  lng: 12.245307
-  organizer: Piero Rosa Salva
-  url: https://www.venicemarathon.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Lausanne Marathon
-  date: '2026-10-25'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Josette Bruchez
-  url: https://www.lausanne-marathon.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: SwissCityMarathon – Lucerne
-  date: '2026-10-25'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Reto Schorno
-  url: https://www.swisscitymarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Ravenna Marathon City of Art
-  date: '2026-11-08'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Stefano Righini
-  url: https://www.maratonadiravenna.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: French Riviera Marathon Nice-Cannes
-  date: '2026-11-08'
-  category: road
-  country: Francia
-  distance_km: 42.195
-  lat: 46.603354
-  lng: 1.888334
-  organizer: 'Hugues Lelievre '
-  url: https://www.marathon06.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Verona Run Marathon
-  date: '2026-11-15'
-  category: road
-  country: Italia
-  region: Verona
-  distance_km: 42.195
-  lat: 45.442498
-  lng: 10.985738
-  organizer: Stefano Stanzial
-  url: https://www.veronarunmarathon.it/?lang=en
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Powerade Milano Half Marathon
-  date: '2026-11-22'
-  category: road
-  country: Italia
-  distance_km: 21.1
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Andrea Trabuio, Luca Lamera
-  url: https://followyourpassion.it/milano21/
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Serge Vigot La Rochelle International Marathon
-  date: '2026-11-29'
-  category: road
-  country: Francia
-  distance_km: 42.195
-  lat: 46.603354
-  lng: 1.888334
-  organizer: Mauny Nicolas
-  url: https://marathondelarochelle.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Estra Firenze Marathon
-  date: '2026-11-29'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Giancarlo Romiti
-  url: https://www.firenzemarathon.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Valencia Trinidad Alfonso Marathon
-  date: '2026-12-06'
-  category: road
-  country: Spagna
-  distance_km: 42.195
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Paco Borao
-  url: https://www.valenciaciudaddelrunning.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Neujahrsmarathon Zürich
-  date: '2027-01-01'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Andreina Schwarz
-  url: https://www.neujahrsmarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: 10K Valencia Ibercaja by Kiprun
-  date: '2027-01-10'
-  category: road
-  country: Spagna
-  region: Valencia
-  distance_km: 10.0
-  lat: 39.469707
-  lng: -0.376335
-  organizer: Alex Aparicio
-  url: https://www.10kvalencia.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Mitja Marató Internacional Vila de Santa Pola
-  date: '2027-01-24'
-  category: road
-  country: Spagna
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Roque M. Alemañ Bonet
-  url: https://www.mitjasantapola.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Hyundai Mitja Marató de Barcelona by Brooks
-  date: '2027-02-14'
-  category: road
-  country: Spagna
-  region: Barcelona
-  lat: 41.38258
-  lng: 2.177073
-  organizer: Cristian Llorens Codinach
-  url: https://mitjamarato.barcelona
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Romeo&Giulietta Run Half Marathon
-  date: '2027-02-14'
-  category: road
-  country: Italia
-  distance_km: 21.1
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Stefano Stanzial
-  url: https://www.romeoegiuliettarunhalfmarathon.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Maratona di San Valentino
-  date: '2027-02-21'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Marcello Vettese
-  url: https://www.maratonadisanvalentino.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Zurich Maratón de Sevilla
-  date: '2027-02-21'
-  category: road
-  country: Spagna
-  region: Parque de Maria Luisa, Sevilla
-  lat: 37.374771
-  lng: -5.988794
-  organizer: Francisco Javier Gavela Rodríguez
-  url: https://en.zurichmaratonsevilla.es
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Napoli City Half Marathon
-  date: '2027-02-21'
-  category: road
-  country: Italia
-  distance_km: 21.1
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Carlo Capalbo
-  url: https://www.napolirunning.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Zurich Marató de Barcelona
-  date: '2027-03-14'
-  category: road
-  country: Spagna
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Cristian Llorens Codinach
-  url: https://www.zurichmaratobarcelona.es
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Movistar Madrid Medio Maratón
-  date: '2027-04-04'
-  category: road
-  country: Spagna
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Alejandro Sánchez Perrote
-  url: https://www.mediomaratonmadrid.es
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Milano Marathon
-  date: '2027-04-04'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Luca Onofrio
-  url: https://www.milanomarathon.it/en/
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Ochsner Sport Zürich Marathon
-  date: '2027-04-11'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Fabian Lips
-  url: https://www.zuerichmarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Padova Marathon
-  date: '2027-04-18'
-  category: road
-  country: Italia
-  region: Padua
-  distance_km: 42.195
-  lat: 45.398443
-  lng: 11.895683
-  organizer: Francesca Facco
-  url: https://www.padovamarathon.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Vienna City Marathon
-  date: '2027-04-18'
-  category: road
-  country: Austria
-  distance_km: 42.195
-  lat: 47.59397
-  lng: 14.12456
-  organizer: Dominik Konrad
-  url: https://www.vienna-marathon.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Zurich Rock ’n’ Roll Running Series Madrid
-  date: '2027-04-25'
-  category: road
-  country: Spagna
-  lat: 39.326069
-  lng: -4.837979
-  organizer: Pedro Rumbao
-  url: https://www.rocknrollmadridrun.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Generali Genève Marathon
-  date: '2027-05-09'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Benjamin Chandelier
-  url: https://www.generaligenevemarathon.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Moonlight Half Marathon
-  date: '2027-05-22'
-  category: road
-  country: Italia
-  distance_km: 21.1
-  lat: 42.638426
-  lng: 12.674297
-  organizer: Piero Rosa Salva
-  url: https://www.moonlighthalfmarathon.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Salzburg Marathon
-  date: '2027-05-23'
-  category: road
-  country: Austria
-  distance_km: 42.195
-  lat: 47.59397
-  lng: 14.12456
-  organizer: Johannes Langer
-  url: https://www.salzburg-marathon.at
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Gornergrat Zermatt Marathon
-  date: '2027-07-02'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Vanessa Lorenz
-  url: https://www.zermattmarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Swissalpine Flims
-  date: '2027-07-17'
-  category: road
-  country: Svizzera
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Andrea Tuffli
-  url: https://www.swissalpine.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: 27th International WACHAUmarathon
-  date: '2027-09-26'
-  category: road
-  country: Austria
-  distance_km: 42.195
-  lat: 47.59397
-  lng: 14.12456
-  organizer: Michael Buchleitner
-  url: https://www.wachaumarathon.com
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Greifenseelauf Uster
-  date: '2027-09-28'
-  category: road
-  country: Svizzera
-  region: Zürichstrasse, Uster
-  lat: 47.36591
-  lng: 8.697745
-  organizer: Markus Ryffel
-  url: https://www.greifenseelauf.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: 3 Country Sparkasse Marathon
-  date: '2027-10-10'
-  category: road
-  country: Austria
-  distance_km: 42.195
-  lat: 47.59397
-  lng: 14.12456
-  organizer: Günter Ernst
-  url: https://www.sparkasse-3-laender-marathon.at
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: Venicemarathon
-  date: '2027-10-24'
-  category: road
-  country: Italia
-  distance_km: 42.195
-  lat: 45.480476
-  lng: 12.245307
-  organizer: Piero Rosa Salva
-  url: https://www.venicemarathon.it
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: SwissCityMarathon – Lucerne
-  date: '2027-10-31'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Reto Schorno
-  url: https://www.swisscitymarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
-
-- name: SwissCityMarathon – Lucerne
-  date: '2028-10-29'
-  category: road
-  country: Svizzera
-  distance_km: 42.195
-  lat: 46.798562
-  lng: 8.231974
-  organizer: Reto Schorno
-  url: https://www.swisscitymarathon.ch
-  source: aims
-  source_url: https://aims-worldrunning.org/events.ics
-  last_synced: '2026-09-24'
 
 - name: 100km De Metz Métropole
   date: '2026-09-19'
@@ -3105,7 +2574,7 @@
 
 - name: Gomera Paradise
   date: '2026-09-20'
-  category: trail
+  category: skyrun
   country: Italia
   region: La Gomera-Isole Canarie (SPAGNA)
   url: https://gomeraparadise.com/
@@ -3116,7 +2585,7 @@
 
 - name: Zacup Skyrace del Grignone
   date: '2026-09-20'
-  category: trail
+  category: skyrun
   country: Italia
   region: Pasturo (LC)
   lat: 45.951783
@@ -3129,7 +2598,7 @@
 
 - name: Azzano SkyRun
   date: '2026-09-20'
-  category: trail
+  category: skyrun
   country: Italia
   region: Azzano (LU)
   lat: 44.020656
@@ -3141,7 +2610,7 @@
 
 - name: Vertical Zucco 
   date: '2026-09-20'
-  category: trail
+  category: skyrun
   country: Italia
   region: San Pellegrino Terme (BG) 
   lat: 45.838631
@@ -3154,7 +2623,7 @@
 
 - name: Trail Grigne Sud - TGS Extreme
   date: '2026-09-26'
-  category: trail
+  category: skyrun
   country: Italia
   region: Mandello del Lario (LC)
   lat: 45.912019
@@ -3167,7 +2636,7 @@
 
 - name: Trail Grigne Sud - TGS Sprint
   date: '2026-09-26'
-  category: trail
+  category: skyrun
   country: Italia
   region: Mandello del Lario (LC)
   lat: 45.912019
@@ -3180,7 +2649,7 @@
 
 - name: Lunigiana SkyRace 24
   date: '2026-09-26'
-  category: trail
+  category: skyrun
   country: Italia
   region: Fivizzano (MS)
   lat: 44.23835
@@ -3193,7 +2662,7 @@
 
 - name: Lunigiana SkyRace 45
   date: '2026-09-26'
-  category: trail
+  category: skyrun
   country: Italia
   region: Fivizzano (MS)
   lat: 44.23835
@@ -3206,7 +2675,7 @@
 
 - name: Melavertical
   date: '2026-09-27'
-  category: trail
+  category: skyrun
   country: Italia
   region: Villa di Tirano (SO)
   lat: 46.203898
@@ -3219,7 +2688,7 @@
 
 - name: Fiemme Sky Ultra
   date: '2026-10-03'
-  category: trail
+  category: skyrun
   country: Italia
   region: Cavalese (TN)
   lat: 46.290756
@@ -3232,7 +2701,7 @@
 
 - name: Fiemme SkyMarathon
   date: '2026-10-03'
-  category: trail
+  category: skyrun
   country: Italia
   region: Cavalese (TN)
   lat: 46.290756
@@ -3245,7 +2714,7 @@
 
 - name: VK70
   date: '2026-10-03'
-  category: trail
+  category: skyrun
   country: Italia
   region: Valmadrera (LC)
   lat: 45.846282
@@ -3258,7 +2727,7 @@
 
 - name: Fiemme SkyRace
   date: '2026-10-04'
-  category: trail
+  category: skyrun
   country: Italia
   region: Cavalese (TN)
   lat: 46.290756
@@ -3271,7 +2740,7 @@
 
 - name: Tartufo  Running
   date: '2026-10-04'
-  category: trail
+  category: skyrun
   country: Italia
   region: Calestano (PR)
   lat: 44.605789
@@ -3284,7 +2753,7 @@
 
 - name: Podone SkyTrail
   date: '2026-10-04'
-  category: trail
+  category: skyrun
   country: Italia
   region: Nembro  (BG)
   lat: 45.744241
@@ -3297,7 +2766,7 @@
 
 - name: Podone SkyTrail Short
   date: '2026-10-04'
-  category: trail
+  category: skyrun
   country: Italia
   region: Nembro  (BG)
   lat: 45.744241
@@ -3310,7 +2779,7 @@
 
 - name: Lago Santo SkyRace
   date: '2026-10-10'
-  category: trail
+  category: skyrun
   country: Italia
   region: Sant'Anna in Pelago (MO)
   url: https://lagosantorace.com/it/
@@ -3321,7 +2790,7 @@
 
 - name: Vertical Grattacielo Reg. Piemonte 
   date: '2026-10-11'
-  category: trail
+  category: skyrun
   country: Italia
   region: Torino
   lat: 45.067755
@@ -3334,7 +2803,7 @@
 
 - name: Morissolo Vertical
   date: '2026-10-18'
-  category: trail
+  category: skyrun
   country: Italia
   region: Cannero  Riviera (VB)
   lat: 46.020516
@@ -3347,7 +2816,7 @@
 
 - name: Bellagio Skyrace
   date: '2026-10-25'
-  category: trail
+  category: skyrun
   country: Italia
   region: Bellagio (CO)
   lat: 45.987255
@@ -3360,7 +2829,7 @@
 
 - name: VTV Vertical Tube Villeneuve
   date: '2026-10-31'
-  category: trail
+  category: skyrun
   country: Italia
   region: Villeneuve (AO)
   lat: 45.702417
@@ -3373,7 +2842,7 @@
 
 - name: Monte Morello SkyRun
   date: '2026-11-01'
-  category: trail
+  category: skyrun
   country: Italia
   region: Sesto Fiorentino (FI)
   lat: 43.823719
@@ -3385,7 +2854,7 @@
 
 - name: Vertical Punta Martin
   date: '2026-11-08'
-  category: trail
+  category: skyrun
   country: Italia
   region: Acquasanta -Mele (GE)
   lat: 44.45767
@@ -3398,7 +2867,7 @@
 
 - name: Martin Extreme Skyrace
   date: '2026-11-08'
-  category: trail
+  category: skyrun
   country: Italia
   region: Acquasanta -Mele (GE)
   lat: 44.45767
@@ -3414,8 +2883,8 @@
   category: trail
   country: Italia
   region: Castellaneta Marina
-  lat: 40.470476
-  lng: 16.93687
+  lat: 40.4627
+  lng: 16.9372
   url: https://puglia.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3427,8 +2896,8 @@
   category: trail
   country: Spagna
   region: Sóller, Mallorca
-  lat: 39.626516
-  lng: 2.662155
+  lat: 39.7664
+  lng: 2.71399
   url: https://mallorca.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3440,8 +2909,8 @@
   category: trail
   country: Italia
   region: Radda in Chianti
-  lat: 43.487052
-  lng: 11.3747
+  lat: 43.487
+  lng: 11.3751
   url: https://chianti.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3453,8 +2922,8 @@
   category: trail
   country: Spagna
   region: Puerto de La Cruz - Tenerife
-  lat: 28.415902
-  lng: -16.553296
+  lat: 28.4159
+  lng: -16.5547
   url: https://tenerife.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3466,8 +2935,8 @@
   category: trail
   country: Francia
   region: Malaucène
-  lat: 44.173274
-  lng: 5.132126
+  lat: 44.1723
+  lng: 5.13367
   url: https://ventoux.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3479,8 +2948,8 @@
   category: trail
   country: Francia
   region: Obernai
-  lat: 48.462336
-  lng: 7.481712
+  lat: 48.4612
+  lng: 7.50082
   url: https://alsace.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3492,8 +2961,8 @@
   category: trail
   country: Austria
   region: Fuschl am see
-  lat: 47.79639
-  lng: 13.302779
+  lat: 47.7938
+  lng: 13.2993
   url: https://mozart.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3505,8 +2974,8 @@
   category: trail
   country: Francia
   region: Le Puy en Velay
-  lat: 45.045974
-  lng: 3.885554
+  lat: 45.0456
+  lng: 3.88382
   url: https://saint-jacques.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3518,8 +2987,8 @@
   category: trail
   country: Italia
   region: Cortina d'Ampezzo
-  lat: 46.568513
-  lng: 12.132319
+  lat: 46.5374
+  lng: 12.1389
   url: https://lavaredo.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3531,8 +3000,8 @@
   category: trail
   country: Spagna
   region: Vielha - Val d'Aran
-  lat: 42.701757
-  lng: 0.795474
+  lat: 42.7004
+  lng: 0.796251
   url: https://valdaran.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3544,8 +3013,8 @@
   category: trail
   country: Francia
   region: Corte
-  lat: 42.30529
-  lng: 9.151194
+  lat: 42.3072
+  lng: 9.14953
   url: https://restonica.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3557,8 +3026,8 @@
   category: trail
   country: Svizzera
   region: Verbier
-  lat: 46.096101
-  lng: 7.228677
+  lat: 46.0964
+  lng: 7.22918
   url: https://verbier.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3570,8 +3039,8 @@
   category: trail
   country: Svizzera
   region: Grindelwald
-  lat: 46.624273
-  lng: 8.036746
+  lat: 46.6243
+  lng: 8.03403
   url: https://eiger.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3583,8 +3052,8 @@
   category: trail
   country: Italia
   region: Gressoney Saint Jean
-  lat: 45.782793
-  lng: 7.831454
+  lat: 45.7768
+  lng: 7.82357
   url: https://mrww.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3596,8 +3065,8 @@
   category: trail
   country: Austria
   region: Fieberbrunn
-  lat: 47.476209
-  lng: 12.545462
+  lat: 47.4759
+  lng: 12.5444
   url: https://kat.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3609,8 +3078,8 @@
   category: trail
   country: Svizzera
   region: Crans Montana
-  lat: 46.306917
-  lng: 7.469015
+  lat: 46.3117
+  lng: 7.48005
   url: https://wildstrubel.utmb.world
   series: UTMB World Series
   source: utmb
@@ -3622,252 +3091,10 @@
   category: trail
   country: Francia
   region: Nice Côte d'Azur
-  lat: 44.001995
-  lng: 7.252297
+  lat: 43.6951
+  lng: 7.27072
   url: https://nice.utmb.world
   series: UTMB World Series
   source: utmb
   source_url: https://utmb.world/utmb-world-series-events
-  last_synced: '2026-09-24'
-
-- name: S3-T Triathlon Oberwallis
-  date: '2026-09-26'
-  category: triathlon
-  country: Svizzera
-  lat: 46.798562
-  lng: 8.231974
-  url: https://swisstriathlon.ch/events/s3-t-triathlon-oberwallis-3/
-  source: switzerland
-  source_url: https://swisstriathlon.ch/race-calendar/
-  last_synced: '2026-09-24'
-
-- name: 15.Linzer Sparkasse City Night Run
-  date: '2026-09-24'
-  category: road
-  country: Austria
-  region: Linz - Promenade
-  lat: 48.308325
-  lng: 14.288904
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: TULLNER LAUFTAGE
-  date: '2026-09-25'
-  category: road
-  country: Austria
-  region: Aubad Tulln, Donaulände 78, 3430 Tulln
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: 22. Steirischer Leukämiehilfelauf
-  date: '2026-09-25'
-  category: road
-  country: Austria
-  region: Graz-Stadion Eggenberg, Schloßstraße 20
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: TULLNER LAUFTAGE
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Aubad Tulln, Donaulände 78, Tulln
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Alpin Team Trailrun Werfenweng (ATT)
-  date: '2026-09-26'
-  category: trail
-  country: Austria
-  region: Werfenweng
-  lat: 47.486441
-  lng: 13.272495
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Kalkkögeltrail
-  date: '2026-09-26'
-  category: trail
-  country: Austria
-  region: Telfes
-  lat: 47.164392
-  lng: 11.359733
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: 22. Groß Jedlersdorf Lauf
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: 1210 Jedlersdorfer Platz
-  lat: 48.282845
-  lng: 16.409045
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Herzlauf Niederösterreich
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Hauptplatz Purkersdorf
-  lat: 48.207628
-  lng: 16.17563
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Bad Loiperdorfer Buschenschanklauf (Österr. Volkslauf-, Thermen- & Vulkanland Steiermark Laufucp)
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Therme Loipersdorf
-  lat: 46.984226
-  lng: 16.1122
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Haager Stadtlauf
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Hauptplatz Haag/NÖ
-  lat: 48.111991
-  lng: 14.566094
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Merkur Viennathlon + ÖM Obstaclerun
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Wien-Donauinsel
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Hope Run
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Trabrennbahn Krieau
-  lat: 48.21049
-  lng: 16.416791
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: 23. Kammerstein-Berglauf (IÖBLC)
-  date: '2026-09-26'
-  category: trail
-  country: Austria
-  region: Heideparkplatz am Ende der Berggasse 2380 Perchtoldsdorf
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Feuerwehrlauf Unterpetersdorf  (Family Run Tour 2026 - 2. Lauf)
-  date: '2026-09-26'
-  category: road
-  country: Austria
-  region: Feuerwehrhaus Unterpetersdorf
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: TULLNER LAUFTAGE mit Nachwuchsbewerben
-  date: '2026-09-27'
-  category: road
-  country: Austria
-  region: Aubad Tulln, Donaulände 78, Tulln
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Wörthersee Marathon (WRC F)
-  date: '2026-09-27'
-  category: road
-  country: Austria
-  region: Strandbad Klagenfurt
-  lat: 46.618634
-  lng: 14.255117
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: Run for Hope von der Missio
-  date: '2026-09-27'
-  category: road
-  country: Austria
-  region: Wien - Prater
-  lat: 48.217065
-  lng: 16.389498
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: 8. EVN Windpark Run Tattendorf
-  date: '2026-09-27'
-  category: road
-  country: Austria
-  region: Tattendorf
-  lat: 47.958976
-  lng: 16.302319
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: 1. Neusiedler See Marathon
-  date: '2026-09-27'
-  category: road
-  country: Austria
-  region: Illmitz
-  lat: 47.761075
-  lng: 16.800829
-  source: austria
-  source_url: https://oelv.athmin.at/runs.aspx?int=cded0020-2621-4904-acb1-e69b883a0501
-  last_synced: '2026-09-24'
-
-- name: IKB Baggersee Aquathlon Innsbruck
-  date: '2026-09-26'
-  category: triathlon
-  country: Austria
-  region: Tirol
-  lat: 47.223193
-  lng: 11.526103
-  url: https://www.triathlon-austria.at/de/service-termine/eventdbshow-ikb-baggersee-aquathlon-innsbruck-26.09.2026?flat
-  source: austria
-  source_url: https://www.triathlon-austria.at/de/service-termine
-  last_synced: '2026-09-24'
-
-- name: Swim & Run Amstetten
-  date: '2026-10-17'
-  category: triathlon
-  country: Austria
-  region: Niederösterreich
-  lat: 48.281781
-  lng: 15.763246
-  url: https://www.triathlon-austria.at/de/service-termine/eventdbshow-swim-run-amstetten-17.10.2026?flat
-  source: austria
-  source_url: https://www.triathlon-austria.at/de/service-termine
-  last_synced: '2026-09-24'
-
-- name: OMNi BiOTiC Apfelland Triathlon 2027
-  date: '2027-05-21'
-  category: triathlon
-  country: Austria
-  region: Steiermark
-  lat: 47.25
-  lng: 15.166667
-  url: https://www.triathlon-austria.at/de/service-termine/eventdbshow-omni-biotic-apfelland-triathlon-2027-21.05.2027?flat
-  source: austria
-  source_url: https://www.triathlon-austria.at/de/service-termine
   last_synced: '2026-09-24'

@@ -55,7 +55,7 @@ module RaceSources
       {
         "name" => race_name,
         "date" => date,
-        "category" => "trail", # skyrunning is mountain/technical trail running by definition
+        "category" => "skyrun",
         "country" => "Italia",
         "region" => (location unless location.empty?),
         "series" => (series unless series.empty?),

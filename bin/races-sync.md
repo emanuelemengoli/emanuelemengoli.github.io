@@ -29,23 +29,30 @@ PR with it. This can't be set from the workflow file itself.
 
 ## Sources (`bin/race_sources/`)
 
+Deliberately narrow for now, per the owner: the named French/Italian federations, the
+trail/skyrunning-specific sources, and the international brand calendars explicitly
+asked for — not the broader multi-country breadth an earlier pass at this built. Spain,
+Switzerland and Austria are explicit stubs rather than populated, and AIMS/DUV (both
+working, both previously active) are simply not required by `bin/sync-races` right now —
+`aims.rb`/`duv.rb` are still on disk if that breadth comes back into scope.
+
 | Source | Category | Status |
 |---|---|---|
-| `aims` | road | live — official iCalendar feed, `aims-worldrunning.org/events.ics` |
-| `duv` | ultra (road & trail alike) | live — official RSS feed of the next ~30 races worldwide, so after filtering to our 5 countries it may return few or none on a given run; deeper per-country coverage (DUV's filterable HTML calendar, confirmed to support `country=ITA/FRA/ESP/SUI/AUT`) is a planned follow-up, not built yet |
-| `ffa` | road + trail, France | live — athle.fr's own competition calendar, queried once per level (Régional and above; Départemental alone runs into thousands of small local races and isn't queried); also picks up FFA-licensed French results abroad in our other 4 countries |
+| `ffa` | road + trail, France | live — athle.fr's own competition calendar, queried once per level (Régional and above; Départemental alone runs into thousands of small local races and isn't queried); also picks up FFA-licensed French results abroad in Italy/Spain/Switzerland/Austria |
 | `fitri` | triathlon, Italy | live in principle — fitri.it's calendar is plain server-rendered HTML, but the site was returning a site-wide 503 for the entire time this was built; the scraper is written against a confirmed archived snapshot of the markup and degrades to "0 results, warning logged" if the outage is still ongoing on a given run. **Worth spot-checking the first real run once fitri.it is confirmed back up.** |
-| `skyrunning_it` | trail, Italy | live — FISky's own yearly calendar page, one plain HTML table, no pagination |
-| `utmb` | trail | live — UTMB World Series' event list; the page is a Next.js app but the full event array (with its own lat/lng already attached) is embedded server-side as JSON, so no HTML scraping is needed. ITRA's own calendar was checked too and ruled out: it loads via client-side JS and sits behind a bot-challenging WAF |
-| `switzerland` | road/trail (Swiss Athletics) + triathlon (Swiss Triathlon) | live, first-page-only — neither federation's site exposes a simple paginated URL (PrimeFaces AJAX postbacks / a WordPress calendar plugin's own AJAX), so this is whatever's on page 1 each run. Swiss Athletics' calendar is *every* sanctioned athletics event (track meets, throws, youth meets included), so entries are only kept when the name actually contains a running-race word in German/French/Italian — safer to under-include than to surface a javelin final as a "road race" |
-| `austria` | road/trail (ÖLV) + triathlon (ÖTRV) | live, first-page-only — both are plain HTML tables; cancelled (`abgesagt`) and virtual/worldwide entries are filtered out |
-| `fftri`, `fidal`, `spain` | triathlon (France), road/trail (Italy), road/trail + triathlon (Spain) | **stubs** — FFTRI's calendar page wasn't inspected yet; FIDAL's is PDF-only per region, not a simple HTML scrape; Spain's federations (RFEA, FETRI) are AJAX-gated (Drupal) / a Blazor single-page app respectively — neither is a plain HTTP scrape. RFEA does have a small server-rendered trail-championships list (`atletismorfea.es/competicion/trail-running`) not wired up yet. Each stub logs why every run, so the gap is always visible rather than silent |
+| `skyrunning_it` | skyrun, Italy | live — FISky's own yearly calendar page, one plain HTML table, no pagination |
+| `utmb` | trail | live — UTMB World Series' event list; the page is a Next.js app but the full event array (with its own lat/lng already attached) is embedded server-side as JSON, so no HTML scraping is needed |
+| `fftri` | triathlon, France | **stub** — fftri.com's national-championship-stages calendar turned out to be poor-quality on inspection: a Google-Sheets-pasted table with merged header cells across race "stages," dates given without a year per row, and most of the year values actually present in the page are stale (2018), not current. Scraping it as-is risked silently attaching the wrong year to a race, so it was left a stub rather than shipped with wrong dates |
+| `fidal` | road + trail, Italy | **stub** — fidal.it's `calendario.php` takes a `livello`/`regione`/`anno` query like athle.fr's, but the real parameter values aren't documented anywhere discoverable (guesses return the empty search form, not results); its regional pages elsewhere on the site are PDF-only |
+| `itra` | trail | **stub** — itra.run's calendar loads via client-side JS (empty on initial load) and the site sits behind a bot-challenging AWS WAF that starts returning empty "challenge" responses after a few plain requests. UTMB's own World Series list (`utmb` above) is the trail source instead |
+| `ironman` | triathlon | **stub** — `www.ironman.com` is Cloudflare-blocked outright; the bare `ironman.com` domain isn't challenged the same way and does serve a real `/races` page, but the actual listing renders via a Drupal AJAX call, not present in the plain HTML response (same blocker pattern as `spain`'s RFEA, below) |
+| `spain`, `switzerland`, `austria` | — | **stubs, not in scope for now** — Switzerland and Austria had working scrapers in an earlier pass (Swiss Athletics + Swiss Triathlon; ÖLV + ÖTRV — both plain HTML tables) that were removed when the owner narrowed scope; Spain's federations (RFEA, FETRI) were checked and are AJAX-gated (Drupal) / a Blazor single-page app respectively. If any of the three come back into scope, re-identify (or, for CH/AT, recover from git history) their sources |
 
 Adding a real source means writing one small `bin/race_sources/<name>.rb` implementing
-`RaceSources::Base#fetch` (see `bin/race_sources/aims.rb` or `bin/race_sources/switzerland.rb`
-for the shape: fetch, parse, return an Array of Hashes shaped like a `_data/races.yml`
-entry — required keys `name`, `date`, `category`, `source`, `source_url`), then swapping
-its `Stub` entry in `bin/sync-races`'s `SOURCES` list for the real class. `HtmlFetch.get(url)`
+`RaceSources::Base#fetch` (see `bin/race_sources/ffa.rb` for the shape: fetch, parse,
+return an Array of Hashes shaped like a `_data/races.yml` entry — required keys `name`,
+`date`, `category`, `source`, `source_url`), then swapping its `Stub` entry in
+`bin/sync-races`'s `SOURCES` list for the real class. `HtmlFetch.get(url)`
 (`bin/lib/html_fetch.rb`) is the standard way to fetch+parse an HTML page — it always tells
 Nokogiri the body is UTF-8 explicitly, which matters: several of these sites have no
 in-document `<meta charset>` tag, and Nokogiri's own charset-sniffing guesses wrong
@@ -55,10 +62,10 @@ character otherwise.
 ## Everyday use
 
 ```sh
-ruby bin/sync-races                    # fetch every source, merge into _data/races.yml
-ruby bin/sync-races --source=aims,duv  # just these sources, for debugging one adapter
-ruby bin/sync-races --sort             # also re-order soonest-first
-ruby bin/sync-races --dry-run          # show what would change, write nothing
+ruby bin/sync-races                   # fetch every source, merge into _data/races.yml
+ruby bin/sync-races --source=ffa,utmb # just these sources, for debugging one adapter
+ruby bin/sync-races --sort            # also re-order soonest-first
+ruby bin/sync-races --dry-run         # show what would change, write nothing
 git diff _data/races.yml
 ```
 
