@@ -103,6 +103,10 @@ module RaceSources
       end
 
       location = Text.utf8(tds[2].children.first&.text.to_s).strip
+      # The "Fiche" column (a per-competition detail page, not the calendar search
+      # itself) — without it, `url` was simply absent and the finder had nothing
+      # race-specific to link to.
+      fiche = tds[6]&.at_xpath(".//a")&.[]("href")
 
       {
         "name" => race_name,
@@ -111,6 +115,7 @@ module RaceSources
         "country" => country,
         "region" => (location unless location.empty?),
         "distance_km" => DistanceGuess.km(race_name),
+        "url" => (fiche && URI.join("https://www.athle.fr", fiche).to_s),
         "source" => "ffa",
         "source_url" => BASE_URL
       }.compact

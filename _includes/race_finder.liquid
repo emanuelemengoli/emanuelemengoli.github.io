@@ -299,39 +299,6 @@
     border-color: var(--global-theme-color);
     color: var(--global-theme-color);
   }
-  .rf-more-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.6rem;
-  }
-  @media (min-width: 768px) {
-    .rf-more-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  .rf-card {
-    border: 1px solid var(--global-divider-color);
-    border-radius: 8px;
-    padding: 0.65rem 0.8rem;
-  }
-  .rf-card .rf-race-name {
-    font-size: 0.94rem;
-  }
-  .rf-card .rf-show {
-    margin-top: 0.5rem;
-    font: inherit;
-    font-size: 0.76rem;
-    padding: 0.24rem 0.6rem;
-    border: 1px solid var(--global-divider-color);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--global-theme-color);
-    cursor: pointer;
-  }
-  .rf-card .rf-show:hover {
-    border-color: var(--global-theme-color);
-  }
-
   @media (max-width: 576px) {
     .rf-hero-row {
       flex-direction: column;
@@ -368,6 +335,7 @@
       <button type="button" class="rf-chip" data-category="triathlon">Triathlon</button>
     </div>
     <select id="rf-country" aria-label="Paese"><option value="">Paese</option></select>
+    <select id="rf-region" aria-label="Regione" hidden><option value="">Regione</option></select>
     <button type="button" id="rf-wine-toggle" class="rf-chip" aria-pressed="false" title="Gare che si abbinano a una zona o evento enologico">🍷 Vino</button>
     <button type="button" id="rf-more-toggle" class="rf-ghost" aria-expanded="false" aria-controls="rf-more">Altri filtri</button>
     <button type="button" id="rf-clear" class="rf-ghost">Pulisci</button>
@@ -520,6 +488,7 @@
           r: r,
           category: r.category || "",
           country: r.country || "",
+          region: r.region || "",
           date: r.date || "",
           distance: primaryDistance(r),
           elevation: r.elevation_gain_m != null ? Number(r.elevation_gain_m) : null,
@@ -532,14 +501,25 @@
       var countriesPresent = uniq(META.map(function (m) { return m.country; }).filter(Boolean)).sort();
       var hasElevation = META.some(function (m) { return m.elevation != null; });
 
+      // Region only makes sense once a country is picked — "Rome" and "Rome, Georgia"
+      // shouldn't collide, and a flat cross-country region list would be enormous and
+      // mostly irrelevant. Keyed by normalized country.
+      var regionsByCountry = {};
+      META.forEach(function (m) {
+        if (!m.country || !m.region) return;
+        var key = norm(m.country);
+        (regionsByCountry[key] = regionsByCountry[key] || {})[m.region] = 1;
+      });
+
       var NO_MIN = -Infinity, NO_MAX = Infinity;
       var sel = {
-        category: {}, country: "", q: "", wine: false,
+        category: {}, country: "", region: "", q: "", wine: false,
         distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
         dateMin: "", dateMax: ""
       };
 
       var elCountry = document.getElementById("rf-country");
+      var elRegion = document.getElementById("rf-region");
       var elWineToggle = document.getElementById("rf-wine-toggle");
       var elQ = document.getElementById("rf-q");
       var elForm = document.getElementById("rf-form");
@@ -573,8 +553,25 @@
         o.setAttribute("data-label", cap(c));
         elCountry.appendChild(o);
       });
+      function populateRegions() {
+        elRegion.innerHTML = '<option value="">Regione</option>';
+        var regions = sel.country ? Object.keys(regionsByCountry[sel.country] || {}).sort() : [];
+        elRegion.hidden = !sel.country || !regions.length;
+        regions.forEach(function (r) {
+          var o = document.createElement("option");
+          o.value = r;
+          o.textContent = cap(r);
+          elRegion.appendChild(o);
+        });
+      }
       elCountry.onchange = function () {
         sel.country = elCountry.value;
+        sel.region = ""; // a region from the previous country would silently mismatch
+        populateRegions();
+        run();
+      };
+      elRegion.onchange = function () {
+        sel.region = elRegion.value;
         run();
       };
       elWineToggle.onclick = function () {
@@ -605,12 +602,13 @@
       };
       document.getElementById("rf-clear").onclick = function () {
         sel = {
-          category: {}, country: "", q: "", wine: false,
+          category: {}, country: "", region: "", q: "", wine: false,
           distMin: NO_MIN, distMax: NO_MAX, elevMin: NO_MIN, elevMax: NO_MAX,
           dateMin: "", dateMax: ""
         };
         elQ.value = "";
         elCountry.value = "";
+        populateRegions();
         ["rf-dist-min", "rf-dist-max", "rf-elev-min", "rf-elev-max", "rf-date-min", "rf-date-max"].forEach(function (id) {
           document.getElementById(id).value = "";
         });
@@ -638,6 +636,7 @@
         var catSel = Object.keys(sel.category);
         if (catSel.length && catSel.indexOf(m.category) < 0) return false;
         if (sel.country && norm(m.country) !== sel.country) return false;
+        if (sel.region && m.region !== sel.region) return false;
         if (m.distance != null && (m.distance < sel.distMin || m.distance > sel.distMax)) return false;
         if (m.elevation != null && (m.elevation < sel.elevMin || m.elevation > sel.elevMax)) return false;
         if (sel.dateMin && m.date && m.date < sel.dateMin) return false;
@@ -701,41 +700,61 @@
           "</article>"
         );
       }
-      function compactCardHtml(m) {
-        var r = m.r;
-        var meta = metaLine(r);
-        return (
-          '<article class="rf-card">' +
-          '<span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span>" +
-          '<div class="rf-race-name no-tx">' + esc(cap(r.name)) + "</div>" + wineBadge(m) +
-          '<div class="rf-race-meta no-tx">' + esc(fmtDate(r.date)) + (meta ? " · " + meta : "") + "</div>" +
-          '<button type="button" class="rf-show" data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">Vedi sulla mappa →</button>' +
-          "</article>"
-        );
-      }
-
       var BROWSE_PAGE = 20;
       var browseShown = BROWSE_PAGE;
 
+      // Same (normalized) name + country within a couple of days of each other is
+      // almost always one event with several distances/editions on one weekend (e.g.
+      // "Rome" on both the 3rd and the 4th) rather than two unrelated races — shown as
+      // one row with a date range instead of duplicate-looking rows. Assumes `list` is
+      // already date-sorted, so anything to group with sits immediately adjacent.
+      var GROUP_MAX_GAP_DAYS = 2;
+      function groupNearbyDates(list) {
+        var groups = [];
+        list.forEach(function (m) {
+          var last = groups[groups.length - 1];
+          if (last) {
+            var head = last[0].r;
+            var gapDays = Math.round((new Date(m.r.date + "T00:00:00") - new Date(last[last.length - 1].r.date + "T00:00:00")) / 86400000);
+            if (norm(head.name) === norm(m.r.name) && head.country === m.r.country && gapDays >= 0 && gapDays <= GROUP_MAX_GAP_DAYS) {
+              last.push(m);
+              return;
+            }
+          }
+          groups.push([m]);
+        });
+        return groups;
+      }
+      function dateRangeLabel(group) {
+        var first = fmtDate(group[0].r.date), last = fmtDate(group[group.length - 1].r.date);
+        return first === last ? first : first + "–" + last;
+      }
+      function distanceListLabel(group) {
+        var ds = uniq(group.map(function (m) { return m.distance != null ? String(m.distance) : null; }).filter(Boolean));
+        return ds.join(", ");
+      }
+
       function browseTableHtml(rows) {
-        var shown = rows.slice(0, browseShown);
+        var groups = groupNearbyDates(rows);
+        var shown = groups.slice(0, browseShown);
         var html =
           '<div class="rf-table-wrap"><table class="rf-table"><thead><tr>' +
           "<th>Data</th><th>Gara</th><th class='rf-col-region'>Luogo</th><th>Tipo</th><th>Km</th><th></th>" +
           "</tr></thead><tbody>" +
           shown
-            .map(function (m) {
-              var r = m.r;
+            .map(function (group) {
+              var m = group[0], r = m.r;
               var link = r.url
                 ? '<a class="rf-link no-tx" href="' + esc(r.url) + '" target="_blank" rel="noopener noreferrer">info</a>'
                 : "";
+              var countBadge = group.length > 1 ? ' <span class="no-tx rf-race-meta">×' + group.length + "</span>" : "";
               return (
                 "<tr>" +
-                '<td class="no-tx">' + esc(fmtDate(r.date)) + "</td>" +
-                '<td><span class="rf-race-name no-tx">' + esc(cap(r.name)) + "</span>" + wineBadge(m) + "</td>" +
+                '<td class="no-tx">' + esc(dateRangeLabel(group)) + "</td>" +
+                '<td><span class="rf-race-name no-tx">' + esc(cap(r.name)) + "</span>" + wineBadge(m) + countBadge + "</td>" +
                 '<td class="rf-col-region no-tx">' + esc(cap(r.region || "")) + "</td>" +
                 '<td><span class="rf-badge rf-badge-' + badgeSlug(m.category) + '">' + esc(CATEGORY_LABEL[m.category] || m.category) + "</span></td>" +
-                '<td class="no-tx">' + (m.distance != null ? m.distance : "") + "</td>" +
+                '<td class="no-tx">' + esc(distanceListLabel(group)) + "</td>" +
                 "<td>" +
                 '<button type="button" class="rf-map-btn no-tx" ' +
                 'data-name="' + esc(r.name) + '" data-date="' + esc(r.date) + '">mappa</button> ' +
@@ -746,8 +765,8 @@
             })
             .join("") +
           "</tbody></table></div>";
-        if (rows.length > shown.length) {
-          html += '<button type="button" class="rf-show-more">Mostra altre (' + (rows.length - shown.length) + ")</button>";
+        if (groups.length > shown.length) {
+          html += '<button type="button" class="rf-show-more">Mostra altre (' + (groups.length - shown.length) + ")</button>";
         }
         return html;
       }
@@ -802,17 +821,18 @@
 
         var html;
         if (sel.q) {
-          // Query mode: rank by keyword match, tie-broken soonest-first, mirroring the
-          // wine finder's single-recommendation shape.
+          // Query mode: highlight the single best keyword match, same as the wine
+          // finder — but unlike wine, everything else that also matches gets listed
+          // too (as many races as fit the filters, not capped at a couple of
+          // runners-up): this is a season-planning tool, not a one-pick recommendation.
           rows.sort(function (a, b) { return b.kw - a.kw || a.m.date.localeCompare(b.m.date); });
           var primary = rows[0];
-          var rest = rows.slice(1, 3);
+          var rest = rows.slice(1).sort(function (a, b) { return a.m.date.localeCompare(b.m.date); });
           html = '<h3 class="rf-h">La mia scelta</h3>' + primaryCardHtml(primary.m);
           if (rest.length) {
             html +=
-              '<h3 class="rf-h">Altre buone scelte</h3><div class="rf-more-grid">' +
-              rest.map(function (r) { return compactCardHtml(r.m); }).join("") +
-              "</div>";
+              '<h3 class="rf-h">Altre gare in linea (' + rest.length + ")</h3>" +
+              browseTableHtml(rest.map(function (r) { return r.m; }));
           }
         } else {
           // Browse mode: every match, soonest first — the actual season-planning view.

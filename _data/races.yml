@@ -49,7 +49,7 @@
 
 - name: 100km De Metz Métropole
   date: '2026-09-19'
-  category: road
+  category: ultra
   country: Francia
   region: Metz
   distance_km: 100.0
@@ -1805,7 +1805,7 @@
 
 - name: Championnat Trail Trans Volcano 67 Km
   date: '2027-01-23'
-  category: trail
+  category: ultra
   country: Francia
   region: La Plaine Des Cafres
   distance_km: 67.0
@@ -2624,7 +2624,7 @@
 
 - name: Championnats Du Monde Du 100 Km
   date: '2026-09-20'
-  category: road
+  category: ultra
   country: Francia
   region: Ames
   distance_km: 100.0
@@ -3240,8 +3240,10 @@
   date: '2026-10-04'
   category: triathlon
   country: Spagna
-  region: Calella, Spain
-  url: https://ironman.com/race/84436
+  region: Calella
+  lat: 41.613293
+  lng: 2.65761
+  url: https://ironman.com/races/im-barcelona
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -3251,10 +3253,10 @@
   date: '2026-10-11'
   category: triathlon
   country: Francia
-  region: Versailles, France
+  region: Versailles
   lat: 48.80354
   lng: 2.126689
-  url: https://ironman.com/race/132041
+  url: https://ironman.com/races/im703-versailles
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -3370,7 +3372,7 @@
 
 - name: I Sassi di Matera
   date: '2026-10-23'
-  category: road
+  category: ultra
   country: Italia
   region: Matera (Mt)
   distance_km: 145.0
@@ -3383,7 +3385,7 @@
 
 - name: 7° 50Km di Calabria – 4° 8h di Calabria
   date: '2026-10-04'
-  category: road
+  category: ultra
   country: Italia
   region: Curinga (Cz)
   distance_km: 50.0
@@ -3838,7 +3840,7 @@
 
 - name: Maratona degli Ernici
   date: '2026-10-11'
-  category: road
+  category: ultra
   country: Italia
   region: Sora (Fr)
   distance_km: 44.0
@@ -4371,7 +4373,7 @@
 
 - name: Ultra Trail del Moscato d’Asti – Magistra Langarum
   date: '2026-09-25'
-  category: trail
+  category: ultra
   country: Italia
   region: Santo Stefano Belbo (Cn)
   distance_km: 106.0
@@ -4500,7 +4502,7 @@
 
 - name: 100 km e 50 km delle Alpi
   date: '2026-10-10'
-  category: road
+  category: ultra
   country: Italia
   region: Torino (TO)
   distance_km: 50.0
@@ -4539,7 +4541,7 @@
 
 - name: 2° Extreme Trail dei Castelli Bruciati
   date: '2026-10-16'
-  category: trail
+  category: ultra
   country: Italia
   region: Gabiano (Al)
   distance_km: 160.0
@@ -4565,7 +4567,7 @@
 
 - name: Ultra Trail Lago d’Orta
   date: '2026-10-17'
-  category: trail
+  category: ultra
   country: Italia
   region: Omegna (Vb)
   distance_km: 100.0
@@ -4772,7 +4774,7 @@
 
 - name: Castellaneta Underground Trail
   date: '2026-10-25'
-  category: trail
+  category: ultra
   country: Italia
   region: Taranto (Ta)
   distance_km: 50.0
@@ -4902,7 +4904,7 @@
 
 - name: Lunigiana Skyrace
   date: '2026-09-26'
-  category: road
+  category: ultra
   country: Italia
   region: Fivizzano (Ms)
   distance_km: 44.0
@@ -4980,7 +4982,7 @@
 
 - name: Valdambra Goro Trail
   date: '2026-10-09'
-  category: trail
+  category: ultra
   country: Italia
   region: Badia Agnano (Ar)
   distance_km: 110.0
@@ -4993,7 +4995,7 @@
 
 - name: Valdambra Disertore Trail
   date: '2026-10-10'
-  category: trail
+  category: ultra
   country: Italia
   region: Badia Agnano (Arezzo)
   distance_km: 64.0
@@ -5006,7 +5008,7 @@
 
 - name: Valdambra Fattoressa Trail
   date: '2026-10-11'
-  category: trail
+  category: ultra
   country: Italia
   region: Badia Agnano (Ar)
   distance_km: 45.0
@@ -5294,7 +5296,7 @@
 
 - name: Epica dell’Acqua
   date: '2026-10-16'
-  category: road
+  category: ultra
   country: Italia
   region: Porto Tolle (Ro)
   distance_km: 100.0
@@ -5398,7 +5400,7 @@
 
 - name: LitTLe RuN
   date: '2026-12-26'
-  category: road
+  category: ultra
   country: Italia
   region: Vittorio Veneto (Tv)
   distance_km: 616.0
@@ -5686,8 +5688,10 @@
   date: '2026-09-26'
   category: triathlon
   country: Stati Uniti
-  region: Jones Beach, NY, United States
-  url: https://ironman.com/race/83711
+  region: Jones Beach, NY
+  lat: 42.904789
+  lng: -76.394101
+  url: https://ironman.com/races/im703-new-york
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5697,10 +5701,10 @@
   date: '2026-09-27'
   category: triathlon
   country: Stati Uniti
-  region: Augusta, GA, United States
+  region: Augusta, GA
   lat: 17.751989
   lng: -64.694495
-  url: https://ironman.com/race/84001
+  url: https://ironman.com/races/im703-augusta
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5710,8 +5714,10 @@
   date: '2026-09-27'
   category: triathlon
   country: Stati Uniti
-  region: Chattanooga, TN, United States
-  url: https://ironman.com/race/84146
+  region: Chattanooga, TN
+  lat: 35.045722
+  lng: -85.309488
+  url: https://ironman.com/races/im-chattanooga
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5721,8 +5727,10 @@
   date: '2026-10-04'
   category: triathlon
   country: Stati Uniti
-  region: Waco, TX, United States
-  url: https://ironman.com/race/95466
+  region: Waco, TX
+  lat: 31.554515
+  lng: -97.132562
+  url: https://ironman.com/races/im703-waco
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5732,10 +5740,10 @@
   date: '2026-10-04'
   category: triathlon
   country: Argentina
-  region: Buenos Aires, Argentina
+  region: Buenos Aires
   lat: -32.712666
   lng: -60.731563
-  url: https://ironman.com/race/97351
+  url: https://ironman.com/races/im703-buenos-aires
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5745,10 +5753,10 @@
   date: '2026-10-04'
   category: triathlon
   country: Cile
-  region: Coquimbo, CO, Chile
+  region: Coquimbo, CO
   lat: -33.456392
   lng: -70.646758
-  url: https://ironman.com/race/130951
+  url: https://ironman.com/races/5150-coquimbo
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5758,8 +5766,10 @@
   date: '2026-10-10'
   category: triathlon
   country: Stati Uniti
-  region: Kona, HI, United States
-  url: https://ironman.com/race/96336
+  region: Kona, HI
+  lat: 19.647221
+  lng: -155.996643
+  url: https://ironman.com/races/im-world-championship-kona
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5769,10 +5779,10 @@
   date: '2026-10-11'
   category: triathlon
   country: Paraguay
-  region: Encarnacion, Paraguay
+  region: Encarnacion
   lat: -25.320696
   lng: -57.592987
-  url: https://ironman.com/race/121516
+  url: https://ironman.com/races/im703-encarnacion
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5782,8 +5792,10 @@
   date: '2026-10-17'
   category: triathlon
   country: Stati Uniti
-  region: Wilmington, NC, United States
-  url: https://ironman.com/race/84581
+  region: Wilmington, NC
+  lat: 34.235285
+  lng: -77.948728
+  url: https://ironman.com/races/im703-north-carolina
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5793,8 +5805,10 @@
   date: '2026-10-17'
   category: triathlon
   country: Portogallo
-  region: Cascais, Portugal
-  url: https://ironman.com/race/84726
+  region: Cascais
+  lat: 38.696892
+  lng: -9.42045
+  url: https://ironman.com/races/im703-cascais
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5804,8 +5818,10 @@
   date: '2026-10-17'
   category: triathlon
   country: Portogallo
-  region: Cascais, Portugal
-  url: https://ironman.com/race/96191
+  region: Cascais
+  lat: 38.696892
+  lng: -9.42045
+  url: https://ironman.com/races/im-cascais
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5815,8 +5831,10 @@
   date: '2026-10-18'
   category: triathlon
   country: Stati Uniti
-  region: Sacramento, CA, United States
-  url: https://ironman.com/race/85016
+  region: Sacramento, CA
+  lat: 38.581061
+  lng: -121.493895
+  url: https://ironman.com/races/im-california
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5826,8 +5844,10 @@
   date: '2026-10-18'
   category: triathlon
   country: Brasile
-  region: Florianopolis, SC, Brazil
-  url: https://ironman.com/race/108081
+  region: Florianopolis, SC
+  lat: -27.5973
+  lng: -48.54961
+  url: https://ironman.com/races/im703-florianopolis
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5837,8 +5857,10 @@
   date: '2026-10-18'
   category: triathlon
   country: Spagna
-  region: Málaga, Spain
-  url: https://ironman.com/race/134956
+  region: Málaga
+  lat: 36.764791
+  lng: -4.442201
+  url: https://ironman.com/races/im703-malaga
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5848,10 +5870,10 @@
   date: '2026-10-25'
   category: triathlon
   country: Grecia
-  region: Peloponnese, Greece
+  region: Peloponnese
   lat: 37.352206
   lng: 22.330047
-  url: https://ironman.com/race/96046
+  url: https://ironman.com/races/im703-greece
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5861,10 +5883,10 @@
   date: '2026-10-30'
   category: triathlon
   country: Argentina
-  region: San Juan, Argentina
+  region: San Juan
   lat: -31.498566
   lng: -68.523159
-  url: https://ironman.com/race/129261
+  url: https://ironman.com/races/5150-san-juan
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5874,10 +5896,10 @@
   date: '2026-11-01'
   category: triathlon
   country: Argentina
-  region: San Juan, Argentina
+  region: San Juan
   lat: -31.498566
   lng: -68.523159
-  url: https://ironman.com/race/128646
+  url: https://ironman.com/races/im-san-juan
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5887,8 +5909,10 @@
   date: '2026-11-07'
   category: triathlon
   country: Stati Uniti
-  region: Panama City Beach, FL, United States
-  url: https://ironman.com/race/85596
+  region: Panama City Beach, FL
+  lat: 30.176591
+  lng: -85.805386
+  url: https://ironman.com/races/im-florida
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5898,10 +5922,10 @@
   date: '2026-11-08'
   category: triathlon
   country: Messico
-  region: Campeche, CAM, Mexico
+  region: Campeche, CAM
   lat: 19.860688
   lng: -90.489416
-  url: https://ironman.com/race/87916
+  url: https://ironman.com/races/im703-campeche
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5911,10 +5935,10 @@
   date: '2026-11-22'
   category: triathlon
   country: Messico
-  region: Cozumel, ROO, Mexico
+  region: Cozumel, ROO
   lat: 20.443087
   lng: -86.989661
-  url: https://ironman.com/race/86176
+  url: https://ironman.com/races/im-cozumel
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5924,10 +5948,10 @@
   date: '2026-11-29'
   category: triathlon
   country: Colombia
-  region: Cartagena, Colombia
+  region: Cartagena
   lat: 2.505
   lng: -68.211944
-  url: https://ironman.com/race/86321
+  url: https://ironman.com/races/im703-cartagena
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5937,8 +5961,10 @@
   date: '2026-11-29'
   category: triathlon
   country: Cile
-  region: Valdivia, LR, Chile
-  url: https://ironman.com/race/97786
+  region: Valdivia, LR
+  lat: -39.814126
+  lng: -73.245986
+  url: https://ironman.com/races/im703-valdivia
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5948,8 +5974,10 @@
   date: '2026-11-29'
   category: triathlon
   country: Brasile
-  region: Aracaju, SE, Brazil
-  url: https://ironman.com/race/98076
+  region: Aracaju, SE
+  lat: -10.916206
+  lng: -37.077466
+  url: https://ironman.com/races/im703-aracaju-sergipe
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5959,8 +5987,10 @@
   date: '2026-11-29'
   category: triathlon
   country: Cile
-  region: Valdivia, LR, Chile
-  url: https://ironman.com/race/123076
+  region: Valdivia, LR
+  lat: -39.814126
+  lng: -73.245986
+  url: https://ironman.com/races/im-valdivia
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -5970,8 +6000,10 @@
   date: '2026-12-06'
   category: triathlon
   country: Stati Uniti
-  region: La Quinta, CA, United States
-  url: https://ironman.com/race/86756
+  region: La Quinta, CA
+  lat: 33.677474
+  lng: -116.295879
+  url: https://ironman.com/races/im703-la-quinta
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5981,10 +6013,10 @@
   date: '2026-12-06'
   category: triathlon
   country: Messico
-  region: Veracruz, Mexico
+  region: Veracruz
   lat: 19.358504
   lng: -99.304217
-  url: https://ironman.com/race/148551
+  url: https://ironman.com/races/im703-veracruz
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -5994,8 +6026,10 @@
   date: '2026-12-13'
   category: triathlon
   country: Stati Uniti
-  region: Haines City, FL, United States
-  url: https://ironman.com/race/98656
+  region: Haines City, FL
+  lat: 28.106732
+  lng: -81.628742
+  url: https://ironman.com/races/im703-florida
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6005,10 +6039,10 @@
   date: '2027-01-10'
   category: triathlon
   country: Cile
-  region: Pucon, Chile
+  region: Pucon
   lat: -33.3891
   lng: -70.564252
-  url: https://ironman.com/race/87046
+  url: https://ironman.com/races/im703-pucon
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6018,8 +6052,10 @@
   date: '2027-02-21'
   category: triathlon
   country: Argentina
-  region: San Salvador de Jujuy, Argentina
-  url: https://ironman.com/race/148691
+  region: San Salvador de Jujuy
+  lat: -24.214931
+  lng: -65.267267
+  url: https://ironman.com/races/5150-jujuy
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6029,10 +6065,10 @@
   date: '2027-02-28'
   category: triathlon
   country: Panama
-  region: Panama City, Panama
+  region: Panama City
   lat: 8.971449
   lng: -79.53418
-  url: https://ironman.com/race/88206
+  url: https://ironman.com/races/im703-panama
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6042,8 +6078,10 @@
   date: '2027-03-07'
   category: triathlon
   country: Uruguay
-  region: Punta del Este, Uruguay
-  url: https://ironman.com/race/87626
+  region: Punta del Este
+  lat: -34.963234
+  lng: -54.943998
+  url: https://ironman.com/races/im703-punta-del-este
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6053,8 +6091,10 @@
   date: '2027-03-14'
   category: triathlon
   country: Stati Uniti
-  region: Dallas, TX, United States
-  url: https://ironman.com/race/127186
+  region: Dallas, TX
+  lat: 32.776272
+  lng: -96.796856
+  url: https://ironman.com/races/im703-dallas-little-elm
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6064,8 +6104,10 @@
   date: '2027-03-21'
   category: triathlon
   country: Brasile
-  region: Curitiba, PR, Brazil
-  url: https://ironman.com/race/131886
+  region: Curitiba, PR
+  lat: -25.429596
+  lng: -49.271272
+  url: https://ironman.com/races/im703-curitiba
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6075,10 +6117,10 @@
   date: '2027-04-03'
   category: triathlon
   country: Stati Uniti
-  region: Oceanside, CA, United States
+  region: Oceanside, CA
   lat: 18.367952
   lng: -64.917004
-  url: https://ironman.com/race/88351
+  url: https://ironman.com/races/im703-oceanside
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6088,8 +6130,10 @@
   date: '2027-04-03'
   category: triathlon
   country: Portogallo
-  region: Vilamoura, Portugal
-  url: https://ironman.com/race/149916
+  region: Vilamoura
+  lat: 37.075951
+  lng: -8.11654
+  url: https://ironman.com/races/im703-vilamoura-algarve
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6099,8 +6143,10 @@
   date: '2027-04-04'
   category: triathlon
   country: Stati Uniti
-  region: Galveston Island, TX, United States
-  url: https://ironman.com/race/99381
+  region: Galveston Island, TX
+  lat: 29.222183
+  lng: -94.90881
+  url: https://ironman.com/races/im703-texas
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6110,10 +6156,10 @@
   date: '2027-04-04'
   category: triathlon
   country: Cile
-  region: Puerto Varas, LL, Chile
+  region: Puerto Varas, LL
   lat: -53.155611
   lng: -70.938332
-  url: https://ironman.com/race/121376
+  url: https://ironman.com/races/im703-puerto-varas
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6123,10 +6169,10 @@
   date: '2027-04-04'
   category: triathlon
   country: Colombia
-  region: Barranquilla, Colombia
+  region: Barranquilla
   lat: 11.016815
   lng: -74.862174
-  url: https://ironman.com/race/135411
+  url: https://ironman.com/races/im703-barranquilla
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6136,10 +6182,10 @@
   date: '2027-04-11'
   category: triathlon
   country: Argentina
-  region: San Juan, Argentina
+  region: San Juan
   lat: -31.498566
   lng: -68.523159
-  url: https://ironman.com/race/88496
+  url: https://ironman.com/races/im703-san-juan
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6149,8 +6195,10 @@
   date: '2027-04-11'
   category: triathlon
   country: Messico
-  region: Los Cabos, BCS, Mexico
-  url: https://ironman.com/race/96626
+  region: Los Cabos, BCS
+  lat: 23.271848
+  lng: -109.689768
+  url: https://ironman.com/races/im703-los-cabos
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6160,8 +6208,10 @@
   date: '2027-04-18'
   category: triathlon
   country: Spagna
-  region: Valencia, Spain
-  url: https://ironman.com/race/99816
+  region: Valencia
+  lat: 39.469707
+  lng: -0.376335
+  url: https://ironman.com/races/im703-valencia
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6171,8 +6221,10 @@
   date: '2027-04-18'
   category: triathlon
   country: Brasile
-  region: DF, Brazil
-  url: https://ironman.com/race/117421
+  region: DF
+  lat: -15.775446
+  lng: -47.797089
+  url: https://ironman.com/races/im703-brasilia
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6182,8 +6234,10 @@
   date: '2027-04-24'
   category: triathlon
   country: Italia
-  region: Jesolo, Italy
-  url: https://ironman.com/race/88931
+  region: Jesolo
+  lat: 45.534744
+  lng: 12.653845
+  url: https://ironman.com/races/im703-venice-jesolo
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6193,8 +6247,10 @@
   date: '2027-04-24'
   category: triathlon
   country: Stati Uniti
-  region: The Woodlands, TX, United States
-  url: https://ironman.com/race/99671
+  region: The Woodlands, TX
+  lat: 30.173419
+  lng: -95.504686
+  url: https://ironman.com/races/im-texas
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6204,10 +6260,10 @@
   date: '2027-04-25'
   category: triathlon
   country: Peru
-  region: Lima, Peru
+  region: Lima
   lat: -12.030899
   lng: -77.090799
-  url: https://ironman.com/race/99961
+  url: https://ironman.com/races/im703-peru
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6217,8 +6273,10 @@
   date: '2027-05-08'
   category: triathlon
   country: Stati Uniti
-  region: Panama City Beach, FL, United States
-  url: https://ironman.com/race/89076
+  region: Panama City Beach, FL
+  lat: 30.176591
+  lng: -85.805386
+  url: https://ironman.com/races/im703-gulf-coast
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6228,8 +6286,10 @@
   date: '2027-05-08'
   category: triathlon
   country: Spagna
-  region: Alcúdia, Spain
-  url: https://ironman.com/race/89221
+  region: Alcúdia
+  lat: 39.853247
+  lng: 3.121251
+  url: https://ironman.com/races/im703-mallorca
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6239,8 +6299,10 @@
   date: '2027-05-15'
   category: triathlon
   country: Spagna
-  region: Lanzarote, Spain
-  url: https://ironman.com/race/100396
+  region: Lanzarote
+  lat: 29.039708
+  lng: -13.636292
+  url: https://ironman.com/races/im-lanzarote
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6250,8 +6312,10 @@
   date: '2027-05-16'
   category: triathlon
   country: Stati Uniti
-  region: Chattanooga, TN, United States
-  url: https://ironman.com/race/89656
+  region: Chattanooga, TN
+  lat: 35.045722
+  lng: -85.309488
+  url: https://ironman.com/races/im703-chattanooga
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6261,8 +6325,10 @@
   date: '2027-05-16'
   category: triathlon
   country: Stati Uniti
-  region: Jacksonville, FL, United States
-  url: https://ironman.com/race/128901
+  region: Jacksonville, FL
+  lat: 30.326225
+  lng: -81.657918
+  url: https://ironman.com/races/im-jacksonville
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6272,10 +6338,10 @@
   date: '2027-05-23'
   category: triathlon
   country: Francia
-  region: Aix en Provence, France
+  region: Aix en Provence
   lat: 43.529842
   lng: 5.447474
-  url: https://ironman.com/race/89511
+  url: https://ironman.com/races/im703-aix-en-provence
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6285,8 +6351,10 @@
   date: '2027-05-23'
   category: triathlon
   country: Stati Uniti
-  region: State College, PA, United States
-  url: https://ironman.com/race/91541
+  region: State College, PA
+  lat: 40.79445
+  lng: -77.861639
+  url: https://ironman.com/races/im703-pennsylvania
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6296,8 +6364,10 @@
   date: '2027-05-23'
   category: triathlon
   country: Stati Uniti
-  region: Redding, CA, United States
-  url: https://ironman.com/race/132766
+  region: Redding, CA
+  lat: 40.586356
+  lng: -122.391675
+  url: https://ironman.com/races/im703-northern-california
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6307,10 +6377,10 @@
   date: '2027-05-23'
   category: triathlon
   country: Austria
-  region: St. Polten, Austria
+  region: St. Polten
   lat: 48.204399
   lng: 15.622912
-  url: https://ironman.com/race/147031
+  url: https://ironman.com/races/im703-st-poelten
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6320,10 +6390,10 @@
   date: '2027-05-30'
   category: triathlon
   country: Canada
-  region: Victoria, BC, Canada
+  region: Victoria, BC
   lat: 21.949439
   lng: -102.345715
-  url: https://ironman.com/race/89801
+  url: https://ironman.com/races/im703-victoria
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6333,8 +6403,10 @@
   date: '2027-05-30'
   category: triathlon
   country: Italia
-  region: Alghero, Italy
-  url: https://ironman.com/race/130551
+  region: Alghero
+  lat: 40.558729
+  lng: 8.315321
+  url: https://ironman.com/races/im703-alghero
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6344,8 +6416,8 @@
   date: '2027-06-05'
   category: triathlon
   country: Stati Uniti
-  region: Kohala Coast, HI, United States
-  url: https://ironman.com/race/90236
+  region: Kohala Coast, HI
+  url: https://ironman.com/races/im703-hawaii
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6355,10 +6427,10 @@
   date: '2027-06-06'
   category: triathlon
   country: Francia
-  region: Tours, France
+  region: Tours
   lat: 47.390047
   lng: 0.688927
-  url: https://ironman.com/race/101266
+  url: https://ironman.com/races/im703-tours
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6368,8 +6440,10 @@
   date: '2027-06-06'
   category: triathlon
   country: Svizzera
-  region: Rapperswil-Jona, Switzerland
-  url: https://ironman.com/race/101556
+  region: Rapperswil-Jona
+  lat: 47.229817
+  lng: 8.8597
+  url: https://ironman.com/races/im703-switzerland
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6379,8 +6453,10 @@
   date: '2027-06-06'
   category: triathlon
   country: Regno Unito
-  region: Bolton, United Kingdom
-  url: https://ironman.com/race/101701
+  region: Bolton
+  lat: 53.578286
+  lng: -2.430037
+  url: https://ironman.com/races/im703-bolton
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6390,8 +6466,10 @@
   date: '2027-06-06'
   category: triathlon
   country: Stati Uniti
-  region: Omaha, NE, United States
-  url: https://ironman.com/race/127756
+  region: Omaha, NE
+  lat: 41.258746
+  lng: -95.938376
+  url: https://ironman.com/races/im703-omaha
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6401,10 +6479,10 @@
   date: '2027-06-12'
   category: triathlon
   country: Stati Uniti
-  region: Boulder, CO, United States
+  region: Boulder, CO
   lat: 40.387489
   lng: -105.557354
-  url: https://ironman.com/race/91251
+  url: https://ironman.com/races/im703-boulder
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6414,10 +6492,10 @@
   date: '2027-06-13'
   category: triathlon
   country: Brasile
-  region: SC, Brazil
+  region: SC
   lat: -22.9053
   lng: -43.0957
-  url: https://ironman.com/race/90381
+  url: https://ironman.com/races/im-brazil
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6427,8 +6505,10 @@
   date: '2027-06-13'
   category: triathlon
   country: Stati Uniti
-  region: Cambridge, MD, United States
-  url: https://ironman.com/race/91106
+  region: Cambridge, MD
+  lat: 38.570053
+  lng: -76.077268
+  url: https://ironman.com/races/im703-eagleman
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6438,8 +6518,10 @@
   date: '2027-06-13'
   category: triathlon
   country: Austria
-  region: Klagenfurt, Austria
-  url: https://ironman.com/race/102136
+  region: Klagenfurt
+  lat: 46.623943
+  lng: 14.307598
+  url: https://ironman.com/races/im-austria
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6449,8 +6531,10 @@
   date: '2027-06-13'
   category: triathlon
   country: Stati Uniti
-  region: Rockford, IL, United States
-  url: https://ironman.com/race/102716
+  region: Rockford, IL
+  lat: 42.271395
+  lng: -89.093966
+  url: https://ironman.com/races/im703-rockford-illinois
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6460,8 +6544,10 @@
   date: '2027-06-19'
   category: triathlon
   country: Canada
-  region: Mont-Tremblant, QC, Canada
-  url: https://ironman.com/race/102426
+  region: Mont-Tremblant, QC
+  lat: 46.113926
+  lng: -74.607171
+  url: https://ironman.com/races/5150-mont-tremblant
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6471,10 +6557,10 @@
   date: '2027-06-20'
   category: triathlon
   country: Paesi Bassi
-  region: Hoorn, Netherlands
+  region: Hoorn
   lat: 52.653272
   lng: 5.07358
-  url: https://ironman.com/race/91976
+  url: https://ironman.com/races/im703-westfriesland
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6484,8 +6570,10 @@
   date: '2027-06-20'
   category: triathlon
   country: Canada
-  region: Mont-Tremblant, QC, Canada
-  url: https://ironman.com/race/102571
+  region: Mont-Tremblant, QC
+  lat: 46.11588
+  lng: -74.589143
+  url: https://ironman.com/races/im703-mont-tremblant
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6495,8 +6583,10 @@
   date: '2027-06-27'
   category: triathlon
   country: Stati Uniti
-  region: Coeur d'Alene, ID, United States
-  url: https://ironman.com/race/91831
+  region: Coeur d'Alene, ID
+  lat: 47.674299
+  lng: -116.781153
+  url: https://ironman.com/races/im703-coeur-dalene
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6506,10 +6596,10 @@
   date: '2027-06-27'
   category: triathlon
   country: Francia
-  region: Les Sables d'Olonne, France
+  region: Les Sables d'Olonne
   lat: 46.526329
   lng: -1.767849
-  url: https://ironman.com/race/102861
+  url: https://ironman.com/races/im-les-sables-dolonne
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6519,10 +6609,10 @@
   date: '2027-06-27'
   category: triathlon
   country: Danimarca
-  region: Elsinore, Denmark
+  region: Elsinore
   lat: 56.034874
   lng: 12.613007
-  url: https://ironman.com/race/103006
+  url: https://ironman.com/races/im703-elsinore
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6532,8 +6622,10 @@
   date: '2027-07-04'
   category: triathlon
   country: Svizzera
-  region: Thun, Switzerland
-  url: https://ironman.com/race/106631
+  region: Thun
+  lat: 46.758283
+  lng: 7.628086
+  url: https://ironman.com/races/im-switzerland
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6543,8 +6635,10 @@
   date: '2027-07-10'
   category: triathlon
   country: Stati Uniti
-  region: Muncie, IN, United States
-  url: https://ironman.com/race/92556
+  region: Muncie, IN
+  lat: 40.193689
+  lng: -85.386527
+  url: https://ironman.com/races/im703-muncie
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6554,8 +6648,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Regno Unito
-  region: Swansea Bay, United Kingdom
-  url: https://ironman.com/race/92701
+  region: Swansea Bay
+  lat: 51.590972
+  lng: -3.987873
+  url: https://ironman.com/races/im703-swansea
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6565,8 +6661,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Svezia
-  region: Jonkoping, Sweden
-  url: https://ironman.com/race/103441
+  region: Jonkoping
+  lat: 57.782563
+  lng: 14.165719
+  url: https://ironman.com/races/im703-jonkoping
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6576,8 +6674,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Stati Uniti
-  region: Geneva, NY, United States
-  url: https://ironman.com/race/103731
+  region: Geneva, NY
+  lat: 42.869027
+  lng: -76.978612
+  url: https://ironman.com/races/im703-musselman
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6587,8 +6687,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Spagna
-  region: Vitoria-Gasteiz, Spain
-  url: https://ironman.com/race/104021
+  region: Vitoria-Gasteiz
+  lat: 42.850585
+  lng: -2.66145
+  url: https://ironman.com/races/im-vitoria
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6598,8 +6700,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Stati Uniti
-  region: Ruidoso, NM, United States
-  url: https://ironman.com/race/118261
+  region: Ruidoso, NM
+  lat: 33.33158
+  lng: -105.673099
+  url: https://ironman.com/races/im703-ruidoso-new-mexico
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6609,8 +6713,10 @@
   date: '2027-07-11'
   category: triathlon
   country: Spagna
-  region: Vitoria-Gasteiz, Spain
-  url: https://ironman.com/race/127936
+  region: Vitoria-Gasteiz
+  lat: 42.850585
+  lng: -2.66145
+  url: https://ironman.com/races/im703-vitoria
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6620,8 +6726,10 @@
   date: '2027-07-18'
   category: triathlon
   country: Canada
-  region: Huntsville, ON, Canada
-  url: https://ironman.com/race/92411
+  region: Huntsville, ON
+  lat: 45.326392
+  lng: -79.218434
+  url: https://ironman.com/races/im703-muskoka
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6631,8 +6739,10 @@
   date: '2027-07-18'
   category: triathlon
   country: Stati Uniti
-  region: Salem, OR, United States
-  url: https://ironman.com/race/104166
+  region: Salem, OR
+  lat: 44.939157
+  lng: -123.033121
+  url: https://ironman.com/races/im703-oregon
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6642,8 +6752,10 @@
   date: '2027-07-18'
   category: triathlon
   country: Stati Uniti
-  region: Sandusky, OH, United States
-  url: https://ironman.com/race/104456
+  region: Sandusky, OH
+  lat: 41.295156
+  lng: -83.155544
+  url: https://ironman.com/races/im703-ohio
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6653,8 +6765,10 @@
   date: '2027-07-24'
   category: triathlon
   country: Stati Uniti
-  region: Boise, ID, United States
-  url: https://ironman.com/race/104601
+  region: Boise, ID
+  lat: 43.616616
+  lng: -116.200886
+  url: https://ironman.com/races/im703-boise
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6664,8 +6778,10 @@
   date: '2027-07-25'
   category: triathlon
   country: Stati Uniti
-  region: Lake Placid, NY, United States
-  url: https://ironman.com/race/104311
+  region: Lake Placid, NY
+  lat: 44.283119
+  lng: -73.982832
+  url: https://ironman.com/races/im-lake-placid
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6675,8 +6791,10 @@
   date: '2027-07-25'
   category: triathlon
   country: Stati Uniti
-  region: Augusta, ME, United States
-  url: https://ironman.com/race/104746
+  region: Augusta, ME
+  lat: 44.314803
+  lng: -69.774395
+  url: https://ironman.com/races/im703-maine
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6686,8 +6804,10 @@
   date: '2027-08-08'
   category: triathlon
   country: Brasile
-  region: Rio de Janeiro, RJ, Brazil
-  url: https://ironman.com/race/93136
+  region: Rio de Janeiro, RJ
+  lat: -22.911014
+  lng: -43.209373
+  url: https://ironman.com/races/im703-rio-de-janeiro
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6697,10 +6817,10 @@
   date: '2027-08-08'
   category: triathlon
   country: Canada
-  region: Ottawa, ON, Canada
+  region: Ottawa, ON
   lat: 45.25813
   lng: -75.920875
-  url: https://ironman.com/race/105616
+  url: https://ironman.com/races/im-canada-ottawa
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6710,8 +6830,10 @@
   date: '2027-08-15'
   category: triathlon
   country: Regno Unito
-  region: Leeds, United Kingdom
-  url: https://ironman.com/race/104891
+  region: Leeds
+  lat: 53.797419
+  lng: -1.543794
+  url: https://ironman.com/races/im-leeds
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6721,8 +6843,10 @@
   date: '2027-08-21'
   category: triathlon
   country: Svezia
-  region: Kalmar, Sweden
-  url: https://ironman.com/race/106341
+  region: Kalmar
+  lat: 56.662883
+  lng: 16.366238
+  url: https://ironman.com/races/im-kalmar
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6732,10 +6856,10 @@
   date: '2027-08-22'
   category: triathlon
   country: Francia
-  region: Vichy, France
+  region: Vichy
   lat: 46.124017
   lng: 3.420366
-  url: https://ironman.com/race/93426
+  url: https://ironman.com/races/im703-vichy
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6745,10 +6869,10 @@
   date: '2027-08-22'
   category: triathlon
   country: Danimarca
-  region: Copenhagen, Denmark
+  region: Copenhagen
   lat: 55.686724
   lng: 12.570072
-  url: https://ironman.com/race/106196
+  url: https://ironman.com/races/im-copenhagen
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6758,10 +6882,10 @@
   date: '2027-08-22'
   category: triathlon
   country: Francia
-  region: Vichy, France
+  region: Vichy
   lat: 46.124017
   lng: 3.420366
-  url: https://ironman.com/race/128296
+  url: https://ironman.com/races/im-vichy
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6771,8 +6895,10 @@
   date: '2027-08-28'
   category: triathlon
   country: Stati Uniti
-  region: Chattanooga, TN, United States
-  url: https://ironman.com/race/148336
+  region: Chattanooga, TN
+  lat: 35.045722
+  lng: -85.309488
+  url: https://ironman.com/races/im703-world-championship-2027
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6782,8 +6908,10 @@
   date: '2027-08-29'
   category: triathlon
   country: Austria
-  region: Zell am See, Austria
-  url: https://ironman.com/race/93571
+  region: Zell am See
+  lat: 47.323964
+  lng: 12.796317
+  url: https://ironman.com/races/im703-zell-am-see
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6793,10 +6921,10 @@
   date: '2027-09-05'
   category: triathlon
   country: Colombia
-  region: Cartagena, Colombia
+  region: Cartagena
   lat: 2.505
   lng: -68.211944
-  url: https://ironman.com/race/107356
+  url: https://ironman.com/races/5150-cartagena
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6806,10 +6934,10 @@
   date: '2027-09-12'
   category: triathlon
   country: Francia
-  region: Nice, France
+  region: Nice
   lat: 43.700936
   lng: 7.268391
-  url: https://ironman.com/race/92121
+  url: https://ironman.com/races/im-france
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6819,10 +6947,10 @@
   date: '2027-09-12'
   category: triathlon
   country: Francia
-  region: Nice, France
+  region: Nice
   lat: 43.700936
   lng: 7.268391
-  url: https://ironman.com/race/92266
+  url: https://ironman.com/races/im703-nice
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6832,8 +6960,10 @@
   date: '2027-09-12'
   category: triathlon
   country: Regno Unito
-  region: Weymouth, United Kingdom
-  url: https://ironman.com/race/107646
+  region: Weymouth
+  lat: 50.609626
+  lng: -2.454342
+  url: https://ironman.com/races/im703-weymouth
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6843,8 +6973,10 @@
   date: '2027-09-18'
   category: triathlon
   country: Italia
-  region: Cervia, Italy
-  url: https://ironman.com/race/82261
+  region: Cervia
+  lat: 44.260984
+  lng: 12.349546
+  url: https://ironman.com/races/im-emilia-romagna
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6854,8 +6986,10 @@
   date: '2027-09-18'
   category: triathlon
   country: Stati Uniti
-  region: Cambridge, MD, United States
-  url: https://ironman.com/race/82406
+  region: Cambridge, MD
+  lat: 38.570053
+  lng: -76.077268
+  url: https://ironman.com/races/im-maryland
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6865,8 +6999,10 @@
   date: '2027-09-19'
   category: triathlon
   country: Regno Unito
-  region: Pembrokeshire, United Kingdom
-  url: https://ironman.com/race/82841
+  region: Pembrokeshire
+  lat: 51.833921
+  lng: -4.916667
+  url: https://ironman.com/races/im-wales
   series: IRONMAN
   source: ironman
   source_url: https://ironman.com/races
@@ -6876,8 +7012,10 @@
   date: '2027-09-19'
   category: triathlon
   country: Brasile
-  region: SP, Brazil
-  url: https://ironman.com/race/83276
+  region: SP
+  lat: -23.201273
+  lng: -45.946317
+  url: https://ironman.com/races/im703-sao-paulo
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6887,8 +7025,10 @@
   date: '2027-09-19'
   category: triathlon
   country: Italia
-  region: Cervia, Italy
-  url: https://ironman.com/race/83421
+  region: Cervia
+  lat: 44.260984
+  lng: 12.349546
+  url: https://ironman.com/races/im703-emilia-romagna
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6898,10 +7038,10 @@
   date: '2027-09-26'
   category: triathlon
   country: Messico
-  region: Cozumel, ROO, Mexico
+  region: Cozumel, ROO
   lat: 20.443087
   lng: -86.989661
-  url: https://ironman.com/race/82986
+  url: https://ironman.com/races/im703-cozumel
   series: IRONMAN 70.3
   source: ironman
   source_url: https://ironman.com/races
@@ -6926,8 +7066,8 @@
   country: Italia
   region: Talamello (RN)
   distance_km: 6.0
-  lat: 43.90499
-  lng: 12.285898
+  lat: 43.9101928
+  lng: 12.2826892
   url: https://www.calendariopodismo.it/gara/80746/romagna-wild-trail-2026-2/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/3/?localita=emilia-romagna
@@ -6939,8 +7079,8 @@
   country: Italia
   region: Ponte Nuovo - Ravenna (Ra)
   distance_km: 6.0
-  lat: 44.40165
-  lng: 12.212146
+  lat: 44.3899078057
+  lng: 12.2184062004
   url: https://www.calendariopodismo.it/gara/76251/cross-uisp-ravenna-6-prova/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/emilia-romagna/page/3/?localita=emilia-romagna
@@ -6952,8 +7092,8 @@
   country: Italia
   region: Filetto di Villafranca in Lunigiana (Massa Carrara)
   distance_km: 18.0
-  lat: 44.297864
-  lng: 9.95564
+  lat: 44.3011303
+  lng: 9.9537527
   url: https://www.calendariopodismo.it/gara/80857/castagna-trail-2026/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
@@ -6965,8 +7105,8 @@
   country: Italia
   region: Isola Del Giglio (Gr)
   distance_km: 30.0
-  lat: 42.353166
-  lng: 10.896429
+  lat: 42.3595389598
+  lng: 10.9207055582
   url: https://www.calendariopodismo.it/gara/76051/3-mezza-maratona-del-giglio/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
@@ -7004,8 +7144,8 @@
   country: Italia
   region: Campi Bisenzio (Fi)
   distance_km: 30.0
-  lat: 43.839994
-  lng: 11.148956
+  lat: 43.820758
+  lng: 11.138237
   url: https://www.calendariopodismo.it/gara/76603/30-n-piana-6/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
@@ -7030,8 +7170,8 @@
   country: Italia
   region: Asciano, Siena
   distance_km: 12.0
-  lat: 43.234775
-  lng: 11.559423
+  lat: 43.3229339
+  lng: 11.3218606
   url: https://www.calendariopodismo.it/gara/80524/strade-storiche-di-siena-le-mura-di-siena-city-trail/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/2/?localita=toscana
@@ -7069,8 +7209,8 @@
   country: Italia
   region: San Miniato Basso (Pi)
   distance_km: 21.097
-  lat: 43.692837
-  lng: 10.843004
+  lat: 45.500084
+  lng: 9.1450991
   url: https://www.calendariopodismo.it/gara/78148/15-mezza-maratona-giuseppe-cerone-citta-di-san-miniato-2026/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
@@ -7082,8 +7222,8 @@
   country: Italia
   region: Porto Santo Stefano (Gr)
   distance_km: 24.0
-  lat: 42.433832
-  lng: 11.123713
+  lat: 42.4338317
+  lng: 11.1237128
   url: https://www.calendariopodismo.it/gara/76097/12-argentario-trail/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana
@@ -7121,8 +7261,8 @@
   country: Italia
   region: Sant'Ermo (Pi)
   distance_km: 5.0
-  lat: 43.536914
-  lng: 10.579149
+  lat: 43.5369136
+  lng: 10.5791488
   url: https://www.calendariopodismo.it/gara/79779/trail-degli-antichi-lavatoi/
   source: calendariopodismo
   source_url: https://www.calendariopodismo.it/regione/toscana/page/3/?localita=toscana

@@ -188,6 +188,23 @@ def tag_entry!(entry)
   entry["tags"] = (entry["tags"] || []) | ["wine"]
 end
 
+# Owner's call: "ultra is by definition a race above 40km," so rather than needing a
+# dedicated ultra source, reclassify any road/trail entry that's already long enough —
+# using the standard 42.195km marathon distance as the actual cutoff (a hair over the
+# owner's stated 40km) so a plain marathon never gets relabelled "ultra" alongside it.
+# Only road/trail are eligible: skyrun/triathlon are their own disciplines regardless of
+# distance, and anything already "ultra" is untouched.
+ULTRA_MIN_KM = 42.195
+
+def reclassify_ultra!(entry)
+  return unless %w[road trail].include?(entry["category"])
+
+  km = entry["distance_km"] || (entry["distances_km"] || []).map(&:to_f).max
+  return unless km && km > ULTRA_MIN_KM
+
+  entry["category"] = "ultra"
+end
+
 # --------------------------------------------------------------------------- fetch
 
 today  = Date.today
@@ -226,7 +243,10 @@ active_sources.each do |source|
     end
     true
   end
-  kept.each { |e| tag_entry!(e) }
+  kept.each do |e|
+    reclassify_ultra!(e)
+    tag_entry!(e)
+  end
   per_source[source.name] = kept.size
   incoming.concat(kept)
 end

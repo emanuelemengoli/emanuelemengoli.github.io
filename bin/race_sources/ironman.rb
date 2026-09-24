@@ -121,14 +121,29 @@ module RaceSources
       country = code && Countries.lookup(code)
       return nil unless country
 
+      # ironman.com's own location text already ends in the country ("Calella, Spain",
+      # "Jones Beach, NY, United States") — bin/sync-races' geocoder appends `country`
+      # (in Italian) as its own term, so passing this straight through produced queries
+      # like "..., Calella, Spain, Spagna": the country stated twice, once in each
+      # language, which Nominatim then failed to resolve for most of these entries
+      # (confirmed: the majority of this source's races had no lat/lng because of it).
+      # Drop the trailing "City[, State], Country" segment before storing it as region.
+      region = location.split(",")[0..-2].map(&:strip).join(", ")
+      region = location if region.empty?
+
+      # A per-card "View race" link (`a.coh-link`) — NOT the URL this adapter used to
+      # construct from `data-race-id` (confirmed 404: ironman.com/race/<id> isn't a real
+      # path; the real one is ironman.com/races/<slug>, only discoverable from this link).
+      url = card.at_css("a.coh-link")&.[]("href")
+
       {
         "name" => race_name,
         "date" => date,
         "category" => "triathlon",
         "country" => country,
-        "region" => (location unless location.empty?),
+        "region" => (region unless region.empty?),
         "series" => (race_name.match?(/70\.3/) ? "IRONMAN 70.3" : "IRONMAN"),
-        "url" => "https://ironman.com/race/#{card['data-race-id']}",
+        "url" => url,
         "source" => "ironman",
         "source_url" => RACES_URL
       }.compact
